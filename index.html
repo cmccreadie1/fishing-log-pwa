@@ -361,7 +361,7 @@
         // --- Saved Scorecards ---
         function showScorecardsModal() { console.log("View Scorecards."); const modalEl=document.getElementById('savedScorecardsModal'), listEl=document.getElementById('savedScorecardsList'); if(modalEl&&listEl){listEl.innerHTML='<div class="text-center p-3"><div class="spinner-border text-primary"><span class="visually-hidden">Load...</span></div></div>'; let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false});mI.show();setTimeout(loadScorecards,50);}else{console.error("Scorecard modal/list missing.");alert("Err show modal.");}}
 
-        // *** UPDATED loadScorecards function ***
+        // *** CORRECTED loadScorecards function ***
         function loadScorecards() {
             console.log("Loading scorecards...");
             const savedScorecardsList = document.getElementById('savedScorecardsList');
@@ -403,7 +403,8 @@
             // 2. Sort scorecards by timestamp, newest first
             scorecards.sort((a, b) => b.timestamp - a.timestamp);
 
-            if (scorecards.length === 0) { // Corrected variable name here
+            // ** Fixed check here: Use scorecards.length **
+            if (scorecards.length === 0) {
                 savedScorecardsList.innerHTML = '<p class="text-center p-3">No saved scorecards found.</p>';
                 return;
             }
@@ -412,11 +413,12 @@
             // 3. Define the display limit and create element helper
             const displayLimit = 4;
 
+             // ** Ensure full, correct helper function is defined here **
              const createScorecardElement = (key, data, isLatest) => {
                  const entryWrapper = document.createElement('div');
                  entryWrapper.className = `scorecard-entry${isLatest ? ' latest-scorecard' : ''}`;
                  let tL=0,fC=0,sp=new Set(),lF=null; const fish=data.fishData||[]; fish.forEach(f=>{const l=f.length||0;fC++;tL+=l;if(f.species)sp.add(f.species);if(!lF||l>(lF.length||0))lF=f;}); const spC=sp.size; const lFS=lF?`${lF.species||'?'}(${lF.length||'?'}cm)`:'N/A'; const eK=key.replace(/'/g,"\\'");
-                 // *** Using the buttons from the download/delete version ***
+                 // Using Download and Delete buttons
                  entryWrapper.innerHTML=`<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue||'?'}</strong> - ${formatDate(data.currentDate||'')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest?'<span class="badge ms-2">Latest</span>':''}</div> <div class="scorecard-details" id="details_${key}"><h6>Details</h6><p><strong>Angler:</strong> ${data.currentAngler||'?'}</p><p><strong>Venue:</strong> ${data.currentVenue||'?'}</p><p><strong>Date:</strong> ${formatDate(data.currentDate||'')}</p>${data.currentZone?`<p><strong>Zone:</strong> ${data.currentZone}</p>`:''}${data.currentPeg?`<p><strong>Peg:</strong> ${data.currentPeg}</p>`:''}<hr><h6>Catch (${fC})</h6>${fish.length>0?`<div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th>#</th><th>Species</th><th>Len(cm)</th></tr></thead><tbody>${fish.map((f,i)=>`<tr><td>${i+1}</td><td>${f.species||'?'}</td><td>${f.length||'?'}</td></tr>`).join('')}</tbody></table></div>`:'<p>No fish.</p>'}${fish.length>0?`<hr><h6>Summary</h6><p><strong>Total Len:</strong> ${tL}cm</p><p><strong>Species:</strong> ${spC}</p><p><strong>Longest:</strong> ${lFS}</p>`:''}<hr><button class="btn btn-success btn-sm" onclick="downloadScorecard('${eK}', event)"><i class="bi bi-download me-1"></i>Download (.txt)</button> <button class="btn btn-danger btn-sm" onclick="deleteScorecard('${eK}', event)"><i class="bi bi-trash me-1"></i>Delete</button></div>`;
                  return entryWrapper;
              }; // End of createScorecardElement
