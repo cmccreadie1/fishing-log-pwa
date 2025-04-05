@@ -1,4 +1,4 @@
-TEST 3<!DOCTYPE html>
+TEST 4<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -74,7 +74,7 @@ TEST 3<!DOCTYPE html>
         .form-control, .form-select { border-radius: 8px; margin-bottom: 15px; border: 1px solid #ced4da; }
         .form-control:focus, .form-select:focus { border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); }
         .form-check-label { color: #212529; }
-        /* Style for Verifier Field */
+        /* Style for Verifier Field in Modal */
         #verifierEndModalSection { display: none; } /* Hide by default */
 
         /* --- Tables --- */
@@ -257,7 +257,7 @@ TEST 3<!DOCTYPE html>
                      <p><strong>Date:</strong> <span id="restoreDate"></span></p>
                      <p><strong>Fish Caught:</strong> <span id="restoreFishCount"></span></p>
                  </div>
-                 {/* Footer structure and button styling from previous request */}
+                 {/* <!-- UPDATED Footer for Restore Modal - Removed placeholder --> */}
                  <div class="modal-footer d-block text-center">
                      <button type="button" class="btn btn-success btn-lg mb-2" id="restoreSessionBtn">Restore Session</button>
                      <br>
@@ -484,7 +484,7 @@ TEST 3<!DOCTYPE html>
                 showPage('fishingPage'); // Stay on fishing page on failure
             }
         }
-        // Removed confirmEndSessionWithVerifier and saveScorecardData functions
+        // Removed separate saveScorecardData function
 
         // --- Tally Page ---
         function populateTallySummaryFields() { try{document.getElementById('summaryAngler').textContent=currentAngler||'?'; document.getElementById('summaryDate').textContent=currentDate?formatDate(currentDate):'?'; document.getElementById('summaryVenue').textContent=currentVenue||'?'; document.getElementById('summaryZone').textContent=currentZone||'?'; document.getElementById('summaryPeg').textContent=currentPeg||'?'; document.getElementById('summaryVerifier').innerHTML = '';}catch(e){} }
@@ -513,8 +513,7 @@ TEST 3<!DOCTYPE html>
             console.log(`Total scorecards found: ${scorecards.length}`);
 
             const displayLimit = 4;
-            // *** UPDATED createScorecardElement function (removed comments) ***
-             const createScorecardElement = (key, data, isLatest) => {
+            const createScorecardElement = (key, data, isLatest) => {
                  try {
                      const w = document.createElement('div');
                      w.className = `scorecard-entry${isLatest ? ' latest-scorecard' : ''}`;
@@ -584,7 +583,7 @@ TEST 3<!DOCTYPE html>
             alert("This will open your default email app. Notes are NOT included.");
 
             let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error getting data: ${error.message}`); return; }
-            let body = "Sea Catch Scorecard\r\n=====================\r\n\r\n";
+            let body = "Sea Catch Scorer\r\n=====================\r\n\r\n";
             body += "Session Details:\r\n"; body += `Angler: ${data.currentAngler||'?'}\r\n`; body += `Date: ${formatDate(data.currentDate||'')}\r\n`; body += `Venue: ${data.currentVenue||'?'}\r\n`; if(data.currentZone)body+=`Zone: ${data.currentZone}\r\n`; if(data.currentPeg)body+=`Peg: ${data.currentPeg}\r\n`; if(data.verifier)body+=`Verified By: ${data.verifier}\r\n`; body += "\r\n";
             body += "Catch List:\r\n"; if(data.fishData?.length>0){data.fishData.forEach((f,i)=>{body+=`${i+1}. ${f.species||'?'} - ${f.length||'?'} cm\r\n`;});}else{body+="No fish.\r\n";} body+="\r\n";
             let tL=0,fC=0,sp=new Set(),lF=null; const fish=data.fishData||[]; fish.forEach(f=>{const l=f.length||0;fC++;tL+=l;if(f.species)sp.add(f.species);if(!lF||l>(lF.length||0))lF=f;}); const spC=sp.size; const lFS=lF?`${lF.species||'?'}(${lF.length||'?'}cm)`:'N/A';
@@ -615,18 +614,7 @@ TEST 3<!DOCTYPE html>
         }
 
         // --- Application Reset ---
-        function resetApp() {
-            console.log("Resetting app.");
-            fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen';
-            deactivateAppMode();
-            try {
-               document.getElementById('anglerName').value=''; document.getElementById('competitionDate').value=''; document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; toggleCompetitionFields(); document.getElementById('speciesInput').value=''; document.getElementById('customSpeciesInput').value=''; document.getElementById('customSpeciesInput').style.display='none'; document.getElementById('lengthInput').value=''; document.getElementById('fishLog').innerHTML='';
-               // Clear and hide verifier input inside modal
-               const vI = document.getElementById('verifierEndModalInput'); if(vI) vI.value='';
-               const vS = document.getElementById('verifierEndModalSection'); if(vS) vS.style.display='none';
-               populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm';
-            } catch(e) { console.error("Error resetting forms:", e); }
-        }
+        function resetApp() { console.log("Resetting app."); fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen'; deactivateAppMode(); try { document.getElementById('anglerName').value=''; document.getElementById('competitionDate').value=''; document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; toggleCompetitionFields(); document.getElementById('speciesInput').value=''; document.getElementById('customSpeciesInput').value=''; document.getElementById('customSpeciesInput').style.display='none'; document.getElementById('lengthInput').value=''; document.getElementById('fishLog').innerHTML=''; const vI=document.getElementById('verifierEndModalInput'); if(vI)vI.value='';const vS=document.getElementById('verifierEndModalSection');if(vS)vS.style.display='none'; populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm'; } catch(e) { console.error("Error resetting forms:", e); } }
 
         // --- Initialisation ---
         document.addEventListener('DOMContentLoaded', () => {
