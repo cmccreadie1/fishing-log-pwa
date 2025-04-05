@@ -414,24 +414,27 @@
             console.log(`Total scorecards found: ${scorecards.length}`);
 
             const displayLimit = 4;
-            const createScorecardElement = (key, data, isLatest) => {
+            // *** UPDATED createScorecardElement function ***
+             const createScorecardElement = (key, data, isLatest) => {
                  try {
-                    const w = document.createElement('div');
-                    w.className = `scorecard-entry${isLatest ? ' latest-scorecard' : ''}`;
-                    let tL = 0, fC = 0, sp = new Set(), lF = null;
-                    const fish = data.fishData || [];
-                    fish.forEach(f => { const l = f.length || 0; fC++; tL += l; if (f.species) sp.add(f.species); if (!lF || l > (lF.length || 0)) lF = f; });
-                    const spC = sp.size;
-                    const lFS = lF ? `${lF.species || '?'}(${lF.length || '?'}cm)` : 'N/A';
-                    const eK = key.replace(/'/g, "\\'");
+                     const w = document.createElement('div');
+                     w.className = `scorecard-entry${isLatest ? ' latest-scorecard' : ''}`;
+                     let tL = 0, fC = 0, sp = new Set(), lF = null;
+                     const fish = data.fishData || [];
+                     fish.forEach(f => {
+                         const l = f.length || 0; fC++; tL += l; if (f.species) sp.add(f.species); if (!lF || l > (lF.length || 0)) lF = f;
+                     });
+                     const spC = sp.size;
+                     const lFS = lF ? `${lF.species || '?'}(${lF.length || '?'}cm)` : 'N/A';
+                     const eK = key.replace(/'/g, "\\'");
 
-                    // Conditionally create View Note button HTML
-                    const viewNoteButtonHtml = (data.notes && data.notes.trim() !== '')
-                       ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${eK}', event)"><i class="bi bi-eye me-1"></i>View Note</button>`
-                       : '';
+                     // Conditionally create View Note button HTML
+                     const viewNoteButtonHtml = (data.notes && data.notes.trim() !== '')
+                        ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${eK}', event)"><i class="bi bi-eye me-1"></i>View Note</button>`
+                        : ''; // Empty string if no notes
 
-                    // Reordered buttons, removed inline notes display
-                    w.innerHTML = `<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest ? '<span class="badge ms-2">Latest</span>' : ''}</div>
+                     // Removed placeholder comments and reordered buttons
+                     w.innerHTML = `<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest ? '<span class="badge ms-2">Latest</span>' : ''}</div>
                         <div class="scorecard-details" id="details_${key}">
                             <h6>Session Details</h6>
                             <p><strong>Angler:</strong> ${data.currentAngler || '?'}</p>
@@ -446,14 +449,22 @@
                             ${fish.length > 0 ? `<hr><h6>Summary</h6><p><strong>Total Len:</strong> ${tL}cm</p><p><strong>Species:</strong> ${spC}</p><p><strong>Longest:</strong> ${lFS}</p>` : ''}
 
                             <div class="btn-actions-group">
-                                ${viewNoteButtonHtml} {/* View Note button */}
+                                ${viewNoteButtonHtml}
                                 <button class="btn btn-outline-secondary btn-sm" onclick="openNotesModal('${eK}', event)"><i class="bi bi-pencil me-1"></i>Add/Edit Note</button>
                                 <button class="btn btn-info btn-sm" onclick="emailScorecard('${eK}', event)"><i class="bi bi-envelope me-1"></i>Email</button>
                                 <button class="btn btn-danger btn-sm" onclick="deleteScorecard('${eK}', event)"><i class="bi bi-trash me-1"></i>Delete</button>
                             </div>
                         </div>`;
-                    return w;
-                 } catch (elementError) { console.error(`Err create el for ${key}:`, elementError); const errDiv = document.createElement('div'); errDiv.className = 'alert alert-warning p-2 my-2'; errDiv.textContent = `Err display card ${key.slice(-4)}`; return errDiv; }};
+                     return w;
+                 } catch (elementError) {
+                     console.error(`Err create el for ${key}:`, elementError);
+                     const errDiv = document.createElement('div');
+                     errDiv.className = 'alert alert-warning p-2 my-2';
+                     errDiv.textContent = `Err display card ${key.slice(-4)}`;
+                     return errDiv;
+                 }
+             }; // End of createScorecardElement
+
 
             try { console.log(`Slicing initial (0 to ${displayLimit})`); const initial = scorecards.slice(0, displayLimit); console.log(`Displaying ${initial.length} initial.`); initial.forEach(({ key, data }, index) => { const el = createScorecardElement(key, data, index === 0); if (el) savedScorecardsList.appendChild(el); }); }
             catch(e) { console.error("Err initial loop:", e); savedScorecardsList.innerHTML += '<p class="text-danger p-3">Err display initial.</p>'; }
@@ -475,7 +486,7 @@
 
         function emailScorecard(key, event) {
             event.stopPropagation(); console.log("Emailing:", key);
-            alert("This will open your default email app. Please add recipients and send. Formatting may vary. Notes are NOT included.");
+            alert("This will open your default email app. Please add recipients and send. Formatting may vary. Notes are NOT included."); // Inform user
 
             let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error: Could not get data to email. ${error.message}`); return; }
             let body = "Sea Catch Scorecard\r\n=====================\r\n\r\n";
@@ -484,57 +495,35 @@
             let tL=0,fC=0,sp=new Set(),lF=null; const fish=data.fishData||[]; fish.forEach(f=>{const l=f.length||0;fC++;tL+=l;if(f.species)sp.add(f.species);if(!lF||l>(lF.length||0))lF=f;}); const spC=sp.size; const lFS=lF?`${lF.species||'?'}(${lF.length||'?'}cm)`:'N/A';
             body += "Summary:\r\n"; body += `Total Fish: ${fC}\r\n`; body += `Total Length: ${tL} cm\r\n`; body += `Unique Species: ${spC}\r\n`; body += `Longest Fish: ${lFS}\r\n\r\n=====================\r\n`;
             const subject = `Fishing Scorecard: ${data.currentVenue||'?'} - ${formatDate(data.currentDate||'')}`;
-            const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`; // Handles \r\n -> %0D%0A
             if(mailtoUrl.length>1800){console.warn(`Mailto long (${mailtoUrl.length})`); alert("Warning: Scorecard is long, email client may struggle.");}
-            console.log("Mailto len:", mailtoUrl.length); try{window.open(mailtoUrl,'_self');}catch(e){console.error("Mailto err:",e);alert("Could not open email client.");}
+            console.log("Mailto len:", mailtoUrl.length); try{window.open(mailtoUrl,'_self');}catch(e){console.error("Mailto err:",e);alert("Could not open email client automatically.");}
         }
 
         // --- Notes Modal Functions ---
         function openNotesModal(key, event) {
-            if(event) event.stopPropagation(); // Prevent details toggle
+            if(event) event.stopPropagation();
             console.log('Opening notes modal for key:', key);
             const notesTextarea = document.getElementById('notesTextarea');
             const notesModalKeyInput = document.getElementById('notesModalScorecardKey');
-
-            if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) {
-                console.error('Notes modal elements or instance not found!');
-                alert('Error opening notes editor.');
-                return;
-            }
-
-            // Load existing notes into textarea
-            try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; notesTextarea.value=data.notes||''; }
-            catch(e){ console.error('Error loading notes for modal:',e); notesTextarea.value=''; }
-
-            notesModalKeyInput.value = key; // Store the key
-            notesModalInstance.show(); // Show the modal
+            if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { console.error('Notes modal elements/instance missing!'); alert('Error opening notes editor.'); return; }
+            try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; notesTextarea.value=data.notes||''; } catch(e){ console.error('Error loading notes for modal:',e); notesTextarea.value=''; }
+            notesModalKeyInput.value = key; notesModalInstance.show();
         }
-
         function saveNoteFromModal() {
-            console.log('Save button in notes modal clicked.');
+            console.log('Save notes modal clicked.');
             const notesTextarea = document.getElementById('notesTextarea');
             const notesModalKeyInput = document.getElementById('notesModalScorecardKey');
             if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { alert('Error saving notes.'); return; }
-
-            const key = notesModalKeyInput.value;
-            const newNotes = notesTextarea.value; // Keep whitespace as entered
+            const key = notesModalKeyInput.value; const newNotes = notesTextarea.value; // Keep whitespace
             if (!key) { alert('Error: Scorecard key missing.'); return; }
-
-            try { const dS = localStorage.getItem(key); if (!dS) throw new Error('Scorecard data not found.'); let data = JSON.parse(dS);
-                data.notes = newNotes; // Update notes
-                localStorage.setItem(key, JSON.stringify(data)); // Save back
-                console.log('Notes saved via modal for key:', key);
-                 notesModalInstance.hide(); // Hide modal
-                 setTimeout(loadScorecards, 150); // Reload list to update view button state
-            } catch (e) { console.error('Error saving notes from modal:', e); alert(`Failed to save notes: ${e.message}`); }
+            try { const dS = localStorage.getItem(key); if (!dS) throw new Error('Scorecard data not found.'); let data = JSON.parse(dS); data.notes = newNotes; localStorage.setItem(key, JSON.stringify(data)); console.log('Notes saved via modal for key:', key); notesModalInstance.hide(); setTimeout(loadScorecards, 150); } // Reload list to update view button
+            catch (e) { console.error('Error saving notes from modal:', e); alert(`Failed to save notes: ${e.message}`); }
         }
-
         function viewNote(key, event) {
-            event.stopPropagation();
-            console.log('Viewing notes for key:', key);
-            try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; const notes=data.notes||'';
-                alert(`Notes for scorecard:\n--------------------\n${notes || '(No notes saved)'}`); // Show notes in simple alert
-            } catch (e) { console.error('Error retrieving notes:', e); alert('Could not retrieve notes.'); }
+            event.stopPropagation(); console.log('Viewing notes for key:', key);
+            try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; const notes=data.notes||''; alert(`Notes for scorecard:\n--------------------\n${notes || '(No notes saved)'}`); }
+            catch (e) { console.error('Error retrieving notes:', e); alert('Could not retrieve notes.'); }
         }
         // --- End Notes Functions ---
 
