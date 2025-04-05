@@ -1,16 +1,20 @@
-TESTY <!DOCTYPE html>
+PWA<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sea Catch Scorer</title>
-    <!-- PWA Manifest Link -->
+
+    <!-- ================== PWA & Mobile Elements ================== -->
     <link rel="manifest" href="manifest.json">
-    <!-- Theme Color for PWA Address Bar -->
     <meta name="theme-color" content="#007bff">
-    <!-- Add Basic Icons for "Add to Home Screen" / PWA -->
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-    <!-- Add other icon sizes if you have them -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sea Scorer">
+    <meta name="application-name" content="Sea Scorer">
+    <!-- ============================================================ -->
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -121,8 +125,7 @@ TESTY <!DOCTYPE html>
         #savedScorecardsModal .latest-scorecard.scorecard-entry .scorecard-item { border-bottom: 1px solid rgba(0, 123, 255, 0.3); background-color: #e7f1ff; }
         #savedScorecardsModal .latest-scorecard.scorecard-entry .scorecard-item .badge { background-color: #007bff !important; color: white !important; font-weight: 600; }
         #olderScorecardsToggleContainer { padding-top: 10px; text-align: center;}
-        #olderScorecardsToggleContainer .btn { margin: 5px; } /* Add spacing between View Older and Delete Older */
-
+        #olderScorecardsToggleContainer .btn { margin: 5px; }
 
         /* --- Notes Modal --- */
         #notesModal .modal-body textarea { resize: vertical; min-height: 100px; }
@@ -385,6 +388,7 @@ TESTY <!DOCTYPE html>
         function checkRestoreSession() { let data; try { const temp = localStorage.getItem('temp_session'); if (!temp) { showPage('splashScreen'); return; } data = JSON.parse(temp); if (!data || !Array.isArray(data.fishData)) throw new Error("Invalid format."); } catch (e) { console.error("Read temp err:", e); clearTempSession(); showPage('splashScreen'); return; } if (data.currentAngler || data.currentDate || data.currentVenue || data.fishData.length > 0) { console.log("Found session, show modal."); document.getElementById('restoreAngler').textContent=data.currentAngler||'N/A'; document.getElementById('restoreDate').textContent=data.currentDate?formatDate(data.currentDate):'N/A'; document.getElementById('restoreFishCount').textContent=data.fishData.length; const modalEl=document.getElementById('restoreSessionModal'); if(modalEl){let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false}); mI.show();}else{console.error("Restore modal missing.");clearTempSession();showPage('splashScreen');} } else { clearTempSession(); showPage('splashScreen'); } }
         function restoreSession() { console.log("Restore clicked."); let temp; try { const sS=localStorage.getItem('temp_session'); if(!sS)throw new Error("No data."); temp=JSON.parse(sS); if(!temp||!Array.isArray(temp.fishData))throw new Error("Invalid format."); } catch(e){console.error("Restore err:",e);alert("Failed restore.");startNewSession();return;} fishData=temp.fishData||[]; currentAngler=temp.currentAngler||null; currentDate=temp.currentDate||null; currentVenue=temp.currentVenue||null; currentZone=temp.currentZone||null; currentPeg=temp.currentPeg||null; const page=temp.currentPage||'registrationPage'; isAppActive=temp.isAppActive||false; historyHijacked=temp.historyHijacked||false; console.log("Restoring to:",page,"App active:",isAppActive); try{if(currentAngler)document.getElementById('anglerName').value=currentAngler; if(currentDate)document.getElementById('competitionDate').value=currentDate; if(currentVenue)document.getElementById('venueInput').value=currentVenue; const isComp=!!(currentZone||currentPeg); document.getElementById('isCompetition').checked=isComp; toggleCompetitionFields(); if(currentZone)document.getElementById('zoneInput').value=currentZone; if(currentPeg)document.getElementById('pegInput').value=currentPeg;}catch(e){console.error("Restore reg fields err:",e);} if(page==='fishingPage'||page==='tallyPage'){populateSpeciesDropdown(); if(page==='fishingPage'){updateFishLog();}else if(page==='tallyPage'){populateTallySummaryFields();populateTallyTable();}} hideModal('restoreSessionModal'); showPage(page); if(isAppActive && !historyHijacked){history.pushState({appActive:true},'',location.href); historyHijacked=true; console.log("Pushed history after restore.");} console.log("Session restored."); }
         function startNewSession() {
+            // Confirmation logic moved to the event listener
             console.log("Start New Session confirmed after prompt.");
             clearTempSession(); resetApp(); hideModal('restoreSessionModal'); showPage('splashScreen');
         }
@@ -451,6 +455,7 @@ TESTY <!DOCTYPE html>
                  if (!verifierInput) {
                      console.error("Verifier input missing inside modal during save!");
                      alert("Error: Verifier field is missing. Cannot save competition scorecard.");
+                     // Keep modal open? Needs user interaction anyway.
                      return; // Stop saving
                  }
                  verifierName = verifierInput.value.trim();
@@ -486,7 +491,7 @@ TESTY <!DOCTYPE html>
                 showPage('fishingPage'); // Stay on fishing page on failure
             }
         }
-        // Removed separate saveScorecardData function
+        // Removed confirmEndSessionWithVerifier and saveScorecardData functions
 
         // --- Tally Page ---
         function populateTallySummaryFields() { try{document.getElementById('summaryAngler').textContent=currentAngler||'?'; document.getElementById('summaryDate').textContent=currentDate?formatDate(currentDate):'?'; document.getElementById('summaryVenue').textContent=currentVenue||'?'; document.getElementById('summaryZone').textContent=currentZone||'?'; document.getElementById('summaryPeg').textContent=currentPeg||'?'; document.getElementById('summaryVerifier').innerHTML = '';}catch(e){} }
@@ -531,7 +536,6 @@ TESTY <!DOCTYPE html>
                         ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${eK}', event)"><i class="bi bi-eye me-1"></i>View Note</button>`
                         : '';
 
-                     // Removed placeholder comments and reordered buttons
                      w.innerHTML = `<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest ? '<span class="badge ms-2">Latest</span>' : ''}</div>
                         <div class="scorecard-details" id="details_${key}">
                             <h6>Session Details</h6>
@@ -631,7 +635,7 @@ TESTY <!DOCTYPE html>
             scorecards.sort((a, b) => parseInt(b.split('_')[1]) - parseInt(a.split('_')[1])); // Sort desc
             if (scorecards.length > displayLimit) {
                  const olderCount = scorecards.length - displayLimit;
-                 if (confirm(`Delete the oldest ${olderCount} scorecard${olderCount > 1 ? 's' : ''}? Cannot be undone.`)) { deleteOlderScorecards(); }
+                 if (confirm(`Are you sure you want to delete the oldest ${olderCount} scorecard${olderCount > 1 ? 's' : ''}? This cannot be undone.`)) { deleteOlderScorecards(); }
                  else { console.log("Delete older cancelled."); }
             } else { alert("No older scorecards found to delete."); }
         }
@@ -649,6 +653,7 @@ TESTY <!DOCTYPE html>
             finally { loadScorecards(); } // Always reload
         }
         // --- End Delete Older Scorecards ---
+
 
         // --- General Modal Hiding/Showing ---
         function hideModal(modalId) { const mE=document.getElementById(modalId); if(mE){const m=bootstrap.Modal.getInstance(mE); if(m){m.hide();}else{mE.classList.remove('show');mE.style.display='none';const b=document.querySelector('.modal-backdrop');if(b)b.remove();document.body.classList.remove('modal-open');document.body.style.overflow='';document.body.style.paddingRight='';}}}
