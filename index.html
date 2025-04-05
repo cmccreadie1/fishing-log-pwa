@@ -1,4 +1,4 @@
-TEST 4<!DOCTYPE html>
+TEST 5<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -121,6 +121,8 @@ TEST 4<!DOCTYPE html>
         #savedScorecardsModal .latest-scorecard.scorecard-entry .scorecard-item { border-bottom: 1px solid rgba(0, 123, 255, 0.3); background-color: #e7f1ff; }
         #savedScorecardsModal .latest-scorecard.scorecard-entry .scorecard-item .badge { background-color: #007bff !important; color: white !important; font-weight: 600; }
         #olderScorecardsToggleContainer { padding-top: 10px; text-align: center;}
+        #olderScorecardsToggleContainer .btn { margin: 5px; } /* Add spacing between View Older and Delete Older */
+
 
         /* --- Notes Modal --- */
         #notesModal .modal-body textarea { resize: vertical; min-height: 100px; }
@@ -257,7 +259,7 @@ TEST 4<!DOCTYPE html>
                      <p><strong>Date:</strong> <span id="restoreDate"></span></p>
                      <p><strong>Fish Caught:</strong> <span id="restoreFishCount"></span></p>
                  </div>
-                 {/* <!-- UPDATED Footer for Restore Modal - Removed placeholder --> */}
+                 {/* Footer structure and button styling - Comments removed */}
                  <div class="modal-footer d-block text-center">
                      <button type="button" class="btn btn-success btn-lg mb-2" id="restoreSessionBtn">Restore Session</button>
                      <br>
@@ -279,7 +281,7 @@ TEST 4<!DOCTYPE html>
                     <div id="savedScorecardsList" class="card-section">
                        <p class="placeholder-glow"><span class="placeholder col-12"></span></p> <!-- Placeholder while loading -->
                     </div>
-                    <!-- DIV TO HOLD THE "VIEW OLDER" BUTTON -->
+                    <!-- DIV TO HOLD THE "VIEW OLDER" / "DELETE OLDER" BUTTONS -->
                     <div id="olderScorecardsToggleContainer" class="text-center mt-3"></div>
                 </div>
                 <div class="modal-footer">
@@ -347,7 +349,6 @@ TEST 4<!DOCTYPE html>
     <!-- Application JS -->
     <script>
         // --- Global Variables ---
-        // *** UPDATED fishCategories object ***
         const fishCategories = {
             "Flatfish": [ "Brill", "Dab", "Flounder", "Halibut", "Megrim", "Plaice", "Sole (Dover)", "Sole (Lemon)", "Turbot" ],
             "Round Fish": [ "Bass", "Bream (Black)", "Bream (Gilthead)", "Bream (Red)", "Bream (Sea)", "Coalfish", "Cod", "Conger Eel", "Dogfish", "Dogfish (Black Mouth)", "Gurnard (Red)", "Gurnard (Tub)", "Haddock", "Hake", "John Dory", "Ling", "Mackerel", "Monkfish", "Mullet (Grey)", "Mullet (Red)", "Pollack", "Poor Cod", "Pouting", "Saithe", "Triggerfish", "Whiting" ], // Removed Smoothhound
@@ -383,6 +384,7 @@ TEST 4<!DOCTYPE html>
         function checkRestoreSession() { let data; try { const temp = localStorage.getItem('temp_session'); if (!temp) { showPage('splashScreen'); return; } data = JSON.parse(temp); if (!data || !Array.isArray(data.fishData)) throw new Error("Invalid format."); } catch (e) { console.error("Read temp err:", e); clearTempSession(); showPage('splashScreen'); return; } if (data.currentAngler || data.currentDate || data.currentVenue || data.fishData.length > 0) { console.log("Found session, show modal."); document.getElementById('restoreAngler').textContent=data.currentAngler||'N/A'; document.getElementById('restoreDate').textContent=data.currentDate?formatDate(data.currentDate):'N/A'; document.getElementById('restoreFishCount').textContent=data.fishData.length; const modalEl=document.getElementById('restoreSessionModal'); if(modalEl){let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false}); mI.show();}else{console.error("Restore modal missing.");clearTempSession();showPage('splashScreen');} } else { clearTempSession(); showPage('splashScreen'); } }
         function restoreSession() { console.log("Restore clicked."); let temp; try { const sS=localStorage.getItem('temp_session'); if(!sS)throw new Error("No data."); temp=JSON.parse(sS); if(!temp||!Array.isArray(temp.fishData))throw new Error("Invalid format."); } catch(e){console.error("Restore err:",e);alert("Failed restore.");startNewSession();return;} fishData=temp.fishData||[]; currentAngler=temp.currentAngler||null; currentDate=temp.currentDate||null; currentVenue=temp.currentVenue||null; currentZone=temp.currentZone||null; currentPeg=temp.currentPeg||null; const page=temp.currentPage||'registrationPage'; isAppActive=temp.isAppActive||false; historyHijacked=temp.historyHijacked||false; console.log("Restoring to:",page,"App active:",isAppActive); try{if(currentAngler)document.getElementById('anglerName').value=currentAngler; if(currentDate)document.getElementById('competitionDate').value=currentDate; if(currentVenue)document.getElementById('venueInput').value=currentVenue; const isComp=!!(currentZone||currentPeg); document.getElementById('isCompetition').checked=isComp; toggleCompetitionFields(); if(currentZone)document.getElementById('zoneInput').value=currentZone; if(currentPeg)document.getElementById('pegInput').value=currentPeg;}catch(e){console.error("Restore reg fields err:",e);} if(page==='fishingPage'||page==='tallyPage'){populateSpeciesDropdown(); if(page==='fishingPage'){updateFishLog();}else if(page==='tallyPage'){populateTallySummaryFields();populateTallyTable();}} hideModal('restoreSessionModal'); showPage(page); if(isAppActive && !historyHijacked){history.pushState({appActive:true},'',location.href); historyHijacked=true; console.log("Pushed history after restore.");} console.log("Session restored."); }
         function startNewSession() {
+            // Confirmation logic moved to the event listener
             console.log("Start New Session confirmed after prompt.");
             clearTempSession(); resetApp(); hideModal('restoreSessionModal'); showPage('splashScreen');
         }
@@ -484,7 +486,7 @@ TEST 4<!DOCTYPE html>
                 showPage('fishingPage'); // Stay on fishing page on failure
             }
         }
-        // Removed separate saveScorecardData function
+        // Removed confirmEndSessionWithVerifier and saveScorecardData functions
 
         // --- Tally Page ---
         function populateTallySummaryFields() { try{document.getElementById('summaryAngler').textContent=currentAngler||'?'; document.getElementById('summaryDate').textContent=currentDate?formatDate(currentDate):'?'; document.getElementById('summaryVenue').textContent=currentVenue||'?'; document.getElementById('summaryZone').textContent=currentZone||'?'; document.getElementById('summaryPeg').textContent=currentPeg||'?'; document.getElementById('summaryVerifier').innerHTML = '';}catch(e){} }
@@ -565,13 +567,31 @@ TEST 4<!DOCTYPE html>
 
             console.log(`Check need Older button: ${scorecards.length} > ${displayLimit}?`);
             if (scorecards.length > displayLimit) {
-                 console.log("Condition MET: Creating 'Older' button.");
-                 if (!olderScorecardsToggleContainer) { console.error("Cannot create 'Older' button - container missing!"); return; }
+                 console.log("Condition MET: Creating 'Older' buttons."); // Plural
+                 if (!olderScorecardsToggleContainer) { console.error("Cannot create 'Older' buttons - container missing!"); return; }
                  const olderCount = scorecards.length - displayLimit;
-                 const showOlderBtn = document.createElement('button'); showOlderBtn.id = 'showOlderBtn'; showOlderBtn.className = 'btn btn-outline-secondary'; showOlderBtn.textContent = `View ${olderCount} Older Scorecard${olderCount > 1 ? 's' : ''}`;
-                 showOlderBtn.onclick = function() { console.log("'Older' clicked."); try { const older = scorecards.slice(displayLimit); console.log(`Appending ${older.length} older.`); older.forEach(({ key, data }) => { const el = createScorecardElement(key, data, false); if (el) savedScorecardsList.appendChild(el); }); olderScorecardsToggleContainer.innerHTML = ''; console.log("Older appended, btn removed."); } catch(e) { console.error("Err create/append older:", e); olderScorecardsToggleContainer.innerHTML = '<p class="text-danger">Err display older.</p>'; } };
-                 olderScorecardsToggleContainer.appendChild(showOlderBtn); console.log("'Older' button added.");
-            } else { console.log("Condition NOT MET: No 'Older' button needed."); }
+
+                 // Create View Older Button
+                 const showOlderBtn = document.createElement('button');
+                 showOlderBtn.id = 'showOlderBtn';
+                 showOlderBtn.className = 'btn btn-outline-secondary'; // Use className
+                 showOlderBtn.textContent = `View ${olderCount} Older Scorecard${olderCount > 1 ? 's' : ''}`;
+                 showOlderBtn.onclick = function() { console.log("'Older' clicked."); try { const older = scorecards.slice(displayLimit); console.log(`Appending ${older.length} older.`); older.forEach(({ key, data }) => { const el = createScorecardElement(key, data, false); if (el) savedScorecardsList.appendChild(el); }); olderScorecardsToggleContainer.innerHTML = ''; console.log("Older appended, buttons removed."); } catch(e) { console.error("Err create/append older:", e); olderScorecardsToggleContainer.innerHTML = '<p class="text-danger">Err display older.</p>'; } };
+                 olderScorecardsToggleContainer.appendChild(showOlderBtn);
+                 console.log("'View Older' button added.");
+
+                 // Create Delete Older Button
+                 const deleteOlderBtn = document.createElement('button');
+                 deleteOlderBtn.id = 'deleteOlderBtn';
+                 deleteOlderBtn.className = 'btn btn-danger'; // Use className, red button
+                 deleteOlderBtn.textContent = 'Delete Older Scorecards';
+                 deleteOlderBtn.onclick = confirmDeleteOlderScorecards; // Assign new confirmation function
+                 olderScorecardsToggleContainer.appendChild(deleteOlderBtn);
+                 console.log("'Delete Older' button added.");
+
+            } else {
+                 console.log("Condition NOT MET: No 'Older' buttons needed.");
+            }
         } // End of loadScorecards
 
 
@@ -583,7 +603,7 @@ TEST 4<!DOCTYPE html>
             alert("This will open your default email app. Notes are NOT included.");
 
             let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error getting data: ${error.message}`); return; }
-            let body = "Sea Catch Scorer\r\n=====================\r\n\r\n";
+            let body = "Sea Catch Scorecard\r\n=====================\r\n\r\n";
             body += "Session Details:\r\n"; body += `Angler: ${data.currentAngler||'?'}\r\n`; body += `Date: ${formatDate(data.currentDate||'')}\r\n`; body += `Venue: ${data.currentVenue||'?'}\r\n`; if(data.currentZone)body+=`Zone: ${data.currentZone}\r\n`; if(data.currentPeg)body+=`Peg: ${data.currentPeg}\r\n`; if(data.verifier)body+=`Verified By: ${data.verifier}\r\n`; body += "\r\n";
             body += "Catch List:\r\n"; if(data.fishData?.length>0){data.fishData.forEach((f,i)=>{body+=`${i+1}. ${f.species||'?'} - ${f.length||'?'} cm\r\n`;});}else{body+="No fish.\r\n";} body+="\r\n";
             let tL=0,fC=0,sp=new Set(),lF=null; const fish=data.fishData||[]; fish.forEach(f=>{const l=f.length||0;fC++;tL+=l;if(f.species)sp.add(f.species);if(!lF||l>(lF.length||0))lF=f;}); const spC=sp.size; const lFS=lF?`${lF.species||'?'}(${lF.length||'?'}cm)`:'N/A';
@@ -600,21 +620,104 @@ TEST 4<!DOCTYPE html>
         function viewNote(key, event) { event.stopPropagation(); console.log('Viewing notes for key:', key); try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; const notes=data.notes||''; alert(`Notes for scorecard:\n--------------------\n${notes || '(No notes saved)'}`); } catch (e) { console.error('Error retrieving notes:', e); alert('Could not retrieve notes.'); } }
         // --- End Notes Functions ---
 
+        // --- Delete Older Scorecards Functions ---
+        function confirmDeleteOlderScorecards() {
+            const displayLimit = 4; // Keep consistent
+            const scorecards = [];
+            try {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key?.startsWith('scorecard_')) scorecards.push(key);
+                }
+            } catch (e) { alert('Error reading scorecards for deletion count.'); return; }
 
-        // --- General Modal Hiding ---
-        function hideModal(modalId) { const mE=document.getElementById(modalId); if(mE){const m=bootstrap.Modal.getInstance(mE); if(m){m.hide();}else{mE.classList.remove('show');mE.style.display='none';const b=document.querySelector('.modal-backdrop');if(b)b.remove();document.body.classList.remove('modal-open');document.body.style.overflow='';document.body.style.paddingRight='';}}}
-        function showModal(modalId) { // Helper to show modals programmatically
-            const modalElement = document.getElementById(modalId);
-            if(modalElement) {
-                const instance = bootstrap.Modal.getOrCreateInstance(modalElement, {backdrop: 'static', keyboard: false});
-                instance.show();
+            scorecards.sort((a, b) => parseInt(b.split('_')[1]) - parseInt(a.split('_')[1])); // Sort by timestamp desc
+
+            if (scorecards.length > displayLimit) {
+                 const olderCount = scorecards.length - displayLimit;
+                 if (confirm(`Are you sure you want to delete the oldest ${olderCount} scorecard${olderCount > 1 ? 's' : ''}? This cannot be undone.`)) {
+                     deleteOlderScorecards();
+                 } else {
+                     console.log("Delete older scorecards cancelled.");
+                 }
             } else {
-                console.error(`Modal element #${modalId} not found!`);
+                 alert("No older scorecards found to delete (less than 5 total).");
             }
         }
 
+        function deleteOlderScorecards() {
+            console.log("Deleting older scorecards...");
+            const displayLimit = 4;
+            const scorecards = [];
+             let errorOccurred = false;
+            try {
+                // Fetch all scorecard keys
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key?.startsWith('scorecard_')) {
+                        const timestamp = parseInt(key.split('_')[1], 10);
+                        if (!isNaN(timestamp)) {
+                             scorecards.push({ key, timestamp });
+                        }
+                    }
+                }
+                // Sort by timestamp, newest first
+                scorecards.sort((a, b) => b.timestamp - a.timestamp);
+
+                // Identify keys to delete (skip the first 'displayLimit')
+                const keysToDelete = scorecards.slice(displayLimit).map(item => item.key);
+
+                if (keysToDelete.length > 0) {
+                    console.log(`Attempting to delete ${keysToDelete.length} older scorecards:`, keysToDelete);
+                    keysToDelete.forEach(key => {
+                         try {
+                             localStorage.removeItem(key);
+                             console.log(`Deleted: ${key}`);
+                         } catch (removeError) {
+                              console.error(`Error removing key ${key}:`, removeError);
+                              errorOccurred = true; // Mark that an error happened
+                         }
+                    });
+
+                    if (errorOccurred) {
+                         alert("Some older scorecards may not have been deleted due to an error. Please check the list.");
+                    } else {
+                         alert(`${keysToDelete.length} older scorecard${keysToDelete.length > 1 ? 's' : ''} deleted successfully.`);
+                    }
+                } else {
+                    console.log("No older scorecards found to delete after re-check.");
+                    // No need to alert if nothing to delete
+                }
+
+            } catch (e) {
+                console.error("Error during the delete older process:", e);
+                alert("An error occurred while trying to delete older scorecards.");
+                errorOccurred = true;
+            } finally {
+                 // Always reload the list to reflect changes or errors
+                 loadScorecards();
+            }
+        }
+        // --- End Delete Older Scorecards ---
+
+
+        // --- General Modal Hiding/Showing ---
+        function hideModal(modalId) { const mE=document.getElementById(modalId); if(mE){const m=bootstrap.Modal.getInstance(mE); if(m){m.hide();}else{mE.classList.remove('show');mE.style.display='none';const b=document.querySelector('.modal-backdrop');if(b)b.remove();document.body.classList.remove('modal-open');document.body.style.overflow='';document.body.style.paddingRight='';}}}
+        function showModal(modalId) { const modalElement = document.getElementById(modalId); if(modalElement) { const instance = bootstrap.Modal.getOrCreateInstance(modalElement, {backdrop: 'static', keyboard: false}); instance.show(); } else { console.error(`Modal element #${modalId} not found!`); } }
+
         // --- Application Reset ---
-        function resetApp() { console.log("Resetting app."); fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen'; deactivateAppMode(); try { document.getElementById('anglerName').value=''; document.getElementById('competitionDate').value=''; document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; toggleCompetitionFields(); document.getElementById('speciesInput').value=''; document.getElementById('customSpeciesInput').value=''; document.getElementById('customSpeciesInput').style.display='none'; document.getElementById('lengthInput').value=''; document.getElementById('fishLog').innerHTML=''; const vI=document.getElementById('verifierEndModalInput'); if(vI)vI.value='';const vS=document.getElementById('verifierEndModalSection');if(vS)vS.style.display='none'; populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm'; } catch(e) { console.error("Error resetting forms:", e); } }
+        function resetApp() {
+            console.log("Resetting app.");
+            fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen';
+            deactivateAppMode();
+            try {
+               document.getElementById('anglerName').value=''; document.getElementById('competitionDate').value=''; document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; toggleCompetitionFields(); document.getElementById('speciesInput').value=''; document.getElementById('customSpeciesInput').value=''; document.getElementById('customSpeciesInput').style.display='none'; document.getElementById('lengthInput').value=''; document.getElementById('fishLog').innerHTML='';
+               // Clear and hide verifier input inside modal
+               const vI = document.getElementById('verifierEndModalInput'); if(vI) vI.value='';
+               const vS = document.getElementById('verifierEndModalSection'); if(vS) vS.style.display='none';
+               populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm';
+            } catch(e) { console.error("Error resetting forms:", e); }
+        }
 
         // --- Initialisation ---
         document.addEventListener('DOMContentLoaded', () => {
