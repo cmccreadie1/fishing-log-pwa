@@ -72,8 +72,7 @@
         .form-control, .form-select { border-radius: 8px; margin-bottom: 15px; border: 1px solid #ced4da; }
         .form-control:focus, .form-select:focus { border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); }
         .form-check-label { color: #212529; }
-        /* Style for Verifier Field */
-        #verifierSection { display: none; } /* Hide by default */
+        /* Verifier field removed from main page CSS */
 
         /* --- Tables --- */
         .card-section .table { background: white; border-radius: 8px; color: #212529; border: 1px solid #dee2e6; margin-top: 15px; }
@@ -91,7 +90,7 @@
         .modal-title { color: #0056b3; font-weight: 700; }
         .modal-header .btn-close { filter: none; background-size: 0.75em; }
         .modal-body { background-color: #ffffff; color: #212529; padding: 20px; }
-        #restoreSessionModal .modal-body, #endSessionModal .modal-body { color: #212529 !important; }
+        #restoreSessionModal .modal-body, #endSessionModal .modal-body, #verifierModal .modal-body { color: #212529 !important; } /* Ensure dark text */
 
         /* --- Saved Scorecards Modal --- */
         #savedScorecardsList.card-section { background: transparent; border: none; padding: 0; margin: 0; }
@@ -111,7 +110,7 @@
         #savedScorecardsModal .scorecard-details .table thead { background-color: #f8f9fa; color: #495057; }
         #savedScorecardsModal .scorecard-details .table th, #savedScorecardsModal .scorecard-details .table td { border-color: #dee2e6; border-bottom-width: 1px; vertical-align: middle;}
         #savedScorecardsModal .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: rgba(0, 0, 0, 0.03); }
-        #savedScorecardsModal .scorecard-details .btn-actions-group { margin-top: 15px; padding-top: 15px; border-top: 1px solid #e9ecef;} /* Group action buttons below notes */
+        #savedScorecardsModal .scorecard-details .btn-actions-group { margin-top: 15px; padding-top: 15px; border-top: 1px solid #e9ecef;}
         #savedScorecardsModal .scorecard-details .btn { margin-top: 5px; margin-right: 5px; }
         #savedScorecardsModal .scorecard-details .btn-danger { color: white !important; }
         #savedScorecardsModal .scorecard-details .btn-info { color: black !important; }
@@ -194,12 +193,7 @@
                 </table>
             </div>
 
-            <!-- Verifier Input Section (Moved here) -->
-            <div id="verifierSection" class="mb-3 mt-4">
-                <label for="verifierName" class="form-label">Verified By <span class="text-danger">*</span></label>
-                <input type="text" id="verifierName" class="form-control" placeholder="Enter name of verifier">
-            </div>
-            <!-- End Verifier Section -->
+            <!-- Verifier section removed from here -->
 
             <div class="text-center mt-3">
                 <button class="btn btn-success" id="endSessionBtn"><i class="bi bi-check-circle me-1"></i> End & Save Session</button>
@@ -290,7 +284,7 @@
         </div>
     </div>
 
-    <!-- End Session Modal -->
+    <!-- End Session Confirmation Modal (Standard) -->
     <div class="modal fade" id="endSessionModal" tabindex="-1" aria-labelledby="endSessionModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -302,11 +296,34 @@
                     Are you sure you want to end your session? This will save the scorecard.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelEndSessionBtn">Return To Scorecard</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelEndSessionBtn">Cancel</button>
                     <button type="button" class="btn btn-danger" id="confirmEndBtn">Confirm & Save</button>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Verifier Modal (for Competitions) -->
+    <div class="modal fade" id="verifierModal" tabindex="-1" aria-labelledby="verifierModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="verifierModalLabel">Competition: Enter Verifier</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Please enter the name of the person who verified the catch details for this competition scorecard.</p>
+            <div class="mb-3">
+              <label for="verifierModalInput" class="form-label">Verifier Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="verifierModalInput" placeholder="Enter name" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="confirmEndWithVerifierBtn">Confirm & Save</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Notes Modal -->
@@ -318,7 +335,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <input type="hidden" id="notesModalScorecardKey"> <!-- To store which scorecard is being edited -->
+            <input type="hidden" id="notesModalScorecardKey">
             <div class="mb-3">
               <label for="notesTextarea" class="form-label">Enter your notes below:</label>
               <textarea class="form-control" id="notesTextarea" rows="5"></textarea>
@@ -355,7 +372,8 @@
         let currentPage = 'splashScreen';
         let isAppActive = false;
         let historyHijacked = false;
-        let notesModalInstance = null; // To hold bootstrap modal instance
+        let notesModalInstance = null;
+        let verifierModalInstance = null; // Added instance for verifier modal
 
         // --- Utility Functions ---
         function formatDate(dateString) { if (!dateString) return 'N/A'; try { const d = new Date(dateString + 'T00:00:00Z'); return isNaN(d.getTime()) ? dateString : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }); } catch (e) { console.error("Date format err:", e); return dateString; } }
@@ -379,13 +397,82 @@
         function toggleCustomSpeciesInput() { const sel=document.getElementById('speciesInput'), custom=document.getElementById('customSpeciesInput'); if(!sel||!custom)return; custom.style.display=sel.value==='Other'?'block':'none'; if(sel.value!=='Other')custom.value=''; }
         function toggleCompetitionFields() { try{const check=document.getElementById('isCompetition').checked, zone=document.getElementById('zoneInput'), peg=document.getElementById('pegInput'); zone.disabled=!check; peg.disabled=!check; if(!check){zone.value='';peg.value='';currentZone=null;currentPeg=null;}}catch(e){console.error("Toggle comp fields err:",e);} }
         function startApp() { console.log("Start Fishing."); populateSpeciesDropdown(); showPage('registrationPage'); }
-        function startRecording() { console.log("Record Catch."); const nameEl=document.getElementById('anglerName'), dateEl=document.getElementById('competitionDate'), venueEl=document.getElementById('venueInput'), checkEl=document.getElementById('isCompetition'), zoneEl=document.getElementById('zoneInput'), pegEl=document.getElementById('pegInput'); if(!nameEl||!dateEl||!venueEl||!checkEl||!zoneEl||!pegEl){alert("Form elements missing.");return;} const name=nameEl.value.trim(), date=dateEl.value, venue=venueEl.value.trim(), isComp=checkEl.checked, zone=zoneEl.value, peg=pegEl.value; if(!name||!date||!venue){alert("Name, Date, Venue required.");return;} if(isComp&&(!zone||!peg)){alert("Zone & Peg required for competition.");return;} if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert("Valid date required.");return;} currentAngler=name; currentDate=date; currentVenue=venue; currentZone=isComp?zone:null; currentPeg=isComp?peg:null; const verifierSection = document.getElementById('verifierSection'), verifierInput=document.getElementById('verifierName'); const isActuallyCompetition = !!(currentZone && currentPeg); if(verifierSection&&verifierInput){verifierSection.style.display=isActuallyCompetition?'block':'none'; if(!isActuallyCompetition)verifierInput.value='';}else{console.error("Verifier elements missing!");} console.log("Start recording data:",{currentAngler,currentDate,currentVenue,currentZone,currentPeg,isCompetition:isActuallyCompetition}); saveTempSession(); updateFishLog(); showPage('fishingPage'); }
+        function startRecording() { console.log("Record Catch."); const nameEl=document.getElementById('anglerName'), dateEl=document.getElementById('competitionDate'), venueEl=document.getElementById('venueInput'), checkEl=document.getElementById('isCompetition'), zoneEl=document.getElementById('zoneInput'), pegEl=document.getElementById('pegInput'); if(!nameEl||!dateEl||!venueEl||!checkEl||!zoneEl||!pegEl){alert("Form elements missing.");return;} const name=nameEl.value.trim(), date=dateEl.value, venue=venueEl.value.trim(), isComp=checkEl.checked, zone=zoneEl.value, peg=pegEl.value; if(!name||!date||!venue){alert("Name, Date, Venue required.");return;} if(isComp&&(!zone||!peg)){alert("Zone & Peg required for competition.");return;} if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert("Valid date required.");return;} currentAngler=name; currentDate=date; currentVenue=venue; currentZone=isComp?zone:null; currentPeg=isComp?peg:null; const isActuallyCompetition = !!(currentZone && currentPeg); /* Verifier section now removed from HTML here, handled on save */ console.log("Start recording data:",{currentAngler,currentDate,currentVenue,currentZone,currentPeg,isCompetition:isActuallyCompetition}); saveTempSession(); updateFishLog(); showPage('fishingPage'); }
         function addFish() { console.log("Add Fish."); const spEl=document.getElementById('speciesInput'), custEl=document.getElementById('customSpeciesInput'), lenEl=document.getElementById('lengthInput'); if(!spEl||!custEl||!lenEl){alert("Add fish elements missing.");return;} let species=spEl.value; const lenVal=lenEl.value.trim(); let length; if(!lenVal){alert("Length required.");return;} length=Math.round(parseFloat(lenVal)); if(isNaN(length)||length<=0||length>500){alert("Valid length (1-500cm) required.");return;} if(species==='Other'){species=custEl.value.trim();if(!species){alert("Custom species name required.");return;}if(!/^[a-zA-Z\s'-]+$/.test(species)){alert("Invalid species chars.");return;}}else if(!species){alert("Select species.");return;} fishData.push({species,length});console.log("Added:",{species,length}); updateFishLog(); spEl.value='';custEl.value='';lenEl.value=''; toggleCustomSpeciesInput();saveTempSession(); }
         function updateFishLog() { const log=document.getElementById('fishLog'); if(!log)return; log.innerHTML=fishData.map((f,i)=>`<tr><td>${f.species||'?'}</td><td>${f.length||'?'}</td><td class="text-end"><button class="btn btn-danger btn-sm" onclick="deleteFish(${i})"><i class="bi bi-trash"></i></button></td></tr>`).join('');}
         function deleteFish(idx){if(idx>=0&&idx<fishData.length){const{species,length}=fishData[idx];if(confirm(`Delete ${species||'?'} (${length||'?'}cm)?`)){console.log("Deleting:",idx);fishData.splice(idx,1);updateFishLog();saveTempSession();}}else{console.error("Invalid delete idx:",idx);}}
         function backFromFishing() { console.log("Back from Fishing."); showPage('registrationPage'); }
-        function showEndSessionModal() { console.log("End Session."); const modalEl=document.getElementById('endSessionModal'); if(modalEl){let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false});mI.show();}else{console.error("End modal missing.");if(confirm("Confirm end & save?")){confirmEndSession();}}}
-        function confirmEndSession() { console.log("Confirm End."); hideModal('endSessionModal'); if(!currentAngler||!currentDate||!currentVenue){alert("Missing Angler/Date/Venue.");showPage('registrationPage');return;} const isCompetition = !!(currentZone && currentPeg); let verifierName = null; if(isCompetition) { const vInput = document.getElementById('verifierName'); if (!vInput){alert("Error: Verifier field missing."); return;} verifierName = vInput.value.trim(); if(!verifierName){alert("Competition: Please enter Verifier name."); showPage('fishingPage'); return;} } const data={currentAngler,currentDate,currentVenue,currentZone,currentPeg,verifier: verifierName, fishData:fishData||[]}; const id=`scorecard_${Date.now()}`; try{localStorage.setItem(id,JSON.stringify(data));console.log("Saved:",id,data);alert("Saved!");clearTempSession();resetApp();showPage('splashScreen');}catch(e){console.error("Save err:",e);alert("Save failed.");showPage('fishingPage');} }
+
+        // *** UPDATED: Checks if competition and shows appropriate modal ***
+        function initiateEndSessionFlow() {
+            console.log("Initiating End Session Flow...");
+            const isCompetition = !!(currentZone && currentPeg);
+
+            if (isCompetition) {
+                console.log("Competition detected, showing Verifier Modal.");
+                // Clear previous input and show verifier modal
+                const verifierInput = document.getElementById('verifierModalInput');
+                if(verifierInput) verifierInput.value = ''; // Clear field
+                showModal('verifierModal');
+            } else {
+                console.log("Not a competition, showing standard End Session Modal.");
+                showModal('endSessionModal');
+            }
+        }
+
+        // *** NEW: Handles save after Verifier Modal confirmation ***
+        function confirmEndSessionWithVerifier() {
+            console.log("Confirming End Session with Verifier.");
+            const verifierInput = document.getElementById('verifierModalInput');
+            if (!verifierInput) {
+                 // NOTE: Uses alert(), browser will add prefix.
+                 alert("Error: Cannot find verifier input field.");
+                 return;
+            }
+            const verifierName = verifierInput.value.trim();
+            if (!verifierName) {
+                 // NOTE: Uses alert(), browser will add prefix.
+                 alert("Please enter the verifier's name.");
+                 verifierInput.focus(); // Keep focus on input
+                 return; // Don't close modal or save yet
+            }
+
+            // If valid, hide this modal and call the main save function
+            hideModal('verifierModal');
+            saveScorecardData(verifierName); // Pass the name
+        }
+
+        // *** NEW: Central function for the actual saving logic ***
+        function saveScorecardData(verifierName = null) {
+            console.log("Executing saveScorecardData. Verifier:", verifierName);
+             if (!currentAngler || !currentDate || !currentVenue) {
+                 // NOTE: Uses alert(), browser will add prefix.
+                 alert("Cannot save session: Missing Angler Name, Date, or Venue information.");
+                 showPage('registrationPage'); // Should not happen if validation passed earlier, but safety check
+                 return;
+             }
+            // Build the final data object
+            const sessionData = {
+                currentAngler, currentDate, currentVenue, currentZone, currentPeg,
+                verifier: verifierName, // Will be null if not provided
+                notes: null, // Initialize notes field (will be filled by notes modal later if needed)
+                fishData: fishData || []
+            };
+            const id = `scorecard_${Date.now()}`;
+            try {
+                localStorage.setItem(id, JSON.stringify(sessionData));
+                console.log("Scorecard saved:", id, sessionData);
+                // NOTE: Uses alert(), browser will add prefix.
+                alert("Scorecard saved successfully!");
+                clearTempSession(); resetApp(); showPage('splashScreen');
+            } catch(e) {
+                console.error("Save err:", e);
+                // NOTE: Uses alert(), browser will add prefix.
+                alert("Save failed. Local storage might be full or disabled.");
+                showPage('fishingPage'); // Stay on fishing page on failure
+            }
+        }
+
 
         // --- Tally Page ---
         function populateTallySummaryFields() { try{document.getElementById('summaryAngler').textContent=currentAngler||'?'; document.getElementById('summaryDate').textContent=currentDate?formatDate(currentDate):'?'; document.getElementById('summaryVenue').textContent=currentVenue||'?'; document.getElementById('summaryZone').textContent=currentZone||'?'; document.getElementById('summaryPeg').textContent=currentPeg||'?'; document.getElementById('summaryVerifier').innerHTML = '';}catch(e){} }
@@ -415,7 +502,7 @@
 
             const displayLimit = 4;
             // *** UPDATED createScorecardElement function ***
-             const createScorecardElement = (key, data, isLatest) => {
+            const createScorecardElement = (key, data, isLatest) => {
                  try {
                      const w = document.createElement('div');
                      w.className = `scorecard-entry${isLatest ? ' latest-scorecard' : ''}`;
@@ -486,53 +573,40 @@
 
         function emailScorecard(key, event) {
             event.stopPropagation(); console.log("Emailing:", key);
-            alert("This will open your default email app. Please add recipients and send. Formatting may vary. Notes are NOT included."); // Inform user
+            alert("This will open your default email app. Notes are NOT included."); // Inform user
 
-            let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error: Could not get data to email. ${error.message}`); return; }
+            let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error getting data: ${error.message}`); return; }
             let body = "Sea Catch Scorecard\r\n=====================\r\n\r\n";
             body += "Session Details:\r\n"; body += `Angler: ${data.currentAngler||'?'}\r\n`; body += `Date: ${formatDate(data.currentDate||'')}\r\n`; body += `Venue: ${data.currentVenue||'?'}\r\n`; if(data.currentZone)body+=`Zone: ${data.currentZone}\r\n`; if(data.currentPeg)body+=`Peg: ${data.currentPeg}\r\n`; if(data.verifier)body+=`Verified By: ${data.verifier}\r\n`; body += "\r\n";
             body += "Catch List:\r\n"; if(data.fishData?.length>0){data.fishData.forEach((f,i)=>{body+=`${i+1}. ${f.species||'?'} - ${f.length||'?'} cm\r\n`;});}else{body+="No fish.\r\n";} body+="\r\n";
             let tL=0,fC=0,sp=new Set(),lF=null; const fish=data.fishData||[]; fish.forEach(f=>{const l=f.length||0;fC++;tL+=l;if(f.species)sp.add(f.species);if(!lF||l>(lF.length||0))lF=f;}); const spC=sp.size; const lFS=lF?`${lF.species||'?'}(${lF.length||'?'}cm)`:'N/A';
             body += "Summary:\r\n"; body += `Total Fish: ${fC}\r\n`; body += `Total Length: ${tL} cm\r\n`; body += `Unique Species: ${spC}\r\n`; body += `Longest Fish: ${lFS}\r\n\r\n=====================\r\n`;
             const subject = `Fishing Scorecard: ${data.currentVenue||'?'} - ${formatDate(data.currentDate||'')}`;
-            const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`; // Handles \r\n -> %0D%0A
-            if(mailtoUrl.length>1800){console.warn(`Mailto long (${mailtoUrl.length})`); alert("Warning: Scorecard is long, email client may struggle.");}
-            console.log("Mailto len:", mailtoUrl.length); try{window.open(mailtoUrl,'_self');}catch(e){console.error("Mailto err:",e);alert("Could not open email client automatically.");}
+            const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            if(mailtoUrl.length>1800){console.warn(`Mailto long (${mailtoUrl.length})`); alert("Warning: Scorecard long.");}
+            console.log("Mailto len:", mailtoUrl.length); try{window.open(mailtoUrl,'_self');}catch(e){console.error("Mailto err:",e);alert("Could not open email client.");}
         }
 
         // --- Notes Modal Functions ---
-        function openNotesModal(key, event) {
-            if(event) event.stopPropagation();
-            console.log('Opening notes modal for key:', key);
-            const notesTextarea = document.getElementById('notesTextarea');
-            const notesModalKeyInput = document.getElementById('notesModalScorecardKey');
-            if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { console.error('Notes modal elements/instance missing!'); alert('Error opening notes editor.'); return; }
-            try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; notesTextarea.value=data.notes||''; } catch(e){ console.error('Error loading notes for modal:',e); notesTextarea.value=''; }
-            notesModalKeyInput.value = key; notesModalInstance.show();
-        }
-        function saveNoteFromModal() {
-            console.log('Save notes modal clicked.');
-            const notesTextarea = document.getElementById('notesTextarea');
-            const notesModalKeyInput = document.getElementById('notesModalScorecardKey');
-            if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { alert('Error saving notes.'); return; }
-            const key = notesModalKeyInput.value; const newNotes = notesTextarea.value; // Keep whitespace
-            if (!key) { alert('Error: Scorecard key missing.'); return; }
-            try { const dS = localStorage.getItem(key); if (!dS) throw new Error('Scorecard data not found.'); let data = JSON.parse(dS); data.notes = newNotes; localStorage.setItem(key, JSON.stringify(data)); console.log('Notes saved via modal for key:', key); notesModalInstance.hide(); setTimeout(loadScorecards, 150); } // Reload list to update view button
-            catch (e) { console.error('Error saving notes from modal:', e); alert(`Failed to save notes: ${e.message}`); }
-        }
-        function viewNote(key, event) {
-            event.stopPropagation(); console.log('Viewing notes for key:', key);
-            try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; const notes=data.notes||''; alert(`Notes for scorecard:\n--------------------\n${notes || '(No notes saved)'}`); }
-            catch (e) { console.error('Error retrieving notes:', e); alert('Could not retrieve notes.'); }
-        }
+        function openNotesModal(key, event) { if(event) event.stopPropagation(); console.log('Opening notes modal for key:', key); const notesTextarea = document.getElementById('notesTextarea'), notesModalKeyInput = document.getElementById('notesModalScorecardKey'); if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { console.error('Notes modal elements/instance missing!'); alert('Error opening notes editor.'); return; } try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; notesTextarea.value=data.notes||''; } catch(e){ console.error('Error loading notes for modal:',e); notesTextarea.value=''; } notesModalKeyInput.value = key; notesModalInstance.show(); }
+        function saveNoteFromModal() { console.log('Save notes modal clicked.'); const notesTextarea = document.getElementById('notesTextarea'), notesModalKeyInput = document.getElementById('notesModalScorecardKey'); if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { alert('Error saving notes.'); return; } const key = notesModalKeyInput.value; const newNotes = notesTextarea.value; if (!key) { alert('Error: Scorecard key missing.'); return; } try { const dS = localStorage.getItem(key); if (!dS) throw new Error('Scorecard data not found.'); let data = JSON.parse(dS); data.notes = newNotes; localStorage.setItem(key, JSON.stringify(data)); console.log('Notes saved via modal for key:', key); notesModalInstance.hide(); setTimeout(loadScorecards, 150); } catch (e) { console.error('Error saving notes from modal:', e); alert(`Failed to save notes: ${e.message}`); } }
+        function viewNote(key, event) { event.stopPropagation(); console.log('Viewing notes for key:', key); try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; const notes=data.notes||''; alert(`Notes for scorecard:\n--------------------\n${notes || '(No notes saved)'}`); } catch (e) { console.error('Error retrieving notes:', e); alert('Could not retrieve notes.'); } }
         // --- End Notes Functions ---
 
-
-        // --- General Modal Hiding ---
+        // --- General Modal Hiding/Showing ---
         function hideModal(modalId) { const mE=document.getElementById(modalId); if(mE){const m=bootstrap.Modal.getInstance(mE); if(m){m.hide();}else{mE.classList.remove('show');mE.style.display='none';const b=document.querySelector('.modal-backdrop');if(b)b.remove();document.body.classList.remove('modal-open');document.body.style.overflow='';document.body.style.paddingRight='';}}}
+        function showModal(modalId) { // Helper to show modals programmatically
+            const modalElement = document.getElementById(modalId);
+            if(modalElement) {
+                const instance = bootstrap.Modal.getOrCreateInstance(modalElement, {backdrop: 'static', keyboard: false});
+                instance.show();
+            } else {
+                console.error(`Modal element #${modalId} not found!`);
+            }
+        }
 
         // --- Application Reset ---
-        function resetApp() { console.log("Resetting app."); fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen'; deactivateAppMode(); try { document.getElementById('anglerName').value=''; document.getElementById('competitionDate').value=''; document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; toggleCompetitionFields(); document.getElementById('speciesInput').value=''; document.getElementById('customSpeciesInput').value=''; document.getElementById('customSpeciesInput').style.display='none'; document.getElementById('lengthInput').value=''; document.getElementById('fishLog').innerHTML=''; const vI = document.getElementById('verifierName'); if(vI) vI.value=''; document.getElementById('verifierSection').style.display='none'; populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm'; } catch(e) { console.error("Error resetting forms:", e); } }
+        function resetApp() { console.log("Resetting app."); fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen'; deactivateAppMode(); try { document.getElementById('anglerName').value=''; document.getElementById('competitionDate').value=''; document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; toggleCompetitionFields(); document.getElementById('speciesInput').value=''; document.getElementById('customSpeciesInput').value=''; document.getElementById('customSpeciesInput').style.display='none'; document.getElementById('lengthInput').value=''; document.getElementById('fishLog').innerHTML=''; /* Verifier input removed from here, reset not needed */ populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm'; } catch(e) { console.error("Error resetting forms:", e); } }
 
         // --- Initialisation ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -549,7 +623,8 @@
                  // --- End Service Worker Registration ---
 
                  window.addEventListener('popstate', handleBackButton); window.addEventListener('beforeunload', handleBeforeUnload); console.log("Nav listeners attached.");
-                 const refs = { continueBtn: document.getElementById('continueBtn'), viewScorecardsBtn: document.getElementById('viewScorecardsBtn'), startRecordingBtn: document.getElementById('startRecordingBtn'), isCompetitionCheck: document.getElementById('isCompetition'), speciesSelect: document.getElementById('speciesInput'), addFishBtn: document.getElementById('addFishBtn'), backFromFishingBtn: document.getElementById('backFromFishingBtn'), endSessionBtn: document.getElementById('endSessionBtn'), confirmEndBtn: document.getElementById('confirmEndBtn'), backFromTallyBtn: document.getElementById('backFromTallyBtn'), closeModalBtn: document.getElementById('closeModalBtn'), restoreSessionBtn: document.getElementById('restoreSessionBtn'), startNewSessionBtn: document.getElementById('startNewSessionBtn'), anglerNameInput: document.getElementById('anglerName'), competitionDateInput: document.getElementById('competitionDate'), venueInput: document.getElementById('venueInput'), zoneSelect: document.getElementById('zoneInput'), pegSelect: document.getElementById('pegInput'), verifierNameInput: document.getElementById('verifierName') };
+                 const refs = { continueBtn: document.getElementById('continueBtn'), viewScorecardsBtn: document.getElementById('viewScorecardsBtn'), startRecordingBtn: document.getElementById('startRecordingBtn'), isCompetitionCheck: document.getElementById('isCompetition'), speciesSelect: document.getElementById('speciesInput'), addFishBtn: document.getElementById('addFishBtn'), backFromFishingBtn: document.getElementById('backFromFishingBtn'), endSessionBtn: document.getElementById('endSessionBtn'), confirmEndBtn: document.getElementById('confirmEndBtn'), backFromTallyBtn: document.getElementById('backFromTallyBtn'), closeModalBtn: document.getElementById('closeModalBtn'), restoreSessionBtn: document.getElementById('restoreSessionBtn'), startNewSessionBtn: document.getElementById('startNewSessionBtn'), anglerNameInput: document.getElementById('anglerName'), competitionDateInput: document.getElementById('competitionDate'), venueInput: document.getElementById('venueInput'), zoneSelect: document.getElementById('zoneInput'), pegSelect: document.getElementById('pegInput'), confirmEndWithVerifierBtn: document.getElementById('confirmEndWithVerifierBtn') /* Added Verifier Modal Button */ };
+                 // Add listeners checking if ref exists
                  if (refs.continueBtn) refs.continueBtn.addEventListener('click', startApp);
                  if (refs.viewScorecardsBtn) refs.viewScorecardsBtn.addEventListener('click', showScorecardsModal);
                  if (refs.startRecordingBtn) refs.startRecordingBtn.addEventListener('click', startRecording);
@@ -557,21 +632,27 @@
                  if (refs.speciesSelect) refs.speciesSelect.addEventListener('change', toggleCustomSpeciesInput);
                  if (refs.addFishBtn) refs.addFishBtn.addEventListener('click', addFish);
                  if (refs.backFromFishingBtn) refs.backFromFishingBtn.addEventListener('click', backFromFishing);
-                 if (refs.endSessionBtn) refs.endSessionBtn.addEventListener('click', showEndSessionModal);
-                 if (refs.confirmEndBtn) refs.confirmEndBtn.addEventListener('click', confirmEndSession);
+                 if (refs.endSessionBtn) refs.endSessionBtn.addEventListener('click', initiateEndSessionFlow); // Changed target function
+                 if (refs.confirmEndBtn) refs.confirmEndBtn.addEventListener('click', () => saveScorecardData()); // Standard save, no verifier
+                 if (refs.confirmEndWithVerifierBtn) refs.confirmEndWithVerifierBtn.addEventListener('click', confirmEndSessionWithVerifier); // Verifier save
                  if (refs.backFromTallyBtn) refs.backFromTallyBtn.addEventListener('click', backFromTally);
                  if (refs.restoreSessionBtn) refs.restoreSessionBtn.addEventListener('click', restoreSession);
                  if (refs.startNewSessionBtn) refs.startNewSessionBtn.addEventListener('click', startNewSession);
+                 // Input listeners
                  if (refs.anglerNameInput) refs.anglerNameInput.addEventListener('input', () => { currentAngler = refs.anglerNameInput.value.trim(); saveTempSession(); });
                  if (refs.competitionDateInput) refs.competitionDateInput.addEventListener('change', () => { currentDate = refs.competitionDateInput.value; saveTempSession(); });
                  if (refs.venueInput) refs.venueInput.addEventListener('input', () => { currentVenue = refs.venueInput.value.trim(); saveTempSession(); });
                  if (refs.zoneSelect) refs.zoneSelect.addEventListener('change', () => { currentZone = refs.isCompetitionCheck?.checked ? refs.zoneSelect.value : null; saveTempSession(); });
                  if (refs.pegSelect) refs.pegSelect.addEventListener('change', () => { currentPeg = refs.isCompetitionCheck?.checked ? refs.pegSelect.value : null; saveTempSession(); });
 
-                 // Initialize the notes modal instance
+                 // Initialize the bootstrap modal instances
                  const notesModalElement = document.getElementById('notesModal');
+                 const verifierModalElement = document.getElementById('verifierModal');
                  if (notesModalElement) { notesModalInstance = new bootstrap.Modal(notesModalElement); }
-                 else { console.error("Notes Modal element (#notesModal) not found in HTML!"); }
+                 else { console.error("Notes Modal element (#notesModal) not found!"); }
+                 if (verifierModalElement) { verifierModalInstance = new bootstrap.Modal(verifierModalElement, {backdrop: 'static', keyboard: false}); } // Static backdrop for verifier modal
+                 else { console.error("Verifier Modal element (#verifierModal) not found!"); }
+
 
                  checkRestoreSession();
              } catch (error) { console.error("Fatal init error:", error); document.body.innerHTML = `<div class="alert alert-danger m-5">App Error: ${error.message}. Please refresh.</div>`; }
