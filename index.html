@@ -1,34 +1,44 @@
-ROLLBACK<!DOCTYPE html>
+Mobile version<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sea Catch Scorer</title>
-    <!-- PWA Manifest Link -->
+
+    {/* PWA & Mobile Meta Tags */}
     <link rel="manifest" href="manifest.json">
-    <!-- Theme Color for PWA Address Bar -->
     <meta name="theme-color" content="#007bff">
-    <!-- Add Basic Icons for "Add to Home Screen" / PWA -->
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-    <!-- Add other icon sizes if you have them -->
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png"> {/* Adjust path if needed */}
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sea Scorer">
+    <meta name="application-name" content="Sea Scorer">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    {/* ================== UPDATED CSS Styles ================== */}
     <style>
         /* --- Base & Global Styles --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html {
+             font-size: 16px; /* Establish a base for rem units - common default */
+        }
         body {
             font-family: 'Poppins', sans-serif;
             background: url('https://i.postimg.cc/pLFtxQWs/seacatchscorecard.jpg') no-repeat center/cover fixed;
-            color: #fff; /* Default text color (mostly for splash) */
+            color: #fff;
             min-height: 100vh;
+            line-height: 1.6; /* Improve readability */
+            -webkit-text-size-adjust: 100%; /* Prevent font scaling on some mobile browsers */
+            text-size-adjust: 100%;
         }
         .container { /* Wrapper for main content cards */
-            background: rgba(0, 0, 0, 0.7); /* Dark, semi-transparent wrapper */
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px auto;
+            background: transparent; /* Make container transparent */
+            margin: 0 auto; /* Center container horizontally */
+            padding: 15px; /* Add padding for smaller screen edges */
             max-width: 800px;
             z-index: 1;
             display: none; /* Hide initially, show based on page */
@@ -39,47 +49,50 @@ ROLLBACK<!DOCTYPE html>
         .splash-screen {
             display: flex; /* Initially shown via JS */
             flex-direction: column; justify-content: flex-end; align-items: center;
-            padding: 40px; height: 100vh; width: 100%;
+            padding: 30px; /* Reduced padding */
+            height: 100vh; width: 100%;
             position: fixed; top: 0; left: 0; z-index: 2;
         }
 
         /* --- Main Content Card Style (Registration, Fishing, Tally) --- */
         .card-section {
-            background: rgba(255, 255, 255, 0.92); /* Slightly more opaque white */
-            border-radius: 15px; padding: 25px; margin: 20px 0; /* Increased padding */
-            border: 1px solid #dee2e6; /* Lighter border */
+            background: rgba(255, 255, 255, 0.94); /* Slightly more opaque */
+            border-radius: 12px; /* Slightly smaller radius */
+            padding: 20px 15px; /* Adjust padding: Vertical Horizontal */
+            margin: 15px 0; /* Reduced margin */
+            border: 1px solid #dee2e6;
             color: #212529; /* Dark text for content */
             z-index: 3;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Softer shadow */
         }
-        .card-section h2 { color: #0056b3; } /* Dark blue headings */
-        .card-section h5 { color: #0056b3; }
+        .card-section h2 { color: #0056b3; font-size: 1.7rem; margin-bottom: 1rem; } /* Adjusted */
+        .card-section h5 { color: #0056b3; font-size: 1.3rem; margin-bottom: 0.8rem; } /* Adjusted */
 
         /* --- Buttons --- */
-        .btn { padding: 12px 24px; font-size: 1.1rem; border-radius: 25px; border: none; margin: 10px; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; cursor: pointer; font-weight: 600; }
+        /* Base button style adjusted for better mobile feel */
+        .btn { padding: 10px 18px; font-size: 0.95rem; border-radius: 25px; border: none; margin: 6px; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; cursor: pointer; font-weight: 600; line-height: 1.5; }
         .btn:disabled { cursor: not-allowed; opacity: 0.65; }
-        .btn-primary { background-color: #007bff; color: white; } .btn-primary:hover { background-color: #0056b3; transform: scale(1.05); }
-        .btn-secondary { background-color: #6c757d; color: white; } .btn-secondary:hover { background-color: #5a6268; transform: scale(1.05); }
-        .btn-success { background-color: #198754; color: white; } .btn-success:hover { background-color: #157347; transform: scale(1.05); }
-        .btn-danger { background-color: #dc3545; color: white; } .btn-danger:hover { background-color: #c82333; transform: scale(1.05); }
-        .btn-info { background-color: #0dcaf0; color: black; } .btn-info:hover { background-color: #31d2f2; transform: scale(1.05); color: black;}
-        .btn-outline-secondary { border: 2px solid #6c757d; color: #6c757d; background-color: transparent; } .btn-outline-secondary:hover { background-color: #6c757d; color: white; }
-        .btn-outline-light { border: 2px solid #f8f9fa; color: #f8f9fa; background-color: transparent; } .btn-outline-light:hover { background-color: #f8f9fa; color: #000; }
-        .btn-sm { padding: 5px 10px; font-size: 0.9rem; border-radius: 20px; font-weight: normal; }
-        .btn-lg { padding: 14px 28px; font-size: 1.25rem; }
-
+        .btn-primary { background-color: #007bff; color: white; } .btn-primary:hover, .btn-primary:focus { background-color: #0056b3; transform: scale(1.03); }
+        .btn-secondary { background-color: #6c757d; color: white; } .btn-secondary:hover, .btn-secondary:focus { background-color: #5a6268; transform: scale(1.03); }
+        .btn-success { background-color: #198754; color: white; } .btn-success:hover, .btn-success:focus { background-color: #157347; transform: scale(1.03); }
+        .btn-danger { background-color: #dc3545; color: white; } .btn-danger:hover, .btn-danger:focus { background-color: #c82333; transform: scale(1.03); }
+        .btn-info { background-color: #0dcaf0; color: black; } .btn-info:hover, .btn-info:focus { background-color: #31d2f2; transform: scale(1.03); color: black;}
+        .btn-outline-secondary { border: 2px solid #6c757d; color: #6c757d; background-color: transparent; } .btn-outline-secondary:hover, .btn-outline-secondary:focus { background-color: #6c757d; color: white; }
+        .btn-outline-light { border: 2px solid #f8f9fa; color: #f8f9fa; background-color: transparent; } .btn-outline-light:hover, .btn-outline-light:focus { background-color: #f8f9fa; color: #000; }
+        .btn-sm { padding: 6px 12px; font-size: 0.875rem; border-radius: 20px; font-weight: normal; margin: 4px; } /* Slightly larger sm */
+        .btn-lg { padding: 12px 26px; font-size: 1.1rem; } /* Slightly adjusted lg */
 
         /* --- Forms --- */
-        .form-label { font-weight: 600; color: #495057; }
-        .form-control, .form-select { border-radius: 8px; margin-bottom: 15px; border: 1px solid #ced4da; }
-        .form-control:focus, .form-select:focus { border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); }
-        .form-check-label { color: #212529; }
-        /* Verifier field removed from main page CSS */
+        .form-label { font-weight: 600; color: #495057; font-size: 0.95rem; margin-bottom: 0.3rem;} /* Adjusted size/margin */
+        .form-control, .form-select { border-radius: 8px; margin-bottom: 1rem; border: 1px solid #ced4da; padding: 0.5rem 0.8rem; font-size: 0.95rem; } /* Adjusted padding/size */
+        .form-control:focus, .form-select:focus { border-color: #86b7fe; box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25); } /* Slightly smaller shadow */
+        .form-check-label { color: #212529; font-size: 0.95rem;}
+        #verifierEndModalSection { display: none; }
 
         /* --- Tables --- */
-        .card-section .table { background: white; border-radius: 8px; color: #212529; border: 1px solid #dee2e6; margin-top: 15px; }
-        .card-section .table thead { background-color: #f8f9fa; }
-        .card-section .table th, .card-section .table td { border-color: #dee2e6; vertical-align: middle; }
+        .card-section .table { background: white; border-radius: 8px; color: #212529; border: 1px solid #dee2e6; margin-top: 1rem; font-size: 0.9rem; } /* Adjusted base size */
+        .card-section .table thead { background-color: #f8f9fa; font-weight: 600; } /* Bolder head */
+        .card-section .table th, .card-section .table td { border-color: #dee2e6; vertical-align: middle; padding: 0.5rem; } /* Adjusted padding */
         .card-section .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: rgba(0, 0, 0, 0.03); }
         .card-section .table-bordered { border: 1px solid #dee2e6; }
         .card-section .table-hover tbody tr:hover > * { background-color: rgba(0, 0, 0, 0.06); }
@@ -87,30 +100,30 @@ ROLLBACK<!DOCTYPE html>
         /* --- Unified Modal Style --- */
         .modal { z-index: 1050; } .modal-backdrop { z-index: 1040; opacity: 0.5; }
         .modal-content { background: #f8f9fa; color: #212529; border: 1px solid #dee2e6; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .modal-header { background-color: #e9ecef; color: #212529; border-bottom: 1px solid #dee2e6; border-top-left-radius: 15px; border-top-right-radius: 15px; }
-        .modal-footer { background-color: #e9ecef; border-top: 1px solid #dee2e6; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; display: flex; justify-content: flex-end; flex-wrap: wrap; }
-        .modal-title { color: #0056b3; font-weight: 700; }
-        .modal-header .btn-close { filter: none; background-size: 0.75em; }
-        .modal-body { background-color: #ffffff; color: #212529; padding: 20px; }
-        #restoreSessionModal .modal-body, #endSessionModal .modal-body, #verifierModal .modal-body { color: #212529 !important; } /* Ensure dark text */
+        .modal-header { background-color: #e9ecef; color: #212529; border-bottom: 1px solid #dee2e6; border-top-left-radius: 15px; border-top-right-radius: 15px; padding: 0.8rem 1rem; }
+        .modal-footer { background-color: #e9ecef; border-top: 1px solid #dee2e6; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; display: flex; justify-content: flex-end; flex-wrap: wrap; padding: 0.6rem 1rem; }
+        .modal-title { color: #0056b3; font-weight: 700; font-size: 1.15rem;}
+        .modal-header .btn-close { filter: none; background-size: 0.75em; margin: -0.4rem -0.4rem -0.4rem auto; }
+        .modal-body { background-color: #ffffff; color: #212529; padding: 1rem 1.2rem; font-size: 0.95rem; } /* Adjusted default size */
+        #restoreSessionModal .modal-body, #endSessionModal .modal-body { color: #212529 !important; }
 
         /* --- Saved Scorecards Modal --- */
         #savedScorecardsList.card-section { background: transparent; border: none; padding: 0; margin: 0; }
         #savedScorecardsModal .scorecard-entry { border: 1px solid #dee2e6; border-radius: 8px; margin-bottom: 15px; background-color: #ffffff; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
-        #savedScorecardsModal .scorecard-item { cursor: pointer; padding: 12px 15px; border-bottom: 1px solid #dee2e6; color: #212529; transition: background-color 0.2s; }
+        #savedScorecardsModal .scorecard-item { cursor: pointer; padding: 10px 15px; border-bottom: 1px solid #dee2e6; color: #212529; transition: background-color 0.2s; font-size: 0.9rem; } /* Adjusted */
         #savedScorecardsModal .scorecard-item:hover { background-color: #f8f9fa; }
         #savedScorecardsModal .scorecard-entry .scorecard-item.details-visible { border-bottom: 1px solid #dee2e6; }
-        #savedScorecardsModal .scorecard-item i.bi { transition: transform 0.2s ease-in-out; color: #6c757d; }
+        #savedScorecardsModal .scorecard-item i.bi { transition: transform 0.2s ease-in-out; color: #6c757d; font-size: 1.1em; } /* Slightly bigger icon */
         #savedScorecardsModal .scorecard-item i.bi-chevron-down { transform: rotate(90deg); }
-        #savedScorecardsModal .scorecard-item .text-muted { color: #6c757d !important; }
-        #savedScorecardsModal .scorecard-details { display: none; padding: 15px; background-color: #ffffff; border-top: none; margin-top: 0; border-radius: 0 0 8px 8px; color: #212529; }
-        #savedScorecardsModal .scorecard-details h6 { font-weight: 700; margin-top: 10px; margin-bottom: 8px; color: #0056b3; border-bottom: 1px solid #e9ecef; padding-bottom: 4px; }
+        #savedScorecardsModal .scorecard-item .text-muted { color: #6c757d !important; font-size: 0.85em; } /* Smaller muted text */
+        #savedScorecardsModal .scorecard-details { display: none; padding: 15px; background-color: #ffffff; border-top: none; margin-top: 0; border-radius: 0 0 8px 8px; color: #212529; font-size: 0.9rem; } /* Base size for details */
+        #savedScorecardsModal .scorecard-details h6 { font-weight: 700; margin-top: 10px; margin-bottom: 8px; color: #0056b3; border-bottom: 1px solid #e9ecef; padding-bottom: 4px; font-size: 1.1em; }
         #savedScorecardsModal .scorecard-details h6:first-of-type { margin-top: 0; }
         #savedScorecardsModal .scorecard-details p { margin-bottom: 8px; color: #212529; }
         #savedScorecardsModal .scorecard-details hr { margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #dee2e6; background-color: transparent; height: 1px; opacity: 1; }
-        #savedScorecardsModal .scorecard-details .table { margin-bottom: 15px; background-color: #ffffff; color: #212529; border: 1px solid #dee2e6; }
+        #savedScorecardsModal .scorecard-details .table { margin-bottom: 15px; background-color: #ffffff; color: #212529; border: 1px solid #dee2e6; font-size: 0.9em; } /* Smaller table in details */
         #savedScorecardsModal .scorecard-details .table thead { background-color: #f8f9fa; color: #495057; }
-        #savedScorecardsModal .scorecard-details .table th, #savedScorecardsModal .scorecard-details .table td { border-color: #dee2e6; border-bottom-width: 1px; vertical-align: middle;}
+        #savedScorecardsModal .scorecard-details .table th, #savedScorecardsModal .scorecard-details .table td { border-color: #dee2e6; border-bottom-width: 1px; vertical-align: middle; padding: 0.4rem;} /* Smaller padding */
         #savedScorecardsModal .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: rgba(0, 0, 0, 0.03); }
         #savedScorecardsModal .scorecard-details .btn-actions-group { margin-top: 15px; padding-top: 15px; border-top: 1px solid #e9ecef;}
         #savedScorecardsModal .scorecard-details .btn { margin-top: 5px; margin-right: 5px; }
@@ -121,15 +134,39 @@ ROLLBACK<!DOCTYPE html>
         #savedScorecardsModal .latest-scorecard.scorecard-entry .scorecard-item .badge { background-color: #007bff !important; color: white !important; font-weight: 600; }
         #olderScorecardsToggleContainer { padding-top: 10px; text-align: center;}
         #olderScorecardsToggleContainer .btn { margin: 5px; }
-
-        /* --- Notes Modal --- */
-        #notesModal .modal-body textarea { resize: vertical; min-height: 100px; }
-
+        #notesModal .modal-body textarea { resize: vertical; min-height: 100px; font-size: 0.95rem; }
         #tallyPage.card-section .table { margin-top: 20px; }
         #tallyPage.card-section .catch-summary-details { margin-bottom: 20px; color: #495057; }
         #tallyPage.card-section tfoot td, #tallyPage.card-section tfoot strong { color: #212529; }
         .table-responsive { margin-bottom: 1rem; }
 
+        /* ================== Responsive Adjustments ================== */
+        @media (max-width: 767.98px) { /* Medium devices and down (Tablets) */
+             html { font-size: 15px; }
+             .card-section { padding: 18px 12px; margin: 15px 0; }
+             .card-section h2 { font-size: 1.6rem; }
+             .card-section h5 { font-size: 1.25rem; }
+             .btn { padding: 9px 16px; margin: 6px; font-size: 0.9rem;}
+             .btn-lg { padding: 11px 22px; font-size: 1.05rem; }
+             .form-control, .form-select { padding: 0.45rem 0.7rem; font-size: 0.95rem; }
+             .modal-body { padding: 0.9rem 1.1rem; }
+        }
+        @media (max-width: 575.98px) { /* Small devices and down (Phones) */
+             html { font-size: 14px; }
+             .splash-screen { padding: 20px; }
+             .container { padding: 10px; }
+             .card-section { padding: 15px 10px; margin: 10px 0; }
+             .card-section h2 { font-size: 1.5rem; }
+             .card-section h5 { font-size: 1.2rem; }
+             .btn { padding: 8px 14px; margin: 5px; font-size: 0.95rem; }
+             .btn-lg { padding: 10px 20px; font-size: 1rem; }
+             .form-control, .form-select { font-size: 0.9rem; }
+             .modal-title { font-size: 1.1rem;}
+             .modal-body { padding: 0.8rem 1rem; }
+             #savedScorecardsModal .scorecard-item { font-size: 0.9rem; padding: 8px 12px;}
+             #savedScorecardsModal .scorecard-details { font-size: 0.85rem;}
+        }
+        /* ============================================================ */
     </style>
 </head>
 <body>
@@ -298,7 +335,7 @@ ROLLBACK<!DOCTYPE html>
                 </div>
                 <div class="modal-body" id="endSessionModalBody">
                     <p>Are you sure you want to end your session? This will save the scorecard.</p>
-                    <!-- Verifier Input Section - Dynamically added, Comments Removed -->
+                    <!-- Verifier Input Section - Dynamically added -->
                     <div id="verifierEndModalSection" class="mt-3" style="display: none;">
                         <hr>
                         <label for="verifierEndModalInput" class="form-label"><strong>Competition Verifier</strong> <span class="text-danger">*</span></label>
@@ -512,7 +549,8 @@ ROLLBACK<!DOCTYPE html>
             console.log(`Total scorecards found: ${scorecards.length}`);
 
             const displayLimit = 4;
-            const createScorecardElement = (key, data, isLatest) => {
+            // *** UPDATED createScorecardElement function ***
+             const createScorecardElement = (key, data, isLatest) => {
                  try {
                      const w = document.createElement('div');
                      w.className = `scorecard-entry${isLatest ? ' latest-scorecard' : ''}`;
@@ -527,6 +565,7 @@ ROLLBACK<!DOCTYPE html>
                         ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${eK}', event)"><i class="bi bi-eye me-1"></i>View Note</button>`
                         : '';
 
+                     // Removed placeholder comments and reordered buttons
                      w.innerHTML = `<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest ? '<span class="badge ms-2">Latest</span>' : ''}</div>
                         <div class="scorecard-details" id="details_${key}">
                             <h6>Session Details</h6>
