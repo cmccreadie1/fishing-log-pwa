@@ -1,4 +1,4 @@
-FIRST FIX <!DOCTYPE html>
+SECOND FIX <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -403,7 +403,7 @@ FIRST FIX <!DOCTYPE html>
         function deleteFish(idx){if(idx>=0&&idx<fishData.length){const{species,length}=fishData[idx];if(confirm(`Delete ${species||'?'} (${length||'?'}cm)?`)){console.log("Deleting:",idx);fishData.splice(idx,1);updateFishLog();saveTempSession();}}else{console.error("Invalid delete idx:",idx);}}
         function backFromFishing() { console.log("Back from Fishing."); showPage('registrationPage'); }
 
-        // *** RENAMED and UPDATED: Checks if competition and shows appropriate modal ***
+        // *** UPDATED: Checks if competition and shows appropriate modal ***
         function initiateEndSessionFlow() {
             console.log("Initiating End Session Flow...");
             const isCompetition = !!(currentZone && currentPeg);
@@ -411,11 +411,11 @@ FIRST FIX <!DOCTYPE html>
             if (isCompetition) {
                 console.log("Competition detected, showing Verifier Modal.");
                 const verifierInput = document.getElementById('verifierModalInput');
-                if(verifierInput) verifierInput.value = ''; // Clear field
-                showModal('verifierModal'); // Use helper function
+                if(verifierInput) verifierInput.value = ''; // Clear field before showing
+                showModal('verifierModal'); // Use helper function to show
             } else {
                 console.log("Not a competition, showing standard End Session Modal.");
-                showModal('endSessionModal'); // Use helper function
+                showModal('endSessionModal'); // Use helper function to show
             }
         }
 
@@ -427,18 +427,38 @@ FIRST FIX <!DOCTYPE html>
             const verifierName = verifierInput.value.trim();
             if (!verifierName) { alert("Please enter the verifier's name."); verifierInput.focus(); return; }
 
-            hideModal('verifierModal'); // Hide this modal
+            hideModal('verifierModal'); // Hide this modal first
             saveScorecardData(verifierName); // Pass the name to the central save function
         }
 
-        // *** NEW: Central function for the actual saving logic ***
+        // *** UPDATED: Central function for the actual saving logic ***
         function saveScorecardData(verifierName = null) {
-            console.log("Executing saveScorecardData. Verifier:", verifierName, "Globals:", { currentAngler, currentDate, currentVenue });
-             if (!currentAngler || !currentDate || !currentVenue) { alert("Cannot save session: Missing Angler Name, Date, or Venue information. Please return to registration details."); showPage('registrationPage'); return; }
-            const sessionData = { currentAngler, currentDate, currentVenue, currentZone, currentPeg, verifier: verifierName, notes: null, /* Initialize notes */ fishData: fishData || [] };
+            // Log added previously:
+            console.log("saveScorecardData called. Verifier:", verifierName, "Globals:", { currentAngler, currentDate, currentVenue });
+
+             if (!currentAngler || !currentDate || !currentVenue) {
+                 alert("Cannot save session: Missing Angler Name, Date, or Venue information. Please return to registration details.");
+                 showPage('registrationPage');
+                 return;
+             }
+            // Build the final data object
+            const sessionData = {
+                currentAngler, currentDate, currentVenue, currentZone, currentPeg,
+                verifier: verifierName, // Will be null if not provided
+                notes: null, // Initialize notes field (saved separately via notes modal)
+                fishData: fishData || []
+            };
             const id = `scorecard_${Date.now()}`;
-            try { localStorage.setItem(id, JSON.stringify(sessionData)); console.log("Scorecard saved:", id, sessionData); alert("Scorecard saved successfully!"); clearTempSession(); resetApp(); showPage('splashScreen'); }
-            catch(e) { console.error("Save err:", e); alert("Save failed. Local storage might be full or disabled."); showPage('fishingPage'); }
+            try {
+                localStorage.setItem(id, JSON.stringify(sessionData));
+                console.log("Scorecard saved:", id, sessionData);
+                alert("Scorecard saved successfully!");
+                clearTempSession(); resetApp(); showPage('splashScreen');
+            } catch(e) {
+                console.error("Save err:", e);
+                alert("Save failed. Local storage might be full or disabled.");
+                showPage('fishingPage'); // Stay on fishing page on failure
+            }
         }
 
 
@@ -539,7 +559,7 @@ FIRST FIX <!DOCTYPE html>
 
         function emailScorecard(key, event) {
             event.stopPropagation(); console.log("Emailing:", key);
-            alert("This will open your default email app. Notes are NOT included."); // Inform user
+            alert("This will open your default email app. Notes are NOT included.");
 
             let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error getting data: ${error.message}`); return; }
             let body = "Sea Catch Scorecard\r\n=====================\r\n\r\n";
@@ -558,6 +578,7 @@ FIRST FIX <!DOCTYPE html>
         function saveNoteFromModal() { console.log('Save notes modal clicked.'); const notesTextarea = document.getElementById('notesTextarea'), notesModalKeyInput = document.getElementById('notesModalScorecardKey'); if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { alert('Error saving notes.'); return; } const key = notesModalKeyInput.value; const newNotes = notesTextarea.value; if (!key) { alert('Error: Scorecard key missing.'); return; } try { const dS = localStorage.getItem(key); if (!dS) throw new Error('Scorecard data not found.'); let data = JSON.parse(dS); data.notes = newNotes; localStorage.setItem(key, JSON.stringify(data)); console.log('Notes saved via modal for key:', key); notesModalInstance.hide(); setTimeout(loadScorecards, 150); } catch (e) { console.error('Error saving notes from modal:', e); alert(`Failed to save notes: ${e.message}`); } }
         function viewNote(key, event) { event.stopPropagation(); console.log('Viewing notes for key:', key); try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; const notes=data.notes||''; alert(`Notes for scorecard:\n--------------------\n${notes || '(No notes saved)'}`); } catch (e) { console.error('Error retrieving notes:', e); alert('Could not retrieve notes.'); } }
         // --- End Notes Functions ---
+
 
         // --- General Modal Hiding/Showing ---
         function hideModal(modalId) { const mE=document.getElementById(modalId); if(mE){const m=bootstrap.Modal.getInstance(mE); if(m){m.hide();}else{mE.classList.remove('show');mE.style.display='none';const b=document.querySelector('.modal-backdrop');if(b)b.remove();document.body.classList.remove('modal-open');document.body.style.overflow='';document.body.style.paddingRight='';}}}
@@ -591,7 +612,16 @@ FIRST FIX <!DOCTYPE html>
                  if (refs.addFishBtn) refs.addFishBtn.addEventListener('click', addFish);
                  if (refs.backFromFishingBtn) refs.backFromFishingBtn.addEventListener('click', backFromFishing);
                  if (refs.endSessionBtn) refs.endSessionBtn.addEventListener('click', initiateEndSessionFlow); // Changed target function
-                 if (refs.confirmEndBtn) refs.confirmEndBtn.addEventListener('click', () => saveScorecardData()); // Standard save
+                 // *** UPDATED listener for standard confirm ***
+                 if (refs.confirmEndBtn) {
+                      refs.confirmEndBtn.addEventListener('click', function() {
+                           console.log("Standard Confirm & Save button clicked.");
+                           console.log("State right before calling saveScorecardData (non-comp):", { angler: currentAngler, date: currentDate, venue: currentVenue }); // Added log
+                           saveScorecardData(); // Call save, relying on up-to-date globals
+                      });
+                 } else {
+                      console.error("Missing: confirmEndBtn");
+                 }
                  if (refs.confirmEndWithVerifierBtn) refs.confirmEndWithVerifierBtn.addEventListener('click', confirmEndSessionWithVerifier); // Verifier save
                  if (refs.backFromTallyBtn) refs.backFromTallyBtn.addEventListener('click', backFromTally);
                  if (refs.restoreSessionBtn) refs.restoreSessionBtn.addEventListener('click', restoreSession);
