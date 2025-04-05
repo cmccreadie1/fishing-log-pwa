@@ -275,7 +275,27 @@
     <!-- Application JS -->
     <script>
         // --- Global Variables ---
-        const fishCategories = { "Flatfish": ["Brill", "Dab", "Flounder", "Halibut", "Megrim", "Plaice", "Sole (Dover)", "Sole (Lemon)", "Sole (Thickback)", "Turbot"], "Round Fish": ["Bass", "Bream (Black)", "Bream (Gilthead)", "Bream (Red)", "Bream (Sea)", "Coalfish", "Cod", "Conger Eel", "Gurnard (Red)", "Gurnard (Tub)", "Haddock", "Hake", "John Dory", "Ling", "Mackerel", "Monkfish", "Mullet (Grey)", "Mullet (Red)", "Pollack", "Poor Cod", "Pouting", "Saithe", "Salmon", "Shark (Blue)", "Shark (Porbeagle)", "Shark (Thresher)", "Smoothhound", "Sprat", "Tope", "Triggerfish", "Whiting"], "Rays and Skates": ["Ray (Blonde)", "Ray (Small-eyed)", "Ray (Starry)", "Ray (Thornback)", "Skate"], "Wrasse": ["Wrasse (Ballan)", "Wrasse (Cuckoo)"] };
+        // *** UPDATED fishCategories object ***
+        const fishCategories = {
+            "Flatfish": [
+                "Brill", "Dab", "Flounder", "Halibut", "Megrim", "Plaice", "Sole (Dover)", "Sole (Lemon)", "Turbot" // Removed Sole (Thickback)
+            ],
+            "Round Fish": [
+                "Bass", "Bream (Black)", "Bream (Gilthead)", "Bream (Red)", "Bream (Sea)", "Coalfish", "Cod", "Conger Eel", "Dogfish", "Dogfish (Black Mouth)", // Added Dogfish entries
+                "Gurnard (Red)", "Gurnard (Tub)", "Haddock", "Hake", "John Dory", "Ling", "Mackerel", "Monkfish", "Mullet (Grey)", "Mullet (Red)",
+                "Pollack", "Poor Cod", "Pouting", "Saithe", "Smoothhound", "Triggerfish", "Whiting" // Removed Salmon, Sprat, Tope
+            ],
+            "Rays and Skates": [
+                "Ray (Blonde)", "Ray (Small-eyed)", "Ray (Starry)", "Ray (Thornback)", "Skate"
+            ],
+            "Sharks": [ // New Category
+                "Shark (Blue)", "Shark (Porbeagle)", "Shark (Thresher)", // Existing ones moved for grouping (optional but logical)
+                "Smoothhound (Starry)", "Spurdog", "Tope" // Added new ones + Tope moved here
+            ],
+            "Wrasse": [
+                "Wrasse (Ballan)", "Wrasse (Cuckoo)"
+            ]
+        };
         let fishData = [];
         let currentAngler = null;
         let currentDate = null;
@@ -338,7 +358,27 @@
         function startNewSession() { console.log("Start New."); clearTempSession(); resetApp(); hideModal('restoreSessionModal'); showPage('splashScreen'); }
 
         // --- UI Interaction ---
-        function populateSpeciesDropdown() { const input = document.getElementById('speciesInput'); if (!input) return; const cats=Object.keys(fishCategories).sort(); input.innerHTML='<option value="" selected disabled>Select species</option><option value="Other">Other</option>'; cats.forEach(cat=>{const group=document.createElement('optgroup'); group.label=cat; const species=fishCategories[cat].sort(); species.forEach(s=>{const opt=document.createElement('option'); opt.value=s; opt.textContent=s; group.appendChild(opt);}); input.appendChild(group);}); }
+        function populateSpeciesDropdown() {
+             const speciesInput = document.getElementById('speciesInput');
+             if (!speciesInput) { console.error("Species dropdown missing!"); return; }
+             // Sort categories alphabetically for consistent order
+             const sortedCategories = Object.keys(fishCategories).sort();
+             speciesInput.innerHTML = '<option value="" selected disabled>Select a species</option><option value="Other">Other (specify)</option>'; // Reset
+             sortedCategories.forEach(category => {
+                  const optgroup = document.createElement('optgroup');
+                  optgroup.label = category;
+                  // Sort species within category alphabetically
+                  const sortedSpecies = [...fishCategories[category]].sort(); // Use spread to avoid modifying original
+                  sortedSpecies.forEach(species => {
+                      const option = document.createElement('option');
+                      option.value = species;
+                      option.textContent = species;
+                      optgroup.appendChild(option);
+                  });
+                  speciesInput.appendChild(optgroup);
+             });
+             console.log("Species dropdown populated.");
+        }
         function toggleCustomSpeciesInput() { const sel=document.getElementById('speciesInput'), custom=document.getElementById('customSpeciesInput'); if(!sel||!custom)return; custom.style.display=sel.value==='Other'?'block':'none'; if(sel.value!=='Other')custom.value=''; }
         function toggleCompetitionFields() { try{const check=document.getElementById('isCompetition').checked, zone=document.getElementById('zoneInput'), peg=document.getElementById('pegInput'); zone.disabled=!check; peg.disabled=!check; if(!check){zone.value='';peg.value='';currentZone=null;currentPeg=null;}}catch(e){console.error("Toggle comp fields err:",e);} }
         function startApp() { console.log("Start Fishing."); populateSpeciesDropdown(); showPage('registrationPage'); }
@@ -362,152 +402,42 @@
         // --- Saved Scorecards ---
         function showScorecardsModal() { console.log("View Scorecards."); const modalEl=document.getElementById('savedScorecardsModal'), listEl=document.getElementById('savedScorecardsList'); if(modalEl&&listEl){listEl.innerHTML='<div class="text-center p-3"><div class="spinner-border text-primary"><span class="visually-hidden">Load...</span></div></div>'; let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false});mI.show();setTimeout(loadScorecards,50);}else{console.error("Scorecard modal/list missing.");alert("Err show modal.");}}
 
-        // *** loadScorecards function with View Older logic ***
         function loadScorecards() {
             console.log("Loading scorecards...");
             const savedScorecardsList = document.getElementById('savedScorecardsList');
             const olderScorecardsToggleContainer = document.getElementById('olderScorecardsToggleContainer');
-            // ** Check if containers exist **
-             if (!savedScorecardsList) {
-                 console.error("CRITICAL: savedScorecardsList element not found!");
-                 // Optionally display error in modal body if possible
-                 const modalBody = document.getElementById('savedScorecardsModal')?.querySelector('.modal-body');
-                 if(modalBody) modalBody.innerHTML = '<p class="text-danger">Error: Cannot display scorecards (List container missing).</p>';
-                 return;
-             }
-              if (!olderScorecardsToggleContainer) {
-                 console.error("CRITICAL: olderScorecardsToggleContainer element not found!");
-                 // Less critical, but button won't appear
-             }
+             if (!savedScorecardsList) { console.error("CRITICAL: savedScorecardsList element not found!"); const mb = document.getElementById('savedScorecardsModal')?.querySelector('.modal-body'); if(mb) mb.innerHTML = '<p class="text-danger">Error: Cannot display scorecards (List container missing).</p>'; return; }
+             if (!olderScorecardsToggleContainer) { console.error("CRITICAL: olderScorecardsToggleContainer element not found!"); }
 
-            // Clear previous content safely
-            savedScorecardsList.innerHTML = '';
-            if(olderScorecardsToggleContainer) olderScorecardsToggleContainer.innerHTML = '';
+            savedScorecardsList.innerHTML = ''; if(olderScorecardsToggleContainer) olderScorecardsToggleContainer.innerHTML = '';
+            const scorecards = []; let loadError = false;
 
-            const scorecards = [];
-            let loadError = false;
+            try { for (let i=0; i<localStorage.length; i++){ const key=localStorage.key(i); if (key?.startsWith('scorecard_')){ const dS=localStorage.getItem(key); if(dS){ try { const data=JSON.parse(dS); if(data?.currentAngler && data.currentDate && data.currentVenue){ const tS=parseInt(key.split('_')[1],10); if(!isNaN(tS)){scorecards.push({key,data,timestamp:tS});}} else {console.warn("Skip invalid card:",key);}} catch(e){console.error("Parse err:",key,e);}}}}}
+            catch (e) { console.error("LS err:",e); savedScorecardsList.innerHTML='<p class="text-danger p-3">Load failed.</p>'; loadError=true; }
+            if(loadError) return;
 
-            // 1. Load ALL scorecards from localStorage
-            try {
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key?.startsWith('scorecard_')) {
-                        const dataString = localStorage.getItem(key);
-                        if (dataString) {
-                            try {
-                                const data = JSON.parse(dataString);
-                                if (data?.currentAngler && data.currentDate && data.currentVenue) {
-                                    const timestamp = parseInt(key.split('_')[1], 10);
-                                    if (!isNaN(timestamp)) { scorecards.push({ key, data, timestamp }); }
-                                } else { console.warn("Skipping invalid/incomplete scorecard:", key); }
-                            } catch (e) { console.error("Parse error for scorecard key:", key, e); /* Continue trying others */ }
-                        }
-                    }
-                }
-            } catch (e) {
-                console.error("LS err:", e);
-                savedScorecardsList.innerHTML = '<p class="text-danger p-3">Load failed due to storage error.</p>';
-                loadError = true; // Mark error
-                // return; // Optionally stop here
-            }
-
-            // Only proceed if no major load error occurred
-             if (loadError) return;
-
-
-            // 2. Sort scorecards by timestamp, newest first
-            scorecards.sort((a, b) => b.timestamp - a.timestamp);
-
-
-            if (scorecards.length === 0) {
-                savedScorecardsList.innerHTML = '<p class="text-center p-3">No saved scorecards found.</p>';
-                return;
-            }
+            scorecards.sort((a,b)=>b.timestamp-a.timestamp);
+            if (scorecards.length===0){ savedScorecardsList.innerHTML='<p class="text-center p-3">No saved scorecards.</p>'; return; }
             console.log(`Total scorecards found: ${scorecards.length}`);
 
-            // 3. Define the display limit and create element helper
             const displayLimit = 4;
+            const createScorecardElement = (key, data, isLatest) => {
+                 try { const w=document.createElement('div'); w.className=`scorecard-entry${isLatest?' latest-scorecard':''}`; let tL=0,fC=0,sp=new Set(),lF=null; const fish=data.fishData||[]; fish.forEach(f=>{const l=f.length||0;fC++;tL+=l;if(f.species)sp.add(f.species);if(!lF||l>(lF.length||0))lF=f;}); const spC=sp.size; const lFS=lF?`${lF.species||'?'}(${lF.length||'?'}cm)`:'N/A'; const eK=key.replace(/'/g,"\\'");
+                 w.innerHTML=`<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue||'?'}</strong> - ${formatDate(data.currentDate||'')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest?'<span class="badge ms-2">Latest</span>':''}</div> <div class="scorecard-details" id="details_${key}"><h6>Details</h6><p><strong>Angler:</strong> ${data.currentAngler||'?'}</p><p><strong>Venue:</strong> ${data.currentVenue||'?'}</p><p><strong>Date:</strong> ${formatDate(data.currentDate||'')}</p>${data.currentZone?`<p><strong>Zone:</strong> ${data.currentZone}</p>`:''}${data.currentPeg?`<p><strong>Peg:</strong> ${data.currentPeg}</p>`:''}<hr><h6>Catch (${fC})</h6>${fish.length>0?`<div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th>#</th><th>Species</th><th>Len(cm)</th></tr></thead><tbody>${fish.map((f,i)=>`<tr><td>${i+1}</td><td>${f.species||'?'}</td><td>${f.length||'?'}</td></tr>`).join('')}</tbody></table></div>`:'<p>No fish.</p>'}${fish.length>0?`<hr><h6>Summary</h6><p><strong>Total Len:</strong> ${tL}cm</p><p><strong>Species:</strong> ${spC}</p><p><strong>Longest:</strong> ${lFS}</p>`:''}<hr><button class="btn btn-success btn-sm" onclick="downloadScorecard('${eK}', event)"><i class="bi bi-download me-1"></i>Download (.txt)</button> <button class="btn btn-danger btn-sm" onclick="deleteScorecard('${eK}', event)"><i class="bi bi-trash me-1"></i>Delete</button></div>`; return w; }
+                 catch (elementError) { console.error(`Err create el for ${key}:`, elementError); const errDiv = document.createElement('div'); errDiv.className = 'alert alert-warning p-2 my-2'; errDiv.textContent = `Err display card ${key.slice(-4)}`; return errDiv; }};
 
-             const createScorecardElement = (key, data, isLatest) => {
-                 // ** Try/Catch around element creation for safety **
-                 try {
-                     const entryWrapper = document.createElement('div');
-                     entryWrapper.className = `scorecard-entry${isLatest ? ' latest-scorecard' : ''}`;
-                     let tL=0,fC=0,sp=new Set(),lF=null; const fish=data.fishData||[]; fish.forEach(f=>{const l=f.length||0;fC++;tL+=l;if(f.species)sp.add(f.species);if(!lF||l>(lF.length||0))lF=f;}); const spC=sp.size; const lFS=lF?`${lF.species||'?'}(${lF.length||'?'}cm)`:'N/A'; const eK=key.replace(/'/g,"\\'");
-                     entryWrapper.innerHTML=`<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue||'?'}</strong> - ${formatDate(data.currentDate||'')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest?'<span class="badge ms-2">Latest</span>':''}</div> <div class="scorecard-details" id="details_${key}"><h6>Details</h6><p><strong>Angler:</strong> ${data.currentAngler||'?'}</p><p><strong>Venue:</strong> ${data.currentVenue||'?'}</p><p><strong>Date:</strong> ${formatDate(data.currentDate||'')}</p>${data.currentZone?`<p><strong>Zone:</strong> ${data.currentZone}</p>`:''}${data.currentPeg?`<p><strong>Peg:</strong> ${data.currentPeg}</p>`:''}<hr><h6>Catch (${fC})</h6>${fish.length>0?`<div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th>#</th><th>Species</th><th>Len(cm)</th></tr></thead><tbody>${fish.map((f,i)=>`<tr><td>${i+1}</td><td>${f.species||'?'}</td><td>${f.length||'?'}</td></tr>`).join('')}</tbody></table></div>`:'<p>No fish.</p>'}${fish.length>0?`<hr><h6>Summary</h6><p><strong>Total Len:</strong> ${tL}cm</p><p><strong>Species:</strong> ${spC}</p><p><strong>Longest:</strong> ${lFS}</p>`:''}<hr><button class="btn btn-success btn-sm" onclick="downloadScorecard('${eK}', event)"><i class="bi bi-download me-1"></i>Download (.txt)</button> <button class="btn btn-danger btn-sm" onclick="deleteScorecard('${eK}', event)"><i class="bi bi-trash me-1"></i>Delete</button></div>`;
-                     return entryWrapper;
-                 } catch (elementError) {
-                      console.error(`Error creating element for key ${key}:`, elementError);
-                      // Return a placeholder or null to avoid breaking the loop entirely
-                      const errorDiv = document.createElement('div');
-                      errorDiv.className = 'alert alert-warning p-2 my-2';
-                      errorDiv.textContent = `Error displaying scorecard ${key.slice(-4)}`;
-                      return errorDiv;
-                 }
-             }; // End of createScorecardElement
+            try { console.log(`Slicing initial (0 to ${displayLimit})`); const initial = scorecards.slice(0, displayLimit); console.log(`Displaying ${initial.length} initial.`); initial.forEach(({ key, data }, index) => { const el = createScorecardElement(key, data, index === 0); if (el) savedScorecardsList.appendChild(el); }); }
+            catch(e) { console.error("Err initial loop:", e); savedScorecardsList.innerHTML += '<p class="text-danger p-3">Err display initial.</p>'; }
 
-            // 4. Display initial scorecards (up to displayLimit)
-            try {
-                 console.log(`Slicing initial scorecards (0 to ${displayLimit})`);
-                 const initialScorecards = scorecards.slice(0, displayLimit);
-                 console.log(`Displaying ${initialScorecards.length} initial scorecards.`);
-                 initialScorecards.forEach(({ key, data }, index) => {
-                     const element = createScorecardElement(key, data, index === 0);
-                     if (element) { // Only append if element creation succeeded
-                         savedScorecardsList.appendChild(element);
-                     }
-                 });
-            } catch(e) {
-                  console.error("Error during initial scorecard display loop:", e);
-                  savedScorecardsList.innerHTML += '<p class="text-danger p-3">Error displaying initial scorecards.</p>';
-                  // Decide if we should still try to show the "older" button or stop
-                  // return; // Let's allow the "Older" button attempt for now
-            }
-
-            // 5. Setup "Show Older" button if necessary
-             console.log(`Checking if need Older button: ${scorecards.length} > ${displayLimit}?`);
+            console.log(`Check need Older button: ${scorecards.length} > ${displayLimit}?`);
             if (scorecards.length > displayLimit) {
-                 console.log("Condition MET: Creating 'View Older' button.");
-                 // ** Ensure the container exists before trying to use it **
-                 if (!olderScorecardsToggleContainer) {
-                     console.error("Cannot create 'Older' button because toggle container is missing!");
-                     return; // Stop if container isn't there
-                 }
-
+                 console.log("Condition MET: Creating 'Older' button.");
+                 if (!olderScorecardsToggleContainer) { console.error("Cannot create 'Older' button - container missing!"); return; }
                  const olderCount = scorecards.length - displayLimit;
-                 const showOlderBtn = document.createElement('button');
-                 showOlderBtn.id = 'showOlderBtn';
-                 showOlderBtn.classList.add('btn', 'btn-outline-secondary');
-                 showOlderBtn.textContent = `View ${olderCount} Older Scorecard${olderCount > 1 ? 's' : ''}`;
-
-                 // 6. Define the button's action
-                 showOlderBtn.onclick = function() {
-                     console.log("'View Older' button clicked.");
-                     try {
-                         const olderScorecards = scorecards.slice(displayLimit);
-                         console.log(`Appending ${olderScorecards.length} older scorecards.`);
-                         olderScorecards.forEach(({ key, data }) => {
-                             const element = createScorecardElement(key, data, false);
-                              if (element) { // Only append valid elements
-                                 savedScorecardsList.appendChild(element);
-                             }
-                         });
-                         // Remove the button itself after loading
-                         olderScorecardsToggleContainer.innerHTML = '';
-                         console.log("Older scorecards appended, button removed.");
-                     } catch(e) {
-                         console.error("Error creating/appending older scorecard elements:", e);
-                         olderScorecardsToggleContainer.innerHTML = '<p class="text-danger">Error displaying older scorecards.</p>';
-                     }
-                 }; // End of onclick function
-
-                 // Add the button to its container
-                 olderScorecardsToggleContainer.appendChild(showOlderBtn);
-                 console.log("'View Older' button added to the DOM.");
-
-            } else {
-                 console.log("Condition NOT MET: Less than or equal to 4 scorecards, no 'Older' button needed.");
-            }
+                 const showOlderBtn = document.createElement('button'); showOlderBtn.id = 'showOlderBtn'; showOlderBtn.className = 'btn btn-outline-secondary'; showOlderBtn.textContent = `View ${olderCount} Older Scorecard${olderCount > 1 ? 's' : ''}`;
+                 showOlderBtn.onclick = function() { console.log("'Older' clicked."); try { const older = scorecards.slice(displayLimit); console.log(`Appending ${older.length} older.`); older.forEach(({ key, data }) => { const el = createScorecardElement(key, data, false); if (el) savedScorecardsList.appendChild(el); }); olderScorecardsToggleContainer.innerHTML = ''; console.log("Older appended, btn removed."); } catch(e) { console.error("Err create/append older:", e); olderScorecardsToggleContainer.innerHTML = '<p class="text-danger">Err display older.</p>'; } };
+                 olderScorecardsToggleContainer.appendChild(showOlderBtn); console.log("'Older' button added.");
+            } else { console.log("Condition NOT MET: No 'Older' button needed."); }
         } // End of loadScorecards
 
 
@@ -546,7 +476,6 @@
                  if (refs.endSessionBtn) refs.endSessionBtn.addEventListener('click', showEndSessionModal);
                  if (refs.confirmEndBtn) refs.confirmEndBtn.addEventListener('click', confirmEndSession);
                  if (refs.backFromTallyBtn) refs.backFromTallyBtn.addEventListener('click', backFromTally);
-                 // closeModalBtn uses data-bs-dismiss
                  if (refs.restoreSessionBtn) refs.restoreSessionBtn.addEventListener('click', restoreSession);
                  if (refs.startNewSessionBtn) refs.startNewSessionBtn.addEventListener('click', startNewSession);
                  if (refs.anglerNameInput) refs.anglerNameInput.addEventListener('input', () => { currentAngler = refs.anglerNameInput.value.trim(); saveTempSession(); });
