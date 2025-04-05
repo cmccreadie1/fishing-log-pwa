@@ -379,19 +379,13 @@
         function toggleCustomSpeciesInput() { const sel=document.getElementById('speciesInput'), custom=document.getElementById('customSpeciesInput'); if(!sel||!custom)return; custom.style.display=sel.value==='Other'?'block':'none'; if(sel.value!=='Other')custom.value=''; }
         function toggleCompetitionFields() { try{const check=document.getElementById('isCompetition').checked, zone=document.getElementById('zoneInput'), peg=document.getElementById('pegInput'); zone.disabled=!check; peg.disabled=!check; if(!check){zone.value='';peg.value='';currentZone=null;currentPeg=null;}}catch(e){console.error("Toggle comp fields err:",e);} }
         function startApp() { console.log("Start Fishing."); populateSpeciesDropdown(); showPage('registrationPage'); }
-        function startRecording() {
-            console.log("Record Catch."); const nameEl=document.getElementById('anglerName'), dateEl=document.getElementById('competitionDate'), venueEl=document.getElementById('venueInput'), checkEl=document.getElementById('isCompetition'), zoneEl=document.getElementById('zoneInput'), pegEl=document.getElementById('pegInput'); if(!nameEl||!dateEl||!venueEl||!checkEl||!zoneEl||!pegEl){alert("Form elements missing.");return;} const name=nameEl.value.trim(), date=dateEl.value, venue=venueEl.value.trim(), isComp=checkEl.checked, zone=zoneEl.value, peg=pegEl.value; if(!name||!date||!venue){alert("Name, Date, Venue required.");return;} if(isComp&&(!zone||!peg)){alert("Zone & Peg required for competition.");return;} if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert("Valid date required.");return;} currentAngler=name; currentDate=date; currentVenue=venue; currentZone=isComp?zone:null; currentPeg=isComp?peg:null; const verifierSection = document.getElementById('verifierSection'), verifierInput=document.getElementById('verifierName'); const isActuallyCompetition = !!(currentZone && currentPeg); if(verifierSection&&verifierInput){verifierSection.style.display=isActuallyCompetition?'block':'none'; if(!isActuallyCompetition)verifierInput.value='';}else{console.error("Verifier elements missing!");} console.log("Start recording data:",{currentAngler,currentDate,currentVenue,currentZone,currentPeg,isCompetition:isActuallyCompetition}); saveTempSession(); updateFishLog(); showPage('fishingPage');
-        }
+        function startRecording() { console.log("Record Catch."); const nameEl=document.getElementById('anglerName'), dateEl=document.getElementById('competitionDate'), venueEl=document.getElementById('venueInput'), checkEl=document.getElementById('isCompetition'), zoneEl=document.getElementById('zoneInput'), pegEl=document.getElementById('pegInput'); if(!nameEl||!dateEl||!venueEl||!checkEl||!zoneEl||!pegEl){alert("Form elements missing.");return;} const name=nameEl.value.trim(), date=dateEl.value, venue=venueEl.value.trim(), isComp=checkEl.checked, zone=zoneEl.value, peg=pegEl.value; if(!name||!date||!venue){alert("Name, Date, Venue required.");return;} if(isComp&&(!zone||!peg)){alert("Zone & Peg required for competition.");return;} if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert("Valid date required.");return;} currentAngler=name; currentDate=date; currentVenue=venue; currentZone=isComp?zone:null; currentPeg=isComp?peg:null; const verifierSection = document.getElementById('verifierSection'), verifierInput=document.getElementById('verifierName'); const isActuallyCompetition = !!(currentZone && currentPeg); if(verifierSection&&verifierInput){verifierSection.style.display=isActuallyCompetition?'block':'none'; if(!isActuallyCompetition)verifierInput.value='';}else{console.error("Verifier elements missing!");} console.log("Start recording data:",{currentAngler,currentDate,currentVenue,currentZone,currentPeg,isCompetition:isActuallyCompetition}); saveTempSession(); updateFishLog(); showPage('fishingPage'); }
         function addFish() { console.log("Add Fish."); const spEl=document.getElementById('speciesInput'), custEl=document.getElementById('customSpeciesInput'), lenEl=document.getElementById('lengthInput'); if(!spEl||!custEl||!lenEl){alert("Add fish elements missing.");return;} let species=spEl.value; const lenVal=lenEl.value.trim(); let length; if(!lenVal){alert("Length required.");return;} length=Math.round(parseFloat(lenVal)); if(isNaN(length)||length<=0||length>500){alert("Valid length (1-500cm) required.");return;} if(species==='Other'){species=custEl.value.trim();if(!species){alert("Custom species name required.");return;}if(!/^[a-zA-Z\s'-]+$/.test(species)){alert("Invalid species chars.");return;}}else if(!species){alert("Select species.");return;} fishData.push({species,length});console.log("Added:",{species,length}); updateFishLog(); spEl.value='';custEl.value='';lenEl.value=''; toggleCustomSpeciesInput();saveTempSession(); }
         function updateFishLog() { const log=document.getElementById('fishLog'); if(!log)return; log.innerHTML=fishData.map((f,i)=>`<tr><td>${f.species||'?'}</td><td>${f.length||'?'}</td><td class="text-end"><button class="btn btn-danger btn-sm" onclick="deleteFish(${i})"><i class="bi bi-trash"></i></button></td></tr>`).join('');}
         function deleteFish(idx){if(idx>=0&&idx<fishData.length){const{species,length}=fishData[idx];if(confirm(`Delete ${species||'?'} (${length||'?'}cm)?`)){console.log("Deleting:",idx);fishData.splice(idx,1);updateFishLog();saveTempSession();}}else{console.error("Invalid delete idx:",idx);}}
         function backFromFishing() { console.log("Back from Fishing."); showPage('registrationPage'); }
         function showEndSessionModal() { console.log("End Session."); const modalEl=document.getElementById('endSessionModal'); if(modalEl){let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false});mI.show();}else{console.error("End modal missing.");if(confirm("Confirm end & save?")){confirmEndSession();}}}
-        function confirmEndSession() {
-            console.log("Confirm End."); hideModal('endSessionModal'); if(!currentAngler||!currentDate||!currentVenue){alert("Missing Angler/Date/Venue.");showPage('registrationPage');return;} const isCompetition = !!(currentZone && currentPeg); let verifierName = null;
-            if(isCompetition) { const vInput = document.getElementById('verifierName'); if (!vInput){alert("Error: Verifier field missing."); return;} verifierName = vInput.value.trim(); if(!verifierName){alert("Competition: Please enter Verifier name."); showPage('fishingPage'); return;} }
-            const data={currentAngler,currentDate,currentVenue,currentZone,currentPeg,verifier: verifierName, fishData:fishData||[]}; const id=`scorecard_${Date.now()}`; try{localStorage.setItem(id,JSON.stringify(data));console.log("Saved:",id,data);alert("Saved!");clearTempSession();resetApp();showPage('splashScreen');}catch(e){console.error("Save err:",e);alert("Save failed.");showPage('fishingPage');}
-        }
+        function confirmEndSession() { console.log("Confirm End."); hideModal('endSessionModal'); if(!currentAngler||!currentDate||!currentVenue){alert("Missing Angler/Date/Venue.");showPage('registrationPage');return;} const isCompetition = !!(currentZone && currentPeg); let verifierName = null; if(isCompetition) { const vInput = document.getElementById('verifierName'); if (!vInput){alert("Error: Verifier field missing."); return;} verifierName = vInput.value.trim(); if(!verifierName){alert("Competition: Please enter Verifier name."); showPage('fishingPage'); return;} } const data={currentAngler,currentDate,currentVenue,currentZone,currentPeg,verifier: verifierName, fishData:fishData||[]}; const id=`scorecard_${Date.now()}`; try{localStorage.setItem(id,JSON.stringify(data));console.log("Saved:",id,data);alert("Saved!");clearTempSession();resetApp();showPage('splashScreen');}catch(e){console.error("Save err:",e);alert("Save failed.");showPage('fishingPage');} }
 
         // --- Tally Page ---
         function populateTallySummaryFields() { try{document.getElementById('summaryAngler').textContent=currentAngler||'?'; document.getElementById('summaryDate').textContent=currentDate?formatDate(currentDate):'?'; document.getElementById('summaryVenue').textContent=currentVenue||'?'; document.getElementById('summaryZone').textContent=currentZone||'?'; document.getElementById('summaryPeg').textContent=currentPeg||'?'; document.getElementById('summaryVerifier').innerHTML = '';}catch(e){} }
@@ -421,34 +415,45 @@
 
             const displayLimit = 4;
             const createScorecardElement = (key, data, isLatest) => {
-                 try { const w=document.createElement('div'); w.className=`scorecard-entry${isLatest?' latest-scorecard':''}`; let tL=0,fC=0,sp=new Set(),lF=null; const fish=data.fishData||[]; fish.forEach(f=>{const l=f.length||0;fC++;tL+=l;if(f.species)sp.add(f.species);if(!lF||l>(lF.length||0))lF=f;}); const spC=sp.size; const lFS=lF?`${lF.species||'?'}(${lF.length||'?'}cm)`:'N/A'; const eK=key.replace(/'/g,"\\'");
-                 // Generate HTML for the View Note button conditionally
-                 const viewNoteButtonHtml = (data.notes && data.notes.trim() !== '')
-                    ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${eK}', event)"><i class="bi bi-eye me-1"></i>View Note</button>`
-                    : ''; // Empty string if no notes
+                 try {
+                    const w = document.createElement('div');
+                    w.className = `scorecard-entry${isLatest ? ' latest-scorecard' : ''}`;
+                    let tL = 0, fC = 0, sp = new Set(), lF = null;
+                    const fish = data.fishData || [];
+                    fish.forEach(f => { const l = f.length || 0; fC++; tL += l; if (f.species) sp.add(f.species); if (!lF || l > (lF.length || 0)) lF = f; });
+                    const spC = sp.size;
+                    const lFS = lF ? `${lF.species || '?'}(${lF.length || '?'}cm)` : 'N/A';
+                    const eK = key.replace(/'/g, "\\'");
 
-                 w.innerHTML=`<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue||'?'}</strong> - ${formatDate(data.currentDate||'')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest?'<span class="badge ms-2">Latest</span>':''}</div>
-                    <div class="scorecard-details" id="details_${key}">
-                        <h6>Session Details</h6>
-                        <p><strong>Angler:</strong> ${data.currentAngler||'?'}</p>
-                        <p><strong>Venue:</strong> ${data.currentVenue||'?'}</p>
-                        <p><strong>Date:</strong> ${formatDate(data.currentDate||'')}</p>
-                        ${data.currentZone?`<p><strong>Zone:</strong> ${data.currentZone}</p>`:''}
-                        ${data.currentPeg?`<p><strong>Peg:</strong> ${data.currentPeg}</p>`:''}
-                        ${data.verifier?`<p><strong>Verified By:</strong> ${data.verifier}</p>`:''}
-                        <hr>
-                        <h6>Catch (${fC})</h6>
-                        ${fish.length>0?`<div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th>#</th><th>Species</th><th>Len(cm)</th></tr></thead><tbody>${fish.map((f,i)=>`<tr><td>${i+1}</td><td>${f.species||'?'}</td><td>${f.length||'?'}</td></tr>`).join('')}</tbody></table></div>`:'<p>No fish.</p>'}
-                        ${fish.length>0?`<hr><h6>Summary</h6><p><strong>Total Len:</strong> ${tL}cm</p><p><strong>Species:</strong> ${spC}</p><p><strong>Longest:</strong> ${lFS}</p>`:''}
-                        <div class="btn-actions-group"> {/* Group action buttons */}
-                            <button class="btn btn-outline-secondary btn-sm" onclick="openNotesModal('${eK}', event)"><i class="bi bi-pencil me-1"></i>Add Note</button>
-                            ${viewNoteButtonHtml} {/* Insert View Note button here */}
-                            <button class="btn btn-info btn-sm" onclick="emailScorecard('${eK}', event)"><i class="bi bi-envelope me-1"></i>Email</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteScorecard('${eK}', event)"><i class="bi bi-trash me-1"></i>Delete</button>
-                        </div>
-                    </div>`;
-                 return w; }
-                 catch (elementError) { console.error(`Err create el for ${key}:`, elementError); const errDiv = document.createElement('div'); errDiv.className = 'alert alert-warning p-2 my-2'; errDiv.textContent = `Err display card ${key.slice(-4)}`; return errDiv; }};
+                    // Conditionally create View Note button HTML
+                    const viewNoteButtonHtml = (data.notes && data.notes.trim() !== '')
+                       ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${eK}', event)"><i class="bi bi-eye me-1"></i>View Note</button>`
+                       : '';
+
+                    // Reordered buttons, removed inline notes display
+                    w.innerHTML = `<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest ? '<span class="badge ms-2">Latest</span>' : ''}</div>
+                        <div class="scorecard-details" id="details_${key}">
+                            <h6>Session Details</h6>
+                            <p><strong>Angler:</strong> ${data.currentAngler || '?'}</p>
+                            <p><strong>Venue:</strong> ${data.currentVenue || '?'}</p>
+                            <p><strong>Date:</strong> ${formatDate(data.currentDate || '')}</p>
+                            ${data.currentZone ? `<p><strong>Zone:</strong> ${data.currentZone}</p>` : ''}
+                            ${data.currentPeg ? `<p><strong>Peg:</strong> ${data.currentPeg}</p>` : ''}
+                            ${data.verifier ? `<p><strong>Verified By:</strong> ${data.verifier}</p>` : ''}
+                            <hr>
+                            <h6>Catch (${fC})</h6>
+                            ${fish.length > 0 ? `<div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th>#</th><th>Species</th><th>Len(cm)</th></tr></thead><tbody>${fish.map((f, i) => `<tr><td>${i + 1}</td><td>${f.species || '?'}</td><td>${f.length || '?'}</td></tr>`).join('')}</tbody></table></div>` : '<p>No fish.</p>'}
+                            ${fish.length > 0 ? `<hr><h6>Summary</h6><p><strong>Total Len:</strong> ${tL}cm</p><p><strong>Species:</strong> ${spC}</p><p><strong>Longest:</strong> ${lFS}</p>` : ''}
+
+                            <div class="btn-actions-group">
+                                ${viewNoteButtonHtml} {/* View Note button */}
+                                <button class="btn btn-outline-secondary btn-sm" onclick="openNotesModal('${eK}', event)"><i class="bi bi-pencil me-1"></i>Add/Edit Note</button>
+                                <button class="btn btn-info btn-sm" onclick="emailScorecard('${eK}', event)"><i class="bi bi-envelope me-1"></i>Email</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteScorecard('${eK}', event)"><i class="bi bi-trash me-1"></i>Delete</button>
+                            </div>
+                        </div>`;
+                    return w;
+                 } catch (elementError) { console.error(`Err create el for ${key}:`, elementError); const errDiv = document.createElement('div'); errDiv.className = 'alert alert-warning p-2 my-2'; errDiv.textContent = `Err display card ${key.slice(-4)}`; return errDiv; }};
 
             try { console.log(`Slicing initial (0 to ${displayLimit})`); const initial = scorecards.slice(0, displayLimit); console.log(`Displaying ${initial.length} initial.`); initial.forEach(({ key, data }, index) => { const el = createScorecardElement(key, data, index === 0); if (el) savedScorecardsList.appendChild(el); }); }
             catch(e) { console.error("Err initial loop:", e); savedScorecardsList.innerHTML += '<p class="text-danger p-3">Err display initial.</p>'; }
@@ -470,7 +475,7 @@
 
         function emailScorecard(key, event) {
             event.stopPropagation(); console.log("Emailing:", key);
-            alert("This will open your default email app. Please add recipients and send. Formatting may vary by email client. Notes are NOT included.");
+            alert("This will open your default email app. Please add recipients and send. Formatting may vary. Notes are NOT included.");
 
             let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error: Could not get data to email. ${error.message}`); return; }
             let body = "Sea Catch Scorecard\r\n=====================\r\n\r\n";
@@ -486,103 +491,50 @@
 
         // --- Notes Modal Functions ---
         function openNotesModal(key, event) {
-            event.stopPropagation(); // Prevent details toggle
+            if(event) event.stopPropagation(); // Prevent details toggle
             console.log('Opening notes modal for key:', key);
             const notesTextarea = document.getElementById('notesTextarea');
             const notesModalKeyInput = document.getElementById('notesModalScorecardKey');
 
-            if (!notesTextarea || !notesModalKeyInput) {
-                console.error('Notes modal elements not found!');
+            if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) {
+                console.error('Notes modal elements or instance not found!');
                 alert('Error opening notes editor.');
                 return;
             }
 
             // Load existing notes into textarea
-            try {
-                const dataString = localStorage.getItem(key);
-                const data = dataString ? JSON.parse(dataString) : {};
-                notesTextarea.value = data.notes || '';
-            } catch (e) {
-                console.error('Error loading notes for modal:', e);
-                notesTextarea.value = ''; // Default to empty on error
-            }
+            try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; notesTextarea.value=data.notes||''; }
+            catch(e){ console.error('Error loading notes for modal:',e); notesTextarea.value=''; }
 
-            // Store the key in the hidden input
-            notesModalKeyInput.value = key;
-
-            // Get or create Bootstrap modal instance and show it
-            const modalElement = document.getElementById('notesModal');
-            if (!notesModalInstance) { // Initialize instance if not already done
-                 if (modalElement) {
-                     notesModalInstance = new bootstrap.Modal(modalElement);
-                 } else {
-                      console.error('Notes modal element itself not found!');
-                      alert('Error initializing notes modal.');
-                      return;
-                 }
-            }
-            if(notesModalInstance) notesModalInstance.show();
+            notesModalKeyInput.value = key; // Store the key
+            notesModalInstance.show(); // Show the modal
         }
 
         function saveNoteFromModal() {
             console.log('Save button in notes modal clicked.');
             const notesTextarea = document.getElementById('notesTextarea');
             const notesModalKeyInput = document.getElementById('notesModalScorecardKey');
-
-            if (!notesTextarea || !notesModalKeyInput) {
-                console.error('Cannot save notes from modal, elements missing!');
-                alert('Error saving notes.');
-                return;
-            }
+            if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { alert('Error saving notes.'); return; }
 
             const key = notesModalKeyInput.value;
-            const newNotes = notesTextarea.value.trim();
+            const newNotes = notesTextarea.value; // Keep whitespace as entered
+            if (!key) { alert('Error: Scorecard key missing.'); return; }
 
-            if (!key) {
-                console.error('Scorecard key missing in notes modal!');
-                alert('Error: Cannot determine which scorecard to save notes for.');
-                return;
-            }
-
-            try {
-                const dataString = localStorage.getItem(key);
-                if (!dataString) throw new Error('Scorecard data not found to save notes to.');
-                let data = JSON.parse(dataString);
-                data.notes = newNotes; // Update/add the notes property
-
+            try { const dS = localStorage.getItem(key); if (!dS) throw new Error('Scorecard data not found.'); let data = JSON.parse(dS);
+                data.notes = newNotes; // Update notes
                 localStorage.setItem(key, JSON.stringify(data)); // Save back
                 console.log('Notes saved via modal for key:', key);
-
-                 if(notesModalInstance) notesModalInstance.hide(); // Hide the modal
-
-                 // Crucially, reload the main scorecards list to update button visibility
-                 // Use a small delay to ensure modal is hidden first visually
-                 setTimeout(loadScorecards, 150);
-
-            } catch (e) {
-                console.error('Error saving notes from modal:', e);
-                alert(`Failed to save notes: ${e.message}`);
-            }
+                 notesModalInstance.hide(); // Hide modal
+                 setTimeout(loadScorecards, 150); // Reload list to update view button state
+            } catch (e) { console.error('Error saving notes from modal:', e); alert(`Failed to save notes: ${e.message}`); }
         }
 
         function viewNote(key, event) {
             event.stopPropagation();
             console.log('Viewing notes for key:', key);
-            try {
-                const dataString = localStorage.getItem(key);
-                const data = dataString ? JSON.parse(dataString) : {};
-                const notes = data.notes || '';
-
-                if (notes) {
-                    // Simple alert for viewing
-                    alert(`Notes for scorecard:\n--------------------\n${notes}`);
-                } else {
-                    alert('No notes found for this scorecard.');
-                }
-            } catch (e) {
-                console.error('Error retrieving notes for viewing:', e);
-                alert('Could not retrieve notes.');
-            }
+            try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; const notes=data.notes||'';
+                alert(`Notes for scorecard:\n--------------------\n${notes || '(No notes saved)'}`); // Show notes in simple alert
+            } catch (e) { console.error('Error retrieving notes:', e); alert('Could not retrieve notes.'); }
         }
         // --- End Notes Functions ---
 
@@ -600,7 +552,6 @@
                  // --- Service Worker Registration ---
                  if ('serviceWorker' in navigator) {
                      window.addEventListener('load', () => {
-                         // *** IMPORTANT: Replace '/your-repository-name/' if needed ***
                          navigator.serviceWorker.register('/Sea-Catch-Scorer/sw.js') // <<< EDIT THIS PATH!!!
                              .then(reg => console.log('SW registered scope: ', reg.scope))
                              .catch(err => console.error('SW registration failed: ', err));
@@ -628,13 +579,10 @@
                  if (refs.zoneSelect) refs.zoneSelect.addEventListener('change', () => { currentZone = refs.isCompetitionCheck?.checked ? refs.zoneSelect.value : null; saveTempSession(); });
                  if (refs.pegSelect) refs.pegSelect.addEventListener('change', () => { currentPeg = refs.isCompetitionCheck?.checked ? refs.pegSelect.value : null; saveTempSession(); });
 
-                 // Initialize the notes modal instance (needed for programmatic show/hide)
+                 // Initialize the notes modal instance
                  const notesModalElement = document.getElementById('notesModal');
-                 if (notesModalElement) {
-                     notesModalInstance = new bootstrap.Modal(notesModalElement);
-                 } else {
-                      console.error("Notes Modal element (#notesModal) not found in HTML!");
-                 }
+                 if (notesModalElement) { notesModalInstance = new bootstrap.Modal(notesModalElement); }
+                 else { console.error("Notes Modal element (#notesModal) not found in HTML!"); }
 
                  checkRestoreSession();
              } catch (error) { console.error("Fatal init error:", error); document.body.innerHTML = `<div class="alert alert-danger m-5">App Error: ${error.message}. Please refresh.</div>`; }
