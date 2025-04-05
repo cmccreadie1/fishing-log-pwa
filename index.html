@@ -1,16 +1,12 @@
-SECOND TRY<!DOCTYPE html>
+THIRD<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sea Catch Scorer</title>
-    <!-- PWA Manifest Link -->
     <link rel="manifest" href="manifest.json">
-    <!-- Theme Color for PWA Address Bar -->
     <meta name="theme-color" content="#007bff">
-    <!-- Add Basic Icons for "Add to Home Screen" / PWA -->
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-    <!-- Add other icon sizes if you have them -->
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -18,44 +14,12 @@ SECOND TRY<!DOCTYPE html>
     <style>
         /* --- Base & Global Styles --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: url('https://i.postimg.cc/pLFtxQWs/seacatchscorecard.jpg') no-repeat center/cover fixed;
-            color: #fff; /* Default text color (mostly for splash) */
-            min-height: 100vh;
-        }
-        .container { /* Wrapper for main content cards */
-            background: rgba(0, 0, 0, 0.7); /* Dark, semi-transparent wrapper */
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px auto;
-            max-width: 800px;
-            z-index: 1;
-            display: none; /* Hide initially, show based on page */
-        }
-        .page { display: none; } /* Hide pages by default */
-
-        /* --- Splash Screen --- */
-        .splash-screen {
-            display: flex; /* Initially shown via JS */
-            flex-direction: column; justify-content: flex-end; align-items: center;
-            padding: 40px; height: 100vh; width: 100%;
-            position: fixed; top: 0; left: 0; z-index: 2;
-        }
-
-        /* --- Main Content Card Style (Registration, Fishing, Tally) --- */
-        .card-section {
-            background: rgba(255, 255, 255, 0.92); /* Slightly more opaque white */
-            border-radius: 15px; padding: 25px; margin: 20px 0; /* Increased padding */
-            border: 1px solid #dee2e6; /* Lighter border */
-            color: #212529; /* Dark text for content */
-            z-index: 3;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .card-section h2 { color: #0056b3; } /* Dark blue headings */
-        .card-section h5 { color: #0056b3; }
-
-        /* --- Buttons --- */
+        body { font-family: 'Poppins', sans-serif; background: url('https://i.postimg.cc/pLFtxQWs/seacatchscorecard.jpg') no-repeat center/cover fixed; color: #fff; min-height: 100vh; }
+        .container { background: rgba(0, 0, 0, 0.7); border-radius: 15px; padding: 20px; margin: 20px auto; max-width: 800px; z-index: 1; display: none; }
+        .page { display: none; }
+        .splash-screen { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding: 40px; height: 100vh; width: 100%; position: fixed; top: 0; left: 0; z-index: 2; }
+        .card-section { background: rgba(255, 255, 255, 0.92); border-radius: 15px; padding: 25px; margin: 20px 0; border: 1px solid #dee2e6; color: #212529; z-index: 3; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+        .card-section h2, .card-section h5 { color: #0056b3; }
         .btn { padding: 12px 24px; font-size: 1.1rem; border-radius: 25px; border: none; margin: 10px; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; cursor: pointer; font-weight: 600; }
         .btn:disabled { cursor: not-allowed; opacity: 0.65; }
         .btn-primary { background-color: #007bff; color: white; } .btn-primary:hover { background-color: #0056b3; transform: scale(1.05); }
@@ -66,23 +30,16 @@ SECOND TRY<!DOCTYPE html>
         .btn-outline-secondary { border: 2px solid #6c757d; color: #6c757d; background-color: transparent; } .btn-outline-secondary:hover { background-color: #6c757d; color: white; }
         .btn-outline-light { border: 2px solid #f8f9fa; color: #f8f9fa; background-color: transparent; } .btn-outline-light:hover { background-color: #f8f9fa; color: #000; }
         .btn-sm { padding: 5px 10px; font-size: 0.9rem; border-radius: 20px; font-weight: normal; }
-
-        /* --- Forms --- */
         .form-label { font-weight: 600; color: #495057; }
         .form-control, .form-select { border-radius: 8px; margin-bottom: 15px; border: 1px solid #ced4da; }
         .form-control:focus, .form-select:focus { border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); }
         .form-check-label { color: #212529; }
-        /* Verifier field removed */
-
-        /* --- Tables --- */
         .card-section .table { background: white; border-radius: 8px; color: #212529; border: 1px solid #dee2e6; margin-top: 15px; }
         .card-section .table thead { background-color: #f8f9fa; }
         .card-section .table th, .card-section .table td { border-color: #dee2e6; vertical-align: middle; }
         .card-section .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: rgba(0, 0, 0, 0.03); }
         .card-section .table-bordered { border: 1px solid #dee2e6; }
         .card-section .table-hover tbody tr:hover > * { background-color: rgba(0, 0, 0, 0.06); }
-
-        /* --- Unified Modal Style --- */
         .modal { z-index: 1050; } .modal-backdrop { z-index: 1040; opacity: 0.5; }
         .modal-content { background: #f8f9fa; color: #212529; border: 1px solid #dee2e6; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .modal-header { background-color: #e9ecef; color: #212529; border-bottom: 1px solid #dee2e6; border-top-left-radius: 15px; border-top-right-radius: 15px; }
@@ -91,8 +48,6 @@ SECOND TRY<!DOCTYPE html>
         .modal-header .btn-close { filter: none; background-size: 0.75em; }
         .modal-body { background-color: #ffffff; color: #212529; padding: 20px; }
         #restoreSessionModal .modal-body, #endSessionModal .modal-body, #verifierModal .modal-body { color: #212529 !important; } /* Ensure dark text */
-
-        /* --- Saved Scorecards Modal --- */
         #savedScorecardsList.card-section { background: transparent; border: none; padding: 0; margin: 0; }
         #savedScorecardsModal .scorecard-entry { border: 1px solid #dee2e6; border-radius: 8px; margin-bottom: 15px; background-color: #ffffff; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
         #savedScorecardsModal .scorecard-item { cursor: pointer; padding: 12px 15px; border-bottom: 1px solid #dee2e6; color: #212529; transition: background-color 0.2s; }
@@ -118,15 +73,11 @@ SECOND TRY<!DOCTYPE html>
         #savedScorecardsModal .latest-scorecard.scorecard-entry .scorecard-item { border-bottom: 1px solid rgba(0, 123, 255, 0.3); background-color: #e7f1ff; }
         #savedScorecardsModal .latest-scorecard.scorecard-entry .scorecard-item .badge { background-color: #007bff !important; color: white !important; font-weight: 600; }
         #olderScorecardsToggleContainer { padding-top: 10px; text-align: center;}
-
-        /* --- Notes Modal --- */
         #notesModal .modal-body textarea { resize: vertical; min-height: 100px; }
-
         #tallyPage.card-section .table { margin-top: 20px; }
         #tallyPage.card-section .catch-summary-details { margin-bottom: 20px; color: #495057; }
         #tallyPage.card-section tfoot td, #tallyPage.card-section tfoot strong { color: #212529; }
         .table-responsive { margin-bottom: 1rem; }
-
     </style>
 </head>
 <body>
@@ -373,8 +324,7 @@ SECOND TRY<!DOCTYPE html>
         let isAppActive = false;
         let historyHijacked = false;
         let notesModalInstance = null;
-        let verifierModalInstance = null;
-        // let dataForSave = null; // Removed global snapshot variable
+        let verifierModalInstance = null; // Added instance for verifier modal
 
         // --- Utility Functions ---
         function formatDate(dateString) { if (!dateString) return 'N/A'; try { const d = new Date(dateString + 'T00:00:00Z'); return isNaN(d.getTime()) ? dateString : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }); } catch (e) { console.error("Date format err:", e); return dateString; } }
@@ -398,7 +348,7 @@ SECOND TRY<!DOCTYPE html>
         function toggleCustomSpeciesInput() { const sel=document.getElementById('speciesInput'), custom=document.getElementById('customSpeciesInput'); if(!sel||!custom)return; custom.style.display=sel.value==='Other'?'block':'none'; if(sel.value!=='Other')custom.value=''; }
         function toggleCompetitionFields() { try{const check=document.getElementById('isCompetition').checked, zone=document.getElementById('zoneInput'), peg=document.getElementById('pegInput'); zone.disabled=!check; peg.disabled=!check; if(!check){zone.value='';peg.value='';currentZone=null;currentPeg=null;}}catch(e){console.error("Toggle comp fields err:",e);} }
         function startApp() { console.log("Start Fishing."); populateSpeciesDropdown(); showPage('registrationPage'); }
-        function startRecording() { console.log("Record Catch."); const nameEl=document.getElementById('anglerName'), dateEl=document.getElementById('competitionDate'), venueEl=document.getElementById('venueInput'), checkEl=document.getElementById('isCompetition'), zoneEl=document.getElementById('zoneInput'), pegEl=document.getElementById('pegInput'); if(!nameEl||!dateEl||!venueEl||!checkEl||!zoneEl||!pegEl){alert("Form elements missing.");return;} const name=nameEl.value.trim(), date=dateEl.value, venue=venueEl.value.trim(), isComp=checkEl.checked, zone=zoneEl.value, peg=pegEl.value; if(!name||!date||!venue){alert("Name, Date, Venue required.");return;} if(isComp&&(!zone||!peg)){alert("Zone & Peg required for competition.");return;} if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert("Valid date required.");return;} currentAngler=name; currentDate=date; currentVenue=venue; currentZone=isComp?zone:null; currentPeg=isComp?peg:null; const isActuallyCompetition = !!(currentZone && currentPeg); /* Verifier section display logic removed */ console.log("Start recording data:",{currentAngler,currentDate,currentVenue,currentZone,currentPeg,isCompetition:isActuallyCompetition}); saveTempSession(); updateFishLog(); showPage('fishingPage'); }
+        function startRecording() { console.log("Record Catch."); const nameEl=document.getElementById('anglerName'), dateEl=document.getElementById('competitionDate'), venueEl=document.getElementById('venueInput'), checkEl=document.getElementById('isCompetition'), zoneEl=document.getElementById('zoneInput'), pegEl=document.getElementById('pegInput'); if(!nameEl||!dateEl||!venueEl||!checkEl||!zoneEl||!pegEl){alert("Form elements missing.");return;} const name=nameEl.value.trim(), date=dateEl.value, venue=venueEl.value.trim(), isComp=checkEl.checked, zone=zoneEl.value, peg=pegEl.value; if(!name||!date||!venue){alert("Name, Date, Venue required.");return;} if(isComp&&(!zone||!peg)){alert("Zone & Peg required for competition.");return;} if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert("Valid date required.");return;} currentAngler=name; currentDate=date; currentVenue=venue; currentZone=isComp?zone:null; currentPeg=isComp?peg:null; const isActuallyCompetition = !!(currentZone && currentPeg); console.log("Start recording data:",{currentAngler,currentDate,currentVenue,currentZone,currentPeg,isCompetition:isActuallyCompetition}); saveTempSession(); updateFishLog(); showPage('fishingPage'); }
         function addFish() { console.log("Add Fish."); const spEl=document.getElementById('speciesInput'), custEl=document.getElementById('customSpeciesInput'), lenEl=document.getElementById('lengthInput'); if(!spEl||!custEl||!lenEl){alert("Add fish elements missing.");return;} let species=spEl.value; const lenVal=lenEl.value.trim(); let length; if(!lenVal){alert("Length required.");return;} length=Math.round(parseFloat(lenVal)); if(isNaN(length)||length<=0||length>500){alert("Valid length (1-500cm) required.");return;} if(species==='Other'){species=custEl.value.trim();if(!species){alert("Custom species name required.");return;}if(!/^[a-zA-Z\s'-]+$/.test(species)){alert("Invalid species chars.");return;}}else if(!species){alert("Select species.");return;} fishData.push({species,length});console.log("Added:",{species,length}); updateFishLog(); spEl.value='';custEl.value='';lenEl.value=''; toggleCustomSpeciesInput();saveTempSession(); }
         function updateFishLog() { const log=document.getElementById('fishLog'); if(!log)return; log.innerHTML=fishData.map((f,i)=>`<tr><td>${f.species||'?'}</td><td>${f.length||'?'}</td><td class="text-end"><button class="btn btn-danger btn-sm" onclick="deleteFish(${i})"><i class="bi bi-trash"></i></button></td></tr>`).join('');}
         function deleteFish(idx){if(idx>=0&&idx<fishData.length){const{species,length}=fishData[idx];if(confirm(`Delete ${species||'?'} (${length||'?'}cm)?`)){console.log("Deleting:",idx);fishData.splice(idx,1);updateFishLog();saveTempSession();}}else{console.error("Invalid delete idx:",idx);}}
@@ -407,7 +357,6 @@ SECOND TRY<!DOCTYPE html>
         // *** UPDATED: Checks if competition and shows appropriate modal ***
         function initiateEndSessionFlow() {
             console.log("Initiating End Session Flow...");
-            // Check competition status based on current globals
             const isCompetition = !!(currentZone && currentPeg);
 
             if (isCompetition) {
@@ -419,7 +368,6 @@ SECOND TRY<!DOCTYPE html>
                 console.log("Not a competition, showing standard End Session Modal.");
                 showModal('endSessionModal'); // Use helper function to show
             }
-            // NO snapshot created here
         }
 
         // *** NEW: Handles save after Verifier Modal confirmation ***
@@ -513,7 +461,8 @@ SECOND TRY<!DOCTYPE html>
             console.log(`Total scorecards found: ${scorecards.length}`);
 
             const displayLimit = 4;
-            const createScorecardElement = (key, data, isLatest) => {
+            // *** UPDATED createScorecardElement function (removed comments) ***
+             const createScorecardElement = (key, data, isLatest) => {
                  try {
                      const w = document.createElement('div');
                      w.className = `scorecard-entry${isLatest ? ' latest-scorecard' : ''}`;
@@ -580,7 +529,7 @@ SECOND TRY<!DOCTYPE html>
 
         function emailScorecard(key, event) {
             event.stopPropagation(); console.log("Emailing:", key);
-            alert("This will open your default email app. Notes are NOT included.");
+            alert("This will open your default email app. Please add recipients and send. Formatting may vary. Notes are NOT included.");
 
             let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error getting data: ${error.message}`); return; }
             let body = "Sea Catch Scorecard\r\n=====================\r\n\r\n";
@@ -606,7 +555,16 @@ SECOND TRY<!DOCTYPE html>
         function showModal(modalId) { const modalElement = document.getElementById(modalId); if(modalElement) { const instance = bootstrap.Modal.getOrCreateInstance(modalElement, {backdrop: 'static', keyboard: false}); instance.show(); } else { console.error(`Modal element #${modalId} not found!`); } }
 
         // --- Application Reset ---
-        function resetApp() { console.log("Resetting app."); fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen'; deactivateAppMode(); try { document.getElementById('anglerName').value=''; document.getElementById('competitionDate').value=''; document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; toggleCompetitionFields(); document.getElementById('speciesInput').value=''; document.getElementById('customSpeciesInput').value=''; document.getElementById('customSpeciesInput').style.display='none'; document.getElementById('lengthInput').value=''; document.getElementById('fishLog').innerHTML=''; /* Verifier input removed */ populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm'; } catch(e) { console.error("Error resetting forms:", e); } }
+        function resetApp() {
+            console.log("Resetting app.");
+            fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen';
+            // dataForSave = null; // REMOVED snapshot clearing
+            deactivateAppMode();
+            try { /* ... rest of form clearing ... */
+               document.getElementById('anglerName').value=''; document.getElementById('competitionDate').value=''; document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; toggleCompetitionFields(); document.getElementById('speciesInput').value=''; document.getElementById('customSpeciesInput').value=''; document.getElementById('customSpeciesInput').style.display='none'; document.getElementById('lengthInput').value=''; document.getElementById('fishLog').innerHTML=''; /* Verifier input removed */ populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm';
+            }
+            catch(e) { console.error("Error resetting forms:", e); }
+        }
 
         // --- Initialisation ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -638,8 +596,9 @@ SECOND TRY<!DOCTYPE html>
                  if (refs.confirmEndBtn) {
                       refs.confirmEndBtn.addEventListener('click', function() {
                            console.log("Standard Confirm & Save button clicked.");
-                           // Call save directly, relies on globals
-                           saveScorecardData();
+                           // Log state right before calling save
+                           console.log("State right before calling saveScorecardData (non-comp):", { angler: currentAngler, date: currentDate, venue: currentVenue });
+                           saveScorecardData(); // Call save with NO arguments, uses globals
                       });
                  } else {
                       console.error("Missing: confirmEndBtn");
