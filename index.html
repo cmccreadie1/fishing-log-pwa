@@ -1,4 +1,4 @@
-CRITICAL ERROR<!DOCTYPE html>
+FIRST FIX <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -373,8 +373,7 @@ CRITICAL ERROR<!DOCTYPE html>
         let isAppActive = false;
         let historyHijacked = false;
         let notesModalInstance = null;
-        let verifierModalInstance = null;
-        let dataForSave = null; // Global variable for snapshot
+        let verifierModalInstance = null; // Added instance for verifier modal
 
         // --- Utility Functions ---
         function formatDate(dateString) { if (!dateString) return 'N/A'; try { const d = new Date(dateString + 'T00:00:00Z'); return isNaN(d.getTime()) ? dateString : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }); } catch (e) { console.error("Date format err:", e); return dateString; } }
@@ -404,54 +403,42 @@ CRITICAL ERROR<!DOCTYPE html>
         function deleteFish(idx){if(idx>=0&&idx<fishData.length){const{species,length}=fishData[idx];if(confirm(`Delete ${species||'?'} (${length||'?'}cm)?`)){console.log("Deleting:",idx);fishData.splice(idx,1);updateFishLog();saveTempSession();}}else{console.error("Invalid delete idx:",idx);}}
         function backFromFishing() { console.log("Back from Fishing."); showPage('registrationPage'); }
 
-        // *** UPDATED: Captures data BEFORE showing modal ***
+        // *** RENAMED and UPDATED: Checks if competition and shows appropriate modal ***
         function initiateEndSessionFlow() {
             console.log("Initiating End Session Flow...");
-            // --- CAPTURE DATA SNAPSHOT ---
-            dataForSave = { angler: currentAngler, date: currentDate, venue: currentVenue, zone: currentZone, peg: currentPeg, fishData: [...fishData] };
-            console.log("Data captured for potential save:", dataForSave);
-            // --- END CAPTURE ---
-            const isCompetition = !!(dataForSave.zone && dataForSave.peg); // Check snapshot
-            if (isCompetition) { console.log("Competition detected, showing Verifier Modal."); const vI=document.getElementById('verifierModalInput'); if(vI)vI.value=''; showModal('verifierModal'); }
-            else { console.log("Not a competition, showing standard End Session Modal."); showModal('endSessionModal'); }
+            const isCompetition = !!(currentZone && currentPeg);
+
+            if (isCompetition) {
+                console.log("Competition detected, showing Verifier Modal.");
+                const verifierInput = document.getElementById('verifierModalInput');
+                if(verifierInput) verifierInput.value = ''; // Clear field
+                showModal('verifierModal'); // Use helper function
+            } else {
+                console.log("Not a competition, showing standard End Session Modal.");
+                showModal('endSessionModal'); // Use helper function
+            }
         }
 
-        // *** UPDATED: Uses snapshot data ***
+        // *** NEW: Handles save after Verifier Modal confirmation ***
         function confirmEndSessionWithVerifier() {
             console.log("Confirming End Session with Verifier.");
             const verifierInput = document.getElementById('verifierModalInput');
             if (!verifierInput) { alert("Error: Cannot find verifier input field."); return; }
             const verifierName = verifierInput.value.trim();
             if (!verifierName) { alert("Please enter the verifier's name."); verifierInput.focus(); return; }
-            hideModal('verifierModal');
-            if (!dataForSave) { console.error("Save aborted: dataForSave snapshot is missing!"); alert("Critical error: Data snapshot missing."); return; }
-            console.log("Calling saveScorecardData from Verifier flow using snapshot.");
-            saveScorecardData(dataForSave, verifierName); // Pass snapshot and verifier
+
+            hideModal('verifierModal'); // Hide this modal
+            saveScorecardData(verifierName); // Pass the name to the central save function
         }
 
-        // *** REVISED saveScorecardData function - USES SNAPSHOT OBJECT ***
-        function saveScorecardData(snapshotData, verifierName = null) {
-            console.log("Executing saveScorecardData. Received Snapshot:", snapshotData, "Verifier:", verifierName);
-            // 1. Validation - Use the SNAPSHOT data
-             if (!snapshotData || !snapshotData.angler || !snapshotData.date || !snapshotData.venue) {
-                 console.error("Save ABORTED: Missing essential data in snapshot.", snapshotData);
-                 alert("Cannot save session: Missing Angler Name, Date, or Venue information in captured data.");
-                 hideModal('endSessionModal'); hideModal('verifierModal'); dataForSave = null; // Clear snapshot
-                 // Don't navigate back, let user potentially retry or diagnose
-                 // showPage('registrationPage');
-                 return; // Stop execution immediately
-             }
-            console.log("Validation passed. Proceeding with save.");
-            // 2. Prepare Data - Use snapshot data
-            const sessionData = { currentAngler: snapshotData.angler, currentDate: snapshotData.date, currentVenue: snapshotData.venue, currentZone: snapshotData.zone, currentPeg: snapshotData.peg, verifier: verifierName, notes: null, fishData: snapshotData.fishData || [] };
+        // *** NEW: Central function for the actual saving logic ***
+        function saveScorecardData(verifierName = null) {
+            console.log("Executing saveScorecardData. Verifier:", verifierName, "Globals:", { currentAngler, currentDate, currentVenue });
+             if (!currentAngler || !currentDate || !currentVenue) { alert("Cannot save session: Missing Angler Name, Date, or Venue information. Please return to registration details."); showPage('registrationPage'); return; }
+            const sessionData = { currentAngler, currentDate, currentVenue, currentZone, currentPeg, verifier: verifierName, notes: null, /* Initialize notes */ fishData: fishData || [] };
             const id = `scorecard_${Date.now()}`;
-            // 3. Attempt Save to localStorage
-            try { localStorage.setItem(id, JSON.stringify(sessionData)); console.log("Scorecard saved successfully to localStorage:", id);
-                // 4. Inform User
-                alert("Scorecard saved successfully!");
-                // 5. Clean up and Navigate
-                console.log("Performing post-save cleanup and navigation..."); clearTempSession(); resetApp(); showPage('splashScreen'); console.log("Cleanup and navigation complete.");
-            } catch(e) { console.error("Save to localStorage failed:", e); alert("Save failed. Local storage might be full or disabled."); dataForSave = null; showPage(currentPage); }
+            try { localStorage.setItem(id, JSON.stringify(sessionData)); console.log("Scorecard saved:", id, sessionData); alert("Scorecard saved successfully!"); clearTempSession(); resetApp(); showPage('splashScreen'); }
+            catch(e) { console.error("Save err:", e); alert("Save failed. Local storage might be full or disabled."); showPage('fishingPage'); }
         }
 
 
@@ -482,7 +469,7 @@ CRITICAL ERROR<!DOCTYPE html>
             console.log(`Total scorecards found: ${scorecards.length}`);
 
             const displayLimit = 4;
-            // *** UPDATED createScorecardElement function (removed comments) ***
+            // *** UPDATED createScorecardElement function ***
              const createScorecardElement = (key, data, isLatest) => {
                  try {
                      const w = document.createElement('div');
@@ -494,10 +481,12 @@ CRITICAL ERROR<!DOCTYPE html>
                      const lFS = lF ? `${lF.species || '?'}(${lF.length || '?'}cm)` : 'N/A';
                      const eK = key.replace(/'/g, "\\'");
 
+                     // Conditionally create View Note button HTML
                      const viewNoteButtonHtml = (data.notes && data.notes.trim() !== '')
                         ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${eK}', event)"><i class="bi bi-eye me-1"></i>View Note</button>`
-                        : '';
+                        : ''; // Empty string if no notes
 
+                     // Removed placeholder comments and reordered buttons
                      w.innerHTML = `<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest ? '<span class="badge ms-2">Latest</span>' : ''}</div>
                         <div class="scorecard-details" id="details_${key}">
                             <h6>Session Details</h6>
@@ -550,7 +539,7 @@ CRITICAL ERROR<!DOCTYPE html>
 
         function emailScorecard(key, event) {
             event.stopPropagation(); console.log("Emailing:", key);
-            alert("This will open your default email app. Notes are NOT included.");
+            alert("This will open your default email app. Notes are NOT included."); // Inform user
 
             let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error getting data: ${error.message}`); return; }
             let body = "Sea Catch Scorecard\r\n=====================\r\n\r\n";
@@ -570,20 +559,12 @@ CRITICAL ERROR<!DOCTYPE html>
         function viewNote(key, event) { event.stopPropagation(); console.log('Viewing notes for key:', key); try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; const notes=data.notes||''; alert(`Notes for scorecard:\n--------------------\n${notes || '(No notes saved)'}`); } catch (e) { console.error('Error retrieving notes:', e); alert('Could not retrieve notes.'); } }
         // --- End Notes Functions ---
 
-
         // --- General Modal Hiding/Showing ---
         function hideModal(modalId) { const mE=document.getElementById(modalId); if(mE){const m=bootstrap.Modal.getInstance(mE); if(m){m.hide();}else{mE.classList.remove('show');mE.style.display='none';const b=document.querySelector('.modal-backdrop');if(b)b.remove();document.body.classList.remove('modal-open');document.body.style.overflow='';document.body.style.paddingRight='';}}}
         function showModal(modalId) { const modalElement = document.getElementById(modalId); if(modalElement) { const instance = bootstrap.Modal.getOrCreateInstance(modalElement, {backdrop: 'static', keyboard: false}); instance.show(); } else { console.error(`Modal element #${modalId} not found!`); } }
 
         // --- Application Reset ---
-        function resetApp() {
-            console.log("Resetting app.");
-            fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen';
-            dataForSave = null; // <<<--- CLEAR THE SNAPSHOT VARIABLE
-            deactivateAppMode(); // Turn off back button block
-            try { /* ... rest of form clearing ... */ }
-            catch(e) { console.error("Error resetting forms:", e); }
-        }
+        function resetApp() { console.log("Resetting app."); fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen'; deactivateAppMode(); try { document.getElementById('anglerName').value=''; document.getElementById('competitionDate').value=''; document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; toggleCompetitionFields(); document.getElementById('speciesInput').value=''; document.getElementById('customSpeciesInput').value=''; document.getElementById('customSpeciesInput').style.display='none'; document.getElementById('lengthInput').value=''; document.getElementById('fishLog').innerHTML=''; /* Verifier input removed */ populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm'; } catch(e) { console.error("Error resetting forms:", e); } }
 
         // --- Initialisation ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -610,23 +591,8 @@ CRITICAL ERROR<!DOCTYPE html>
                  if (refs.addFishBtn) refs.addFishBtn.addEventListener('click', addFish);
                  if (refs.backFromFishingBtn) refs.backFromFishingBtn.addEventListener('click', backFromFishing);
                  if (refs.endSessionBtn) refs.endSessionBtn.addEventListener('click', initiateEndSessionFlow); // Changed target function
-
-                 // *** UPDATED listener for standard confirm ***
-                 if (refs.confirmEndBtn) {
-                      refs.confirmEndBtn.addEventListener('click', function() {
-                           console.log("Standard Confirm & Save button clicked.");
-                           // Capture current state BEFORE calling save
-                           const snapshot = { angler: currentAngler, date: currentDate, venue: currentVenue, zone: currentZone, peg: currentPeg, fishData: [...fishData] };
-                           console.log("Re-captured snapshot just before calling saveScorecardData:", snapshot);
-                           // Pass the newly captured snapshot
-                           saveScorecardData(snapshot); // Verifier defaults to null
-                      });
-                 } else {
-                      console.error("Missing: confirmEndBtn");
-                 }
-                 // Listener for verifier confirm button
-                 if (refs.confirmEndWithVerifierBtn) refs.confirmEndWithVerifierBtn.addEventListener('click', confirmEndSessionWithVerifier);
-
+                 if (refs.confirmEndBtn) refs.confirmEndBtn.addEventListener('click', () => saveScorecardData()); // Standard save
+                 if (refs.confirmEndWithVerifierBtn) refs.confirmEndWithVerifierBtn.addEventListener('click', confirmEndSessionWithVerifier); // Verifier save
                  if (refs.backFromTallyBtn) refs.backFromTallyBtn.addEventListener('click', backFromTally);
                  if (refs.restoreSessionBtn) refs.restoreSessionBtn.addEventListener('click', restoreSession);
                  if (refs.startNewSessionBtn) refs.startNewSessionBtn.addEventListener('click', startNewSession);
@@ -642,7 +608,6 @@ CRITICAL ERROR<!DOCTYPE html>
                  const verifierModalElement = document.getElementById('verifierModal');
                  if (notesModalElement) { notesModalInstance = new bootstrap.Modal(notesModalElement); } else { console.error("Notes Modal element (#notesModal) not found!"); }
                  if (verifierModalElement) { verifierModalInstance = new bootstrap.Modal(verifierModalElement, {backdrop: 'static', keyboard: false}); } else { console.error("Verifier Modal element (#verifierModal) not found!"); }
-
 
                  checkRestoreSession();
              } catch (error) { console.error("Fatal init error:", error); document.body.innerHTML = `<div class="alert alert-danger m-5">App Error: ${error.message}. Please refresh.</div>`; }
