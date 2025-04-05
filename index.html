@@ -1,74 +1,35 @@
-Mobile version<!DOCTYPE html>
+FIX<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sea Catch Scorer</title>
 
-    
+    <!-- ================== PWA & Mobile Elements ================== -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#007bff">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png"> 
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png"> {/* Adjust path if needed */}
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Sea Scorer">
     <meta name="application-name" content="Sea Scorer">
+    {/* ============================================================ */}
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
     <style>
         /* --- Base & Global Styles --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html {
-             font-size: 16px; /* Establish a base for rem units - common default */
-        }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: url('https://i.postimg.cc/pLFtxQWs/seacatchscorecard.jpg') no-repeat center/cover fixed;
-            color: #fff;
-            min-height: 100vh;
-            line-height: 1.6; /* Improve readability */
-            -webkit-text-size-adjust: 100%; /* Prevent font scaling on some mobile browsers */
-            text-size-adjust: 100%;
-        }
-        .container { /* Wrapper for main content cards */
-            background: transparent; /* Make container transparent */
-            margin: 0 auto; /* Center container horizontally */
-            padding: 15px; /* Add padding for smaller screen edges */
-            max-width: 800px;
-            z-index: 1;
-            display: none; /* Hide initially, show based on page */
-        }
-        .page { display: none; } /* Hide pages by default */
-
-        /* --- Splash Screen --- */
-        .splash-screen {
-            display: flex; /* Initially shown via JS */
-            flex-direction: column; justify-content: flex-end; align-items: center;
-            padding: 30px; /* Reduced padding */
-            height: 100vh; width: 100%;
-            position: fixed; top: 0; left: 0; z-index: 2;
-        }
-
-        /* --- Main Content Card Style (Registration, Fishing, Tally) --- */
-        .card-section {
-            background: rgba(255, 255, 255, 0.94); /* Slightly more opaque */
-            border-radius: 12px; /* Slightly smaller radius */
-            padding: 20px 15px; /* Adjust padding: Vertical Horizontal */
-            margin: 15px 0; /* Reduced margin */
-            border: 1px solid #dee2e6;
-            color: #212529; /* Dark text for content */
-            z-index: 3;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Softer shadow */
-        }
-        .card-section h2 { color: #0056b3; font-size: 1.7rem; margin-bottom: 1rem; } /* Adjusted */
-        .card-section h5 { color: #0056b3; font-size: 1.3rem; margin-bottom: 0.8rem; } /* Adjusted */
-
-        /* --- Buttons --- */
-        /* Base button style adjusted for better mobile feel */
+        html { font-size: 16px; }
+        body { font-family: 'Poppins', sans-serif; background: url('https://i.postimg.cc/pLFtxQWs/seacatchscorecard.jpg') no-repeat center/cover fixed; color: #fff; min-height: 100vh; line-height: 1.6; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+        .container { background: transparent; margin: 0 auto; padding: 15px; max-width: 800px; z-index: 1; display: none; }
+        .page { display: none; }
+        .splash-screen { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding: 30px; height: 100vh; width: 100%; position: fixed; top: 0; left: 0; z-index: 2; }
+        .card-section { background: rgba(255, 255, 255, 0.94); border-radius: 12px; padding: 20px 15px; margin: 15px 0; border: 1px solid #dee2e6; color: #212529; z-index: 3; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
+        .card-section h2 { color: #0056b3; font-size: 1.7rem; margin-bottom: 1rem; }
+        .card-section h5 { color: #0056b3; font-size: 1.3rem; margin-bottom: 0.8rem; }
         .btn { padding: 10px 18px; font-size: 0.95rem; border-radius: 25px; border: none; margin: 6px; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; cursor: pointer; font-weight: 600; line-height: 1.5; }
         .btn:disabled { cursor: not-allowed; opacity: 0.65; }
         .btn-primary { background-color: #007bff; color: white; } .btn-primary:hover, .btn-primary:focus { background-color: #0056b3; transform: scale(1.03); }
@@ -78,51 +39,43 @@ Mobile version<!DOCTYPE html>
         .btn-info { background-color: #0dcaf0; color: black; } .btn-info:hover, .btn-info:focus { background-color: #31d2f2; transform: scale(1.03); color: black;}
         .btn-outline-secondary { border: 2px solid #6c757d; color: #6c757d; background-color: transparent; } .btn-outline-secondary:hover, .btn-outline-secondary:focus { background-color: #6c757d; color: white; }
         .btn-outline-light { border: 2px solid #f8f9fa; color: #f8f9fa; background-color: transparent; } .btn-outline-light:hover, .btn-outline-light:focus { background-color: #f8f9fa; color: #000; }
-        .btn-sm { padding: 6px 12px; font-size: 0.875rem; border-radius: 20px; font-weight: normal; margin: 4px; } /* Slightly larger sm */
-        .btn-lg { padding: 12px 26px; font-size: 1.1rem; } /* Slightly adjusted lg */
-
-        /* --- Forms --- */
-        .form-label { font-weight: 600; color: #495057; font-size: 0.95rem; margin-bottom: 0.3rem;} /* Adjusted size/margin */
-        .form-control, .form-select { border-radius: 8px; margin-bottom: 1rem; border: 1px solid #ced4da; padding: 0.5rem 0.8rem; font-size: 0.95rem; } /* Adjusted padding/size */
-        .form-control:focus, .form-select:focus { border-color: #86b7fe; box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25); } /* Slightly smaller shadow */
+        .btn-sm { padding: 6px 12px; font-size: 0.875rem; border-radius: 20px; font-weight: normal; margin: 4px; }
+        .btn-lg { padding: 12px 26px; font-size: 1.1rem; }
+        .form-label { font-weight: 600; color: #495057; font-size: 0.95rem; margin-bottom: 0.3rem;}
+        .form-control, .form-select { border-radius: 8px; margin-bottom: 1rem; border: 1px solid #ced4da; padding: 0.5rem 0.75rem; font-size: 0.95rem; }
+        .form-control:focus, .form-select:focus { border-color: #86b7fe; box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25); }
         .form-check-label { color: #212529; font-size: 0.95rem;}
         #verifierEndModalSection { display: none; }
-
-        /* --- Tables --- */
-        .card-section .table { background: white; border-radius: 8px; color: #212529; border: 1px solid #dee2e6; margin-top: 1rem; font-size: 0.9rem; } /* Adjusted base size */
-        .card-section .table thead { background-color: #f8f9fa; font-weight: 600; } /* Bolder head */
-        .card-section .table th, .card-section .table td { border-color: #dee2e6; vertical-align: middle; padding: 0.5rem; } /* Adjusted padding */
+        .card-section .table { background: white; border-radius: 8px; color: #212529; border: 1px solid #dee2e6; margin-top: 1rem; font-size: 0.9rem; }
+        .card-section .table thead { background-color: #f8f9fa; font-weight: 600; }
+        .card-section .table th, .card-section .table td { border-color: #dee2e6; vertical-align: middle; padding: 0.5rem; }
         .card-section .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: rgba(0, 0, 0, 0.03); }
         .card-section .table-bordered { border: 1px solid #dee2e6; }
         .card-section .table-hover tbody tr:hover > * { background-color: rgba(0, 0, 0, 0.06); }
-
-        /* --- Unified Modal Style --- */
         .modal { z-index: 1050; } .modal-backdrop { z-index: 1040; opacity: 0.5; }
         .modal-content { background: #f8f9fa; color: #212529; border: 1px solid #dee2e6; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .modal-header { background-color: #e9ecef; color: #212529; border-bottom: 1px solid #dee2e6; border-top-left-radius: 15px; border-top-right-radius: 15px; padding: 0.8rem 1rem; }
         .modal-footer { background-color: #e9ecef; border-top: 1px solid #dee2e6; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; display: flex; justify-content: flex-end; flex-wrap: wrap; padding: 0.6rem 1rem; }
         .modal-title { color: #0056b3; font-weight: 700; font-size: 1.15rem;}
         .modal-header .btn-close { filter: none; background-size: 0.75em; margin: -0.4rem -0.4rem -0.4rem auto; }
-        .modal-body { background-color: #ffffff; color: #212529; padding: 1rem 1.2rem; font-size: 0.95rem; } /* Adjusted default size */
+        .modal-body { background-color: #ffffff; color: #212529; padding: 1rem 1.2rem; font-size: 0.95rem; }
         #restoreSessionModal .modal-body, #endSessionModal .modal-body { color: #212529 !important; }
-
-        /* --- Saved Scorecards Modal --- */
         #savedScorecardsList.card-section { background: transparent; border: none; padding: 0; margin: 0; }
         #savedScorecardsModal .scorecard-entry { border: 1px solid #dee2e6; border-radius: 8px; margin-bottom: 15px; background-color: #ffffff; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
-        #savedScorecardsModal .scorecard-item { cursor: pointer; padding: 10px 15px; border-bottom: 1px solid #dee2e6; color: #212529; transition: background-color 0.2s; font-size: 0.9rem; } /* Adjusted */
+        #savedScorecardsModal .scorecard-item { cursor: pointer; padding: 10px 15px; border-bottom: 1px solid #dee2e6; color: #212529; transition: background-color 0.2s; font-size: 0.9rem; }
         #savedScorecardsModal .scorecard-item:hover { background-color: #f8f9fa; }
         #savedScorecardsModal .scorecard-entry .scorecard-item.details-visible { border-bottom: 1px solid #dee2e6; }
-        #savedScorecardsModal .scorecard-item i.bi { transition: transform 0.2s ease-in-out; color: #6c757d; font-size: 1.1em; } /* Slightly bigger icon */
+        #savedScorecardsModal .scorecard-item i.bi { transition: transform 0.2s ease-in-out; color: #6c757d; font-size: 1.1em; }
         #savedScorecardsModal .scorecard-item i.bi-chevron-down { transform: rotate(90deg); }
-        #savedScorecardsModal .scorecard-item .text-muted { color: #6c757d !important; font-size: 0.85em; } /* Smaller muted text */
-        #savedScorecardsModal .scorecard-details { display: none; padding: 15px; background-color: #ffffff; border-top: none; margin-top: 0; border-radius: 0 0 8px 8px; color: #212529; font-size: 0.9rem; } /* Base size for details */
+        #savedScorecardsModal .scorecard-item .text-muted { color: #6c757d !important; font-size: 0.85em; }
+        #savedScorecardsModal .scorecard-details { display: none; padding: 15px; background-color: #ffffff; border-top: none; margin-top: 0; border-radius: 0 0 8px 8px; color: #212529; font-size: 0.9rem; }
         #savedScorecardsModal .scorecard-details h6 { font-weight: 700; margin-top: 10px; margin-bottom: 8px; color: #0056b3; border-bottom: 1px solid #e9ecef; padding-bottom: 4px; font-size: 1.1em; }
         #savedScorecardsModal .scorecard-details h6:first-of-type { margin-top: 0; }
         #savedScorecardsModal .scorecard-details p { margin-bottom: 8px; color: #212529; }
         #savedScorecardsModal .scorecard-details hr { margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #dee2e6; background-color: transparent; height: 1px; opacity: 1; }
-        #savedScorecardsModal .scorecard-details .table { margin-bottom: 15px; background-color: #ffffff; color: #212529; border: 1px solid #dee2e6; font-size: 0.9em; } /* Smaller table in details */
+        #savedScorecardsModal .scorecard-details .table { margin-bottom: 15px; background-color: #ffffff; color: #212529; border: 1px solid #dee2e6; font-size: 0.9em; }
         #savedScorecardsModal .scorecard-details .table thead { background-color: #f8f9fa; color: #495057; }
-        #savedScorecardsModal .scorecard-details .table th, #savedScorecardsModal .scorecard-details .table td { border-color: #dee2e6; border-bottom-width: 1px; vertical-align: middle; padding: 0.4rem;} /* Smaller padding */
+        #savedScorecardsModal .scorecard-details .table th, #savedScorecardsModal .scorecard-details .table td { border-color: #dee2e6; border-bottom-width: 1px; vertical-align: middle; padding: 0.4rem;}
         #savedScorecardsModal .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: rgba(0, 0, 0, 0.03); }
         #savedScorecardsModal .scorecard-details .btn-actions-group { margin-top: 15px; padding-top: 15px; border-top: 1px solid #e9ecef;}
         #savedScorecardsModal .scorecard-details .btn { margin-top: 5px; margin-right: 5px; }
@@ -433,7 +386,7 @@ Mobile version<!DOCTYPE html>
         function deleteFish(idx){if(idx>=0&&idx<fishData.length){const{species,length}=fishData[idx];if(confirm(`Delete ${species||'?'} (${length||'?'}cm)?`)){console.log("Deleting:",idx);fishData.splice(idx,1);updateFishLog();saveTempSession();}}else{console.error("Invalid delete idx:",idx);}}
         function backFromFishing() { console.log("Back from Fishing."); showPage('registrationPage'); }
 
-        // *** UPDATED: Shows the single confirmation modal, adjusts visibility of verifier inside ***
+        // *** Shows the single confirmation modal, adjusts visibility of verifier inside ***
         function showEndSessionModal() {
             console.log("End Session button clicked.");
             const modalEl = document.getElementById('endSessionModal');
@@ -463,14 +416,14 @@ Mobile version<!DOCTYPE html>
             modalInstance.show();
         }
 
-        // *** UPDATED: Handles single confirm button, includes conditional verifier check ***
+        // *** Handles single confirm button, includes conditional verifier check ***
         function confirmEndSession() {
             console.log("Confirm End button clicked.");
 
             // 1. Basic Data Validation (Globals)
             if (!currentAngler || !currentDate || !currentVenue) {
                 alert("Cannot save session: Missing Angler Name, Date, or Venue information.");
-                hideModal('endSessionModal'); // Hide modal before navigating
+                hideModal('endSessionModal');
                 showPage('registrationPage');
                 return;
             }
@@ -481,17 +434,9 @@ Mobile version<!DOCTYPE html>
             // 2. Competition Verifier Validation (If applicable)
             if (isCompetition) {
                  const verifierInput = document.getElementById('verifierEndModalInput');
-                 if (!verifierInput) {
-                     console.error("Verifier input missing inside modal during save!");
-                     alert("Error: Verifier field is missing. Cannot save competition scorecard.");
-                     return; // Stop saving
-                 }
+                 if (!verifierInput) { console.error("Verifier input missing inside modal!"); alert("Error: Verifier field missing."); return; }
                  verifierName = verifierInput.value.trim();
-                 if (!verifierName) {
-                     alert("Competition Scorecard: Please enter the verifier's name in the modal.");
-                     verifierInput.focus(); // Keep focus in modal
-                     return; // Stop saving, keep modal open
-                 }
+                 if (!verifierName) { alert("Competition Scorecard: Please enter the verifier's name in the modal."); verifierInput.focus(); return; }
             }
 
             // 3. Hide modal *before* attempting save
@@ -499,27 +444,11 @@ Mobile version<!DOCTYPE html>
 
             // 4. Prepare and Save Data
             console.log("Validation passed. Proceeding to save data with verifier:", verifierName);
-            const sessionData = {
-                currentAngler, currentDate, currentVenue, currentZone, currentPeg,
-                verifier: verifierName, // Will be null if not competition or invalid
-                notes: null, // Initialize notes field
-                fishData: fishData || []
-            };
+            const sessionData = { currentAngler, currentDate, currentVenue, currentZone, currentPeg, verifier: verifierName, notes: null, fishData: fishData || [] };
             const id = `scorecard_${Date.now()}`;
-            try {
-                localStorage.setItem(id, JSON.stringify(sessionData));
-                console.log("Saved:", id, sessionData);
-                alert("Scorecard saved successfully!");
-                clearTempSession();
-                resetApp(); // This includes deactivateAppMode()
-                showPage('splashScreen');
-            } catch(e) {
-                console.error("Save err:", e);
-                alert("Save failed. Local storage might be full or disabled.");
-                showPage('fishingPage'); // Stay on fishing page on failure
-            }
+            try { localStorage.setItem(id, JSON.stringify(sessionData)); console.log("Saved:", id, sessionData); alert("Scorecard saved successfully!"); clearTempSession(); resetApp(); showPage('splashScreen'); }
+            catch(e) { console.error("Save err:", e); alert("Save failed."); showPage('fishingPage'); }
         }
-        // Removed confirmEndSessionWithVerifier and saveScorecardData functions
 
         // --- Tally Page ---
         function populateTallySummaryFields() { try{document.getElementById('summaryAngler').textContent=currentAngler||'?'; document.getElementById('summaryDate').textContent=currentDate?formatDate(currentDate):'?'; document.getElementById('summaryVenue').textContent=currentVenue||'?'; document.getElementById('summaryZone').textContent=currentZone||'?'; document.getElementById('summaryPeg').textContent=currentPeg||'?'; document.getElementById('summaryVerifier').innerHTML = '';}catch(e){} }
@@ -548,7 +477,7 @@ Mobile version<!DOCTYPE html>
             console.log(`Total scorecards found: ${scorecards.length}`);
 
             const displayLimit = 4;
-            // *** UPDATED createScorecardElement function ***
+            // *** UPDATED createScorecardElement function (removed comments) ***
              const createScorecardElement = (key, data, isLatest) => {
                  try {
                      const w = document.createElement('div');
@@ -564,7 +493,6 @@ Mobile version<!DOCTYPE html>
                         ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${eK}', event)"><i class="bi bi-eye me-1"></i>View Note</button>`
                         : '';
 
-                     // Removed placeholder comments and reordered buttons
                      w.innerHTML = `<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest ? '<span class="badge ms-2">Latest</span>' : ''}</div>
                         <div class="scorecard-details" id="details_${key}">
                             <h6>Session Details</h6>
@@ -698,11 +626,13 @@ Mobile version<!DOCTYPE html>
                  // --- Service Worker Registration ---
                  if ('serviceWorker' in navigator) {
                      window.addEventListener('load', () => {
+                         // *** YOU MUST EDIT THIS PATH TO MATCH YOUR REPO NAME/STRUCTURE ***
+                         // Examples: '/YourRepoName/sw.js' or '/sw.js'
                          navigator.serviceWorker.register('/Sea-Catch-Scorer/sw.js') // <<< EDIT THIS PATH!!!
                              .then(reg => console.log('SW registered scope: ', reg.scope))
                              .catch(err => console.error('SW registration failed: ', err));
                      });
-                 } else { console.log('Service workers not supported.'); }
+                 } else { console.log('Service workers are not supported.'); }
                  // --- End Service Worker Registration ---
 
                  window.addEventListener('popstate', handleBackButton); window.addEventListener('beforeunload', handleBeforeUnload); console.log("Nav listeners attached.");
