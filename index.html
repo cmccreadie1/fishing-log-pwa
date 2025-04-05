@@ -1,4 +1,4 @@
-LAST KNOWN <!DOCTYPE html>
+NO PLACEHOLDERS<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -93,7 +93,7 @@ LAST KNOWN <!DOCTYPE html>
         .modal-title { color: #0056b3; font-weight: 700; }
         .modal-header .btn-close { filter: none; background-size: 0.75em; }
         .modal-body { background-color: #ffffff; color: #212529; padding: 20px; }
-        #restoreSessionModal .modal-body, #endSessionModal .modal-body, #verifierModal .modal-body { color: #212529 !important; } /* Ensure dark text */
+        #restoreSessionModal .modal-body, #endSessionModal .modal-body { color: #212529 !important; }
 
         /* --- Saved Scorecards Modal --- */
         #savedScorecardsList.card-section { background: transparent; border: none; padding: 0; margin: 0; }
@@ -257,10 +257,11 @@ LAST KNOWN <!DOCTYPE html>
                      <p><strong>Date:</strong> <span id="restoreDate"></span></p>
                      <p><strong>Fish Caught:</strong> <span id="restoreFishCount"></span></p>
                  </div>
-                 {/* <!-- *** UPDATED Footer for Restore Modal *** --> */}
-                 <div class="modal-footer justify-content-between"> {/* Use justify-content-between for spacing */}
-                     <button type="button" class="btn btn-danger" id="startNewSessionBtn">Start New Session</button> {/* Changed to btn-danger */}
-                     <button type="button" class="btn btn-success btn-lg" id="restoreSessionBtn">Restore Session</button> {/* Changed to btn-success and btn-lg */}
+                 {/* <!-- *** UPDATED Footer for Restore Modal - Order, Style, Centering *** --> */}
+                 <div class="modal-footer d-block text-center"> {/* Use d-block and text-center for stacking */}
+                     <button type="button" class="btn btn-success btn-lg mb-2" id="restoreSessionBtn">Restore Session</button> {/* Green, Large, Margin Bottom */}
+                     <br> {/* Force break */}
+                     <button type="button" class="btn btn-danger" id="startNewSessionBtn">Start New Session</button> {/* Red */}
                  </div>
              </div>
          </div>
@@ -381,7 +382,7 @@ LAST KNOWN <!DOCTYPE html>
         function clearTempSession() { try { localStorage.removeItem('temp_session'); console.log("Temp cleared."); } catch (e) { console.error("Clear temp err:", e); } }
         function checkRestoreSession() { let data; try { const temp = localStorage.getItem('temp_session'); if (!temp) { showPage('splashScreen'); return; } data = JSON.parse(temp); if (!data || !Array.isArray(data.fishData)) throw new Error("Invalid format."); } catch (e) { console.error("Read temp err:", e); clearTempSession(); showPage('splashScreen'); return; } if (data.currentAngler || data.currentDate || data.currentVenue || data.fishData.length > 0) { console.log("Found session, show modal."); document.getElementById('restoreAngler').textContent=data.currentAngler||'N/A'; document.getElementById('restoreDate').textContent=data.currentDate?formatDate(data.currentDate):'N/A'; document.getElementById('restoreFishCount').textContent=data.fishData.length; const modalEl=document.getElementById('restoreSessionModal'); if(modalEl){let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false}); mI.show();}else{console.error("Restore modal missing.");clearTempSession();showPage('splashScreen');} } else { clearTempSession(); showPage('splashScreen'); } }
         function restoreSession() { console.log("Restore clicked."); let temp; try { const sS=localStorage.getItem('temp_session'); if(!sS)throw new Error("No data."); temp=JSON.parse(sS); if(!temp||!Array.isArray(temp.fishData))throw new Error("Invalid format."); } catch(e){console.error("Restore err:",e);alert("Failed restore.");startNewSession();return;} fishData=temp.fishData||[]; currentAngler=temp.currentAngler||null; currentDate=temp.currentDate||null; currentVenue=temp.currentVenue||null; currentZone=temp.currentZone||null; currentPeg=temp.currentPeg||null; const page=temp.currentPage||'registrationPage'; isAppActive=temp.isAppActive||false; historyHijacked=temp.historyHijacked||false; console.log("Restoring to:",page,"App active:",isAppActive); try{if(currentAngler)document.getElementById('anglerName').value=currentAngler; if(currentDate)document.getElementById('competitionDate').value=currentDate; if(currentVenue)document.getElementById('venueInput').value=currentVenue; const isComp=!!(currentZone||currentPeg); document.getElementById('isCompetition').checked=isComp; toggleCompetitionFields(); if(currentZone)document.getElementById('zoneInput').value=currentZone; if(currentPeg)document.getElementById('pegInput').value=currentPeg;}catch(e){console.error("Restore reg fields err:",e);} if(page==='fishingPage'||page==='tallyPage'){populateSpeciesDropdown(); if(page==='fishingPage'){updateFishLog();}else if(page==='tallyPage'){populateTallySummaryFields();populateTallyTable();}} hideModal('restoreSessionModal'); showPage(page); if(isAppActive && !historyHijacked){history.pushState({appActive:true},'',location.href); historyHijacked=true; console.log("Pushed history after restore.");} console.log("Session restored."); }
-        function startNewSession() { console.log("Start New."); clearTempSession(); resetApp(); hideModal('restoreSessionModal'); showPage('splashScreen'); }
+        function startNewSession() { console.log("Start New Session confirmed after prompt."); clearTempSession(); resetApp(); hideModal('restoreSessionModal'); showPage('splashScreen'); }
 
         // --- UI Interaction ---
         function populateSpeciesDropdown() { const input=document.getElementById('speciesInput'); if(!input) {console.error("Species dropdown missing!"); return;} const cats=Object.keys(fishCategories).sort(); input.innerHTML='<option value="" selected disabled>Select species</option><option value="Other">Other</option>'; cats.forEach(cat=>{const group=document.createElement('optgroup'); group.label=cat; const species=[...fishCategories[cat]].sort(); species.forEach(s=>{const opt=document.createElement('option'); opt.value=s; opt.textContent=s; group.appendChild(opt);}); input.appendChild(group);}); console.log("Species dropdown populated."); }
@@ -511,8 +512,7 @@ LAST KNOWN <!DOCTYPE html>
             console.log(`Total scorecards found: ${scorecards.length}`);
 
             const displayLimit = 4;
-            // *** UPDATED createScorecardElement function ***
-             const createScorecardElement = (key, data, isLatest) => {
+            const createScorecardElement = (key, data, isLatest) => {
                  try {
                      const w = document.createElement('div');
                      w.className = `scorecard-entry${isLatest ? ' latest-scorecard' : ''}`;
@@ -523,12 +523,10 @@ LAST KNOWN <!DOCTYPE html>
                      const lFS = lF ? `${lF.species || '?'}(${lF.length || '?'}cm)` : 'N/A';
                      const eK = key.replace(/'/g, "\\'");
 
-                     // Conditionally create View Note button HTML
                      const viewNoteButtonHtml = (data.notes && data.notes.trim() !== '')
                         ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${eK}', event)"><i class="bi bi-eye me-1"></i>View Note</button>`
                         : '';
 
-                     // Removed placeholder comments and reordered buttons
                      w.innerHTML = `<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest ? '<span class="badge ms-2">Latest</span>' : ''}</div>
                         <div class="scorecard-details" id="details_${key}">
                             <h6>Session Details</h6>
@@ -615,7 +613,18 @@ LAST KNOWN <!DOCTYPE html>
         }
 
         // --- Application Reset ---
-        function resetApp() { console.log("Resetting app."); fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen'; deactivateAppMode(); try { document.getElementById('anglerName').value=''; document.getElementById('competitionDate').value=''; document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; toggleCompetitionFields(); document.getElementById('speciesInput').value=''; document.getElementById('customSpeciesInput').value=''; document.getElementById('customSpeciesInput').style.display='none'; document.getElementById('lengthInput').value=''; document.getElementById('fishLog').innerHTML=''; const vI=document.getElementById('verifierEndModalInput'); if(vI)vI.value='';const vS=document.getElementById('verifierEndModalSection');if(vS)vS.style.display='none'; populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm'; } catch(e) { console.error("Error resetting forms:", e); } }
+        function resetApp() {
+            console.log("Resetting app.");
+            fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen';
+            deactivateAppMode();
+            try {
+               document.getElementById('anglerName').value=''; document.getElementById('competitionDate').value=''; document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; toggleCompetitionFields(); document.getElementById('speciesInput').value=''; document.getElementById('customSpeciesInput').value=''; document.getElementById('customSpeciesInput').style.display='none'; document.getElementById('lengthInput').value=''; document.getElementById('fishLog').innerHTML='';
+               // Clear and hide verifier input inside modal
+               const vI = document.getElementById('verifierEndModalInput'); if(vI) vI.value='';
+               const vS = document.getElementById('verifierEndModalSection'); if(vS) vS.style.display='none';
+               populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm';
+            } catch(e) { console.error("Error resetting forms:", e); }
+        }
 
         // --- Initialisation ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -632,7 +641,7 @@ LAST KNOWN <!DOCTYPE html>
                  // --- End Service Worker Registration ---
 
                  window.addEventListener('popstate', handleBackButton); window.addEventListener('beforeunload', handleBeforeUnload); console.log("Nav listeners attached.");
-                 const refs = { continueBtn: document.getElementById('continueBtn'), viewScorecardsBtn: document.getElementById('viewScorecardsBtn'), startRecordingBtn: document.getElementById('startRecordingBtn'), isCompetitionCheck: document.getElementById('isCompetition'), speciesSelect: document.getElementById('speciesInput'), addFishBtn: document.getElementById('addFishBtn'), backFromFishingBtn: document.getElementById('backFromFishingBtn'), endSessionBtn: document.getElementById('endSessionBtn'), confirmEndBtn: document.getElementById('confirmEndBtn'), backFromTallyBtn: document.getElementById('backFromTallyBtn'), closeModalBtn: document.getElementById('closeModalBtn'), restoreSessionBtn: document.getElementById('restoreSessionBtn'), startNewSessionBtn: document.getElementById('startNewSessionBtn'), anglerNameInput: document.getElementById('anglerName'), competitionDateInput: document.getElementById('competitionDate'), venueInput: document.getElementById('venueInput'), zoneSelect: document.getElementById('zoneInput'), pegSelect: document.getElementById('pegInput') /* No verifier input ref needed here */ };
+                 const refs = { continueBtn: document.getElementById('continueBtn'), viewScorecardsBtn: document.getElementById('viewScorecardsBtn'), startRecordingBtn: document.getElementById('startRecordingBtn'), isCompetitionCheck: document.getElementById('isCompetition'), speciesSelect: document.getElementById('speciesInput'), addFishBtn: document.getElementById('addFishBtn'), backFromFishingBtn: document.getElementById('backFromFishingBtn'), endSessionBtn: document.getElementById('endSessionBtn'), confirmEndBtn: document.getElementById('confirmEndBtn'), backFromTallyBtn: document.getElementById('backFromTallyBtn'), closeModalBtn: document.getElementById('closeModalBtn'), restoreSessionBtn: document.getElementById('restoreSessionBtn'), startNewSessionBtn: document.getElementById('startNewSessionBtn'), anglerNameInput: document.getElementById('anglerName'), competitionDateInput: document.getElementById('competitionDate'), venueInput: document.getElementById('venueInput'), zoneSelect: document.getElementById('zoneInput'), pegSelect: document.getElementById('pegInput') };
                  // Add listeners checking if ref exists
                  if (refs.continueBtn) refs.continueBtn.addEventListener('click', startApp);
                  if (refs.viewScorecardsBtn) refs.viewScorecardsBtn.addEventListener('click', showScorecardsModal);
@@ -646,7 +655,19 @@ LAST KNOWN <!DOCTYPE html>
                  // Removed verifier modal button listener
                  if (refs.backFromTallyBtn) refs.backFromTallyBtn.addEventListener('click', backFromTally);
                  if (refs.restoreSessionBtn) refs.restoreSessionBtn.addEventListener('click', restoreSession);
-                 if (refs.startNewSessionBtn) refs.startNewSessionBtn.addEventListener('click', startNewSession);
+                 // *** UPDATED listener for Start New Session Button ***
+                 if (refs.startNewSessionBtn) {
+                      refs.startNewSessionBtn.addEventListener('click', function() {
+                            if (confirm("Starting a new session will discard the currently unsaved session data. Are you sure?")) {
+                                console.log("User confirmed discarding session.");
+                                startNewSession(); // Proceed only if user clicks OK
+                            } else {
+                                console.log("User cancelled discarding session.");
+                            }
+                      });
+                 } else {
+                      console.error("Missing: startNewSessionBtn");
+                 }
                  // Input listeners
                  if (refs.anglerNameInput) refs.anglerNameInput.addEventListener('input', () => { currentAngler = refs.anglerNameInput.value.trim(); saveTempSession(); });
                  if (refs.competitionDateInput) refs.competitionDateInput.addEventListener('change', () => { currentDate = refs.competitionDateInput.value; saveTempSession(); });
