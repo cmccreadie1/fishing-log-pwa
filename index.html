@@ -133,8 +133,51 @@
             <div class="mb-3"> <label for="competitionDate" class="form-label">Date</label> <input type="date" id="competitionDate" class="form-control"> </div>
             <div class="mb-3"> <label for="venueInput" class="form-label">Venue</label> <input type="text" id="venueInput" class="form-control" placeholder="Enter venue"> </div>
             <div class="mb-3 form-check"> <input type="checkbox" class="form-check-input" id="isCompetition"> <label class="form-check-label" for="isCompetition">Competition</label> </div>
-            <div class="mb-3"> <label for="zoneInput" class="form-label">Zone</label> <select id="zoneInput" class="form-select" disabled> <option value="" selected>Select a zone</option> <option value="A">A</option> <option value="B">B</option> <option value="C">C</option> <option value="D">D</option> </select> </div>
-            <div class="mb-3"> <label for="pegInput" class="form-label">Peg</label> <select id="pegInput" class="form-select" disabled> <option value="" selected>Select a peg</option> <option value="1">1</option> <option value="2">2</option> <option value="3">3</option> <option value="4">4</option> <option value="5">5</option> <option value="6">6</option> <option value="7">7</option> <option value="8">8</option> </select> </div>
+            <div class="mb-3">
+                 <label for="zoneInput" class="form-label">Zone</label>
+                 <select id="zoneInput" class="form-select" disabled>
+                    <option value="" selected>Select a zone</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option> <!-- Added E -->
+                    <option value="F">F</option> <!-- Added F -->
+                    <option value="G">G</option> <!-- Added G -->
+                    <option value="H">H</option> <!-- Added H -->
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="pegInput" class="form-label">Peg</label>
+                <select id="pegInput" class="form-select" disabled>
+                    <option value="" selected>Select a peg</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>   <!-- Added 9 -->
+                    <option value="10">10</option> <!-- Added 10 -->
+                    <option value="11">11</option> <!-- Added 11 -->
+                    <option value="12">12</option> <!-- Added 12 -->
+                    <option value="13">13</option> <!-- Added 13 -->
+                    <option value="14">14</option> <!-- Added 14 -->
+                    <option value="15">15</option> <!-- Added 15 -->
+                    <option value="16">16</option> <!-- Added 16 -->
+                    <option value="17">17</option> <!-- Added 17 -->
+                    <option value="18">18</option> <!-- Added 18 -->
+                    <option value="19">19</option> <!-- Added 19 -->
+                    <option value="20">20</option> <!-- Added 20 -->
+                    <option value="21">21</option> <!-- Added 21 -->
+                    <option value="22">22</option> <!-- Added 22 -->
+                    <option value="23">23</option> <!-- Added 23 -->
+                    <option value="24">24</option> <!-- Added 24 -->
+                    <option value="25">25</option> <!-- Added 25 -->
+                 </select>
+            </div>
             <div class="text-center">
                 <button class="btn btn-primary" id="startRecordingBtn">Record Catch <i class="bi bi-arrow-right-circle ms-1"></i></button>
             </div>
@@ -382,7 +425,7 @@
         function toggleScorecardDetails(key, element){console.log("Toggle:",key); const d=document.getElementById(`details_${key}`), i=element.querySelector('i.bi'); if(d){const v=d.style.display==='block'; d.style.display=v?'none':'block'; if(i){i.classList.toggle('bi-chevron-right',v);i.classList.toggle('bi-chevron-down',!v);} element.classList.toggle('details-visible',!v);}else{console.error("Details missing:",key);}}
         function deleteScorecard(key, event){event.stopPropagation(); console.log("Delete:",key); let sN=`card ${key.slice(-6)}`; try{const d=JSON.parse(localStorage.getItem(key)||'{}'); sN=`card for ${d.currentAngler||'?'} on ${formatDate(d.currentDate||'')}`;}catch(e){} if(confirm(`Delete ${sN}? Cannot undo.`)){try{localStorage.removeItem(key);console.log("Deleted:",key);loadScorecards();}catch(e){console.error("Delete err:",e);alert("Failed delete.");}}else{console.log("Delete cancel.");}}
 
-        // *** emailScorecard function (using mailto: and \r\n) ***
+        // *** Email Scorecard function (using mailto:) ***
         function emailScorecard(key, event) {
             event.stopPropagation(); console.log("Emailing:", key);
             alert("This will open your default email app. Please add recipients and send. Formatting may vary by email client."); // Inform user
@@ -440,6 +483,7 @@
                  if (refs.endSessionBtn) refs.endSessionBtn.addEventListener('click', showEndSessionModal);
                  if (refs.confirmEndBtn) refs.confirmEndBtn.addEventListener('click', confirmEndSession);
                  if (refs.backFromTallyBtn) refs.backFromTallyBtn.addEventListener('click', backFromTally);
+                 // closeModalBtn uses data-bs-dismiss
                  if (refs.restoreSessionBtn) refs.restoreSessionBtn.addEventListener('click', restoreSession);
                  if (refs.startNewSessionBtn) refs.startNewSessionBtn.addEventListener('click', startNewSession);
                  if (refs.anglerNameInput) refs.anglerNameInput.addEventListener('input', () => { currentAngler = refs.anglerNameInput.value.trim(); saveTempSession(); });
