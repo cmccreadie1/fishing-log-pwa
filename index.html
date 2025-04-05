@@ -1,4 +1,4 @@
-TEST<!DOCTYPE html>
+PWA TEST<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -327,7 +327,7 @@ TEST<!DOCTYPE html>
         function clearTempSession() { try { localStorage.removeItem('temp_session'); console.log("Temp cleared."); } catch (e) { console.error("Clear temp err:", e); } }
         function checkRestoreSession() { let data; try { const temp = localStorage.getItem('temp_session'); if (!temp) { showPage('splashScreen'); return; } data = JSON.parse(temp); if (!data || !Array.isArray(data.fishData)) throw new Error("Invalid format."); } catch (e) { console.error("Read temp err:", e); clearTempSession(); showPage('splashScreen'); return; } if (data.currentAngler || data.currentDate || data.currentVenue || data.fishData.length > 0) { console.log("Found session, show modal."); document.getElementById('restoreAngler').textContent=data.currentAngler||'N/A'; document.getElementById('restoreDate').textContent=data.currentDate?formatDate(data.currentDate):'N/A'; document.getElementById('restoreFishCount').textContent=data.fishData.length; const modalEl=document.getElementById('restoreSessionModal'); if(modalEl){let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false}); mI.show();}else{console.error("Restore modal missing.");clearTempSession();showPage('splashScreen');} } else { clearTempSession(); showPage('splashScreen'); } }
         function restoreSession() { console.log("Restore clicked."); let temp; try { const sS=localStorage.getItem('temp_session'); if(!sS)throw new Error("No data."); temp=JSON.parse(sS); if(!temp||!Array.isArray(temp.fishData))throw new Error("Invalid format."); } catch(e){console.error("Restore err:",e);alert("Failed restore.");startNewSession();return;} fishData=temp.fishData||[]; currentAngler=temp.currentAngler||null; currentDate=temp.currentDate||null; currentVenue=temp.currentVenue||null; currentZone=temp.currentZone||null; currentPeg=temp.currentPeg||null; const page=temp.currentPage||'registrationPage'; isAppActive=temp.isAppActive||false; historyHijacked=temp.historyHijacked||false; console.log("Restoring to:",page,"App active:",isAppActive); try{if(currentAngler)document.getElementById('anglerName').value=currentAngler; if(currentDate)document.getElementById('competitionDate').value=currentDate; if(currentVenue)document.getElementById('venueInput').value=currentVenue; const isComp=!!(currentZone||currentPeg); document.getElementById('isCompetition').checked=isComp; toggleCompetitionFields(); if(currentZone)document.getElementById('zoneInput').value=currentZone; if(currentPeg)document.getElementById('pegInput').value=currentPeg;}catch(e){console.error("Restore reg fields err:",e);} if(page==='fishingPage'||page==='tallyPage'){populateSpeciesDropdown(); if(page==='fishingPage'){updateFishLog();}else if(page==='tallyPage'){populateTallySummaryFields();populateTallyTable();}} hideModal('restoreSessionModal'); showPage(page); if(isAppActive && !historyHijacked){history.pushState({appActive:true},'',location.href); historyHijacked=true; console.log("Pushed history after restore.");} console.log("Session restored."); }
-        function startNewSession() { console.log("Start New triggered (post-confirmation)."); clearTempSession(); resetApp(); hideModal('restoreSessionModal'); showPage('splashScreen'); } // Note: hideModal is called here, after confirmation logic handles the flow
+        function startNewSession() { console.log("Start New triggered (post-confirmation)."); clearTempSession(); resetApp(); hideModal('restoreSessionModal'); showPage('splashScreen'); }
 
         // --- UI Interaction ---
         function populateSpeciesDropdown() { const input=document.getElementById('speciesInput'); if(!input) {console.error("Species dropdown missing!"); return;} const cats=Object.keys(fishCategories).sort(); input.innerHTML='<option value="" selected disabled>Select species</option><option value="Other">Other</option>'; cats.forEach(cat=>{const group=document.createElement('optgroup'); group.label=cat; const species=[...fishCategories[cat]].sort(); species.forEach(s=>{const opt=document.createElement('option'); opt.value=s; opt.textContent=s; group.appendChild(opt);}); input.appendChild(group);}); console.log("Species dropdown populated."); }
@@ -555,10 +555,11 @@ TEST<!DOCTYPE html>
         document.addEventListener('DOMContentLoaded', () => {
             console.log("DOM loaded.");
             try {
-                 // --- Service Worker Registration ---
+                 // --- Service Worker Registration --- // PWA ELEMENT
                  if ('serviceWorker' in navigator) {
                      window.addEventListener('load', () => {
-                         navigator.serviceWorker.register('/Sea-Catch-Scorer/sw.js') // <<< EDIT THIS PATH IF NEEDED!!!
+                         // Ensure this path is correct for your deployment!
+                         navigator.serviceWorker.register('sw.js') // Example: Changed path to root
                              .then(reg => console.log('SW registered scope: ', reg.scope))
                              .catch(err => console.error('SW registration failed: ', err));
                      });
@@ -580,7 +581,7 @@ TEST<!DOCTYPE html>
                      backFromTallyBtn: document.getElementById('backFromTallyBtn'),
                      closeModalBtn: document.getElementById('closeModalBtn'),
                      restoreSessionBtn: document.getElementById('restoreSessionBtn'),
-                     startNewSessionBtn: document.getElementById('startNewSessionBtn'), // Reference needed for the listener below
+                     startNewSessionBtn: document.getElementById('startNewSessionBtn'),
                      anglerNameInput: document.getElementById('anglerName'),
                      competitionDateInput: document.getElementById('competitionDate'),
                      venueInput: document.getElementById('venueInput'),
@@ -602,20 +603,16 @@ TEST<!DOCTYPE html>
                  if (refs.backFromTallyBtn) refs.backFromTallyBtn.addEventListener('click', backFromTally);
                  if (refs.restoreSessionBtn) refs.restoreSessionBtn.addEventListener('click', restoreSession);
 
-                 // ****** MODIFIED LISTENER FOR START NEW SESSION ******
+                 // Modified listener for Start New Session with confirmation
                  if (refs.startNewSessionBtn) {
                      refs.startNewSessionBtn.addEventListener('click', () => {
-                         // Show confirmation dialog
                          if (confirm("Discard the previous unsaved session data and start fresh? This action cannot be undone.")) {
-                             // User confirmed (clicked OK)
                              startNewSession();
                          } else {
-                             // User cancelled - do nothing, the modal remains open
                              console.log("User cancelled starting a new session.");
                          }
                      });
                  }
-                 // ****** END MODIFIED LISTENER ******
 
                  if (refs.closeAppBtn) {
                     refs.closeAppBtn.addEventListener('click', () => {
