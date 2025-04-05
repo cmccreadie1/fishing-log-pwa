@@ -428,20 +428,26 @@
             if (!verifierName) { alert("Please enter the verifier's name."); verifierInput.focus(); return; }
 
             hideModal('verifierModal'); // Hide this modal first
-            saveScorecardData(verifierName); // Pass the name to the central save function
+
+            // Capture current state BEFORE calling save
+            const angler = currentAngler;
+            const date = currentDate;
+            const venue = currentVenue;
+            console.log("Calling saveScorecardData from Verifier flow with:", { angler, date, venue, verifierName });
+            saveScorecardData(angler, date, venue, verifierName); // Pass captured values AND verifier
         }
 
-        // *** REFINED saveScorecardData function ***
-        function saveScorecardData(verifierName = null) {
-            // Log added previously:
-            console.log("saveScorecardData called. Verifier:", verifierName, "Globals:", { currentAngler, currentDate, currentVenue });
+        // *** REFINED saveScorecardData function - ACCEPTS ARGUMENTS ***
+        function saveScorecardData(angler, date, venue, verifierName = null) {
+            // Log the data received by the function
+            console.log("saveScorecardData called. Received Args:", { angler, date, venue, verifierName });
 
-             // 1. Validation - Perform this check immediately and exit if failed.
-             if (!currentAngler || !currentDate || !currentVenue) {
-                 console.error("Save ABORTED: Missing essential data.", { currentAngler, currentDate, currentVenue });
+             // 1. Validation - Use the PASSED arguments, not globals directly
+             if (!angler || !date || !venue) {
+                 console.error("Save ABORTED: Missing essential data in arguments.", { angler, date, venue });
                  // NOTE: Uses alert(), browser will add prefix.
-                 alert("Cannot save session: Missing Angler Name, Date, or Venue information. Please return to registration details.");
-                 // Ensure modals are hidden if somehow still open
+                 alert("Cannot save session: Missing Angler Name, Date, or Venue information at time of save initiation. Please return to registration details.");
+                 // Ensure modals are hidden
                  hideModal('endSessionModal');
                  hideModal('verifierModal');
                  showPage('registrationPage'); // Guide user back to fix the missing data
@@ -451,10 +457,14 @@
             // --- If validation passes, proceed with saving ---
             console.log("Validation passed. Proceeding with save.");
 
-            // 2. Prepare Data
+            // 2. Prepare Data - Use arguments and potentially zone/peg globals (less critical)
             const sessionData = {
-                currentAngler, currentDate, currentVenue, currentZone, currentPeg,
-                verifier: verifierName, // Will be null if not provided
+                currentAngler: angler, // Use arg
+                currentDate: date,     // Use arg
+                currentVenue: venue,   // Use arg
+                currentZone: currentZone, // Okay to use global here
+                currentPeg: currentPeg,     // Okay to use global here
+                verifier: verifierName,
                 notes: null, // Initialize notes field (saved separately via notes modal)
                 fishData: fishData || []
             };
@@ -466,11 +476,9 @@
                 console.log("Scorecard saved successfully to localStorage:", id);
 
                 // 4. Inform User (wait for acknowledgement)
-                // NOTE: Uses alert(), browser will add prefix.
                 alert("Scorecard saved successfully!");
 
                 // 5. Clean up and Navigate ONLY AFTER success alert is dismissed
-                // It's crucial these happen *after* the save is confirmed and alerted.
                 console.log("Performing post-save cleanup and navigation...");
                 clearTempSession();
                 resetApp(); // This includes deactivateAppMode()
@@ -479,10 +487,8 @@
 
             } catch(e) {
                 console.error("Save to localStorage failed:", e);
-                // NOTE: Uses alert(), browser will add prefix.
                 alert("Save failed. Local storage might be full or disabled.");
-                // Don't reset state on failure, allow retry from current page
-                showPage(currentPage); // Stay on the current page (likely 'fishingPage')
+                showPage(currentPage); // Stay on the current page
             }
         }
 
@@ -604,6 +610,7 @@
         function viewNote(key, event) { event.stopPropagation(); console.log('Viewing notes for key:', key); try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; const notes=data.notes||''; alert(`Notes for scorecard:\n--------------------\n${notes || '(No notes saved)'}`); } catch (e) { console.error('Error retrieving notes:', e); alert('Could not retrieve notes.'); } }
         // --- End Notes Functions ---
 
+
         // --- General Modal Hiding/Showing ---
         function hideModal(modalId) { const mE=document.getElementById(modalId); if(mE){const m=bootstrap.Modal.getInstance(mE); if(m){m.hide();}else{mE.classList.remove('show');mE.style.display='none';const b=document.querySelector('.modal-backdrop');if(b)b.remove();document.body.classList.remove('modal-open');document.body.style.overflow='';document.body.style.paddingRight='';}}}
         function showModal(modalId) { const modalElement = document.getElementById(modalId); if(modalElement) { const instance = bootstrap.Modal.getOrCreateInstance(modalElement, {backdrop: 'static', keyboard: false}); instance.show(); } else { console.error(`Modal element #${modalId} not found!`); } }
@@ -636,17 +643,24 @@
                  if (refs.addFishBtn) refs.addFishBtn.addEventListener('click', addFish);
                  if (refs.backFromFishingBtn) refs.backFromFishingBtn.addEventListener('click', backFromFishing);
                  if (refs.endSessionBtn) refs.endSessionBtn.addEventListener('click', initiateEndSessionFlow); // Changed target function
+
                  // *** UPDATED listener for standard confirm ***
                  if (refs.confirmEndBtn) {
                       refs.confirmEndBtn.addEventListener('click', function() {
                            console.log("Standard Confirm & Save button clicked.");
-                           console.log("State right before calling saveScorecardData (non-comp):", { angler: currentAngler, date: currentDate, venue: currentVenue });
-                           saveScorecardData(); // Call save, relying on up-to-date globals
+                           // Capture current state BEFORE calling save
+                           const angler = currentAngler;
+                           const date = currentDate;
+                           const venue = currentVenue;
+                           console.log("Calling saveScorecardData from Standard flow with:", { angler, date, venue });
+                           saveScorecardData(angler, date, venue); // Pass captured values, verifier defaults to null
                       });
                  } else {
                       console.error("Missing: confirmEndBtn");
                  }
-                 if (refs.confirmEndWithVerifierBtn) refs.confirmEndWithVerifierBtn.addEventListener('click', confirmEndSessionWithVerifier); // Verifier save
+                 // Listener for verifier confirm button
+                 if (refs.confirmEndWithVerifierBtn) refs.confirmEndWithVerifierBtn.addEventListener('click', confirmEndSessionWithVerifier);
+
                  if (refs.backFromTallyBtn) refs.backFromTallyBtn.addEventListener('click', backFromTally);
                  if (refs.restoreSessionBtn) refs.restoreSessionBtn.addEventListener('click', restoreSession);
                  if (refs.startNewSessionBtn) refs.startNewSessionBtn.addEventListener('click', startNewSession);
