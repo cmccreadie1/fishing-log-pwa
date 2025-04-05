@@ -431,17 +431,27 @@
             saveScorecardData(verifierName); // Pass the name to the central save function
         }
 
-        // *** UPDATED: Central function for the actual saving logic ***
+        // *** REFINED saveScorecardData function ***
         function saveScorecardData(verifierName = null) {
             // Log added previously:
             console.log("saveScorecardData called. Verifier:", verifierName, "Globals:", { currentAngler, currentDate, currentVenue });
 
+             // 1. Validation - Perform this check immediately and exit if failed.
              if (!currentAngler || !currentDate || !currentVenue) {
+                 console.error("Save ABORTED: Missing essential data.", { currentAngler, currentDate, currentVenue });
+                 // NOTE: Uses alert(), browser will add prefix.
                  alert("Cannot save session: Missing Angler Name, Date, or Venue information. Please return to registration details.");
-                 showPage('registrationPage');
-                 return;
+                 // Ensure modals are hidden if somehow still open
+                 hideModal('endSessionModal');
+                 hideModal('verifierModal');
+                 showPage('registrationPage'); // Guide user back to fix the missing data
+                 return; // Stop execution immediately
              }
-            // Build the final data object
+
+            // --- If validation passes, proceed with saving ---
+            console.log("Validation passed. Proceeding with save.");
+
+            // 2. Prepare Data
             const sessionData = {
                 currentAngler, currentDate, currentVenue, currentZone, currentPeg,
                 verifier: verifierName, // Will be null if not provided
@@ -449,15 +459,30 @@
                 fishData: fishData || []
             };
             const id = `scorecard_${Date.now()}`;
+
+            // 3. Attempt Save to localStorage
             try {
                 localStorage.setItem(id, JSON.stringify(sessionData));
-                console.log("Scorecard saved:", id, sessionData);
+                console.log("Scorecard saved successfully to localStorage:", id);
+
+                // 4. Inform User (wait for acknowledgement)
+                // NOTE: Uses alert(), browser will add prefix.
                 alert("Scorecard saved successfully!");
-                clearTempSession(); resetApp(); showPage('splashScreen');
+
+                // 5. Clean up and Navigate ONLY AFTER success alert is dismissed
+                // It's crucial these happen *after* the save is confirmed and alerted.
+                console.log("Performing post-save cleanup and navigation...");
+                clearTempSession();
+                resetApp(); // This includes deactivateAppMode()
+                showPage('splashScreen'); // Navigate away
+                console.log("Cleanup and navigation complete.");
+
             } catch(e) {
-                console.error("Save err:", e);
+                console.error("Save to localStorage failed:", e);
+                // NOTE: Uses alert(), browser will add prefix.
                 alert("Save failed. Local storage might be full or disabled.");
-                showPage('fishingPage'); // Stay on fishing page on failure
+                // Don't reset state on failure, allow retry from current page
+                showPage(currentPage); // Stay on the current page (likely 'fishingPage')
             }
         }
 
@@ -504,7 +529,7 @@
                      // Conditionally create View Note button HTML
                      const viewNoteButtonHtml = (data.notes && data.notes.trim() !== '')
                         ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${eK}', event)"><i class="bi bi-eye me-1"></i>View Note</button>`
-                        : ''; // Empty string if no notes
+                        : '';
 
                      // Removed placeholder comments and reordered buttons
                      w.innerHTML = `<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest ? '<span class="badge ms-2">Latest</span>' : ''}</div>
@@ -579,7 +604,6 @@
         function viewNote(key, event) { event.stopPropagation(); console.log('Viewing notes for key:', key); try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; const notes=data.notes||''; alert(`Notes for scorecard:\n--------------------\n${notes || '(No notes saved)'}`); } catch (e) { console.error('Error retrieving notes:', e); alert('Could not retrieve notes.'); } }
         // --- End Notes Functions ---
 
-
         // --- General Modal Hiding/Showing ---
         function hideModal(modalId) { const mE=document.getElementById(modalId); if(mE){const m=bootstrap.Modal.getInstance(mE); if(m){m.hide();}else{mE.classList.remove('show');mE.style.display='none';const b=document.querySelector('.modal-backdrop');if(b)b.remove();document.body.classList.remove('modal-open');document.body.style.overflow='';document.body.style.paddingRight='';}}}
         function showModal(modalId) { const modalElement = document.getElementById(modalId); if(modalElement) { const instance = bootstrap.Modal.getOrCreateInstance(modalElement, {backdrop: 'static', keyboard: false}); instance.show(); } else { console.error(`Modal element #${modalId} not found!`); } }
@@ -616,7 +640,7 @@
                  if (refs.confirmEndBtn) {
                       refs.confirmEndBtn.addEventListener('click', function() {
                            console.log("Standard Confirm & Save button clicked.");
-                           console.log("State right before calling saveScorecardData (non-comp):", { angler: currentAngler, date: currentDate, venue: currentVenue }); // Added log
+                           console.log("State right before calling saveScorecardData (non-comp):", { angler: currentAngler, date: currentDate, venue: currentVenue });
                            saveScorecardData(); // Call save, relying on up-to-date globals
                       });
                  } else {
@@ -638,6 +662,7 @@
                  const verifierModalElement = document.getElementById('verifierModal');
                  if (notesModalElement) { notesModalInstance = new bootstrap.Modal(notesModalElement); } else { console.error("Notes Modal element (#notesModal) not found!"); }
                  if (verifierModalElement) { verifierModalInstance = new bootstrap.Modal(verifierModalElement, {backdrop: 'static', keyboard: false}); } else { console.error("Verifier Modal element (#verifierModal) not found!"); }
+
 
                  checkRestoreSession();
              } catch (error) { console.error("Fatal init error:", error); document.body.innerHTML = `<div class="alert alert-danger m-5">App Error: ${error.message}. Please refresh.</div>`; }
