@@ -373,7 +373,8 @@
         let isAppActive = false;
         let historyHijacked = false;
         let notesModalInstance = null;
-        let verifierModalInstance = null; // Added instance for verifier modal
+        let verifierModalInstance = null;
+        let dataForSave = null; // <<<--- NEW GLOBAL VARIABLE FOR SNAPSHOT
 
         // --- Utility Functions ---
         function formatDate(dateString) { if (!dateString) return 'N/A'; try { const d = new Date(dateString + 'T00:00:00Z'); return isNaN(d.getTime()) ? dateString : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }); } catch (e) { console.error("Date format err:", e); return dateString; } }
@@ -403,93 +404,52 @@
         function deleteFish(idx){if(idx>=0&&idx<fishData.length){const{species,length}=fishData[idx];if(confirm(`Delete ${species||'?'} (${length||'?'}cm)?`)){console.log("Deleting:",idx);fishData.splice(idx,1);updateFishLog();saveTempSession();}}else{console.error("Invalid delete idx:",idx);}}
         function backFromFishing() { console.log("Back from Fishing."); showPage('registrationPage'); }
 
-        // *** UPDATED: Checks if competition and shows appropriate modal ***
+        // *** UPDATED: Captures data BEFORE showing modal ***
         function initiateEndSessionFlow() {
             console.log("Initiating End Session Flow...");
-            const isCompetition = !!(currentZone && currentPeg);
-
-            if (isCompetition) {
-                console.log("Competition detected, showing Verifier Modal.");
-                const verifierInput = document.getElementById('verifierModalInput');
-                if(verifierInput) verifierInput.value = ''; // Clear field before showing
-                showModal('verifierModal'); // Use helper function to show
-            } else {
-                console.log("Not a competition, showing standard End Session Modal.");
-                showModal('endSessionModal'); // Use helper function to show
-            }
+            // --- CAPTURE DATA SNAPSHOT ---
+            dataForSave = { angler: currentAngler, date: currentDate, venue: currentVenue, zone: currentZone, peg: currentPeg, fishData: [...fishData] };
+            console.log("Data captured for potential save:", dataForSave);
+            // --- END CAPTURE ---
+            const isCompetition = !!(dataForSave.zone && dataForSave.peg); // Check snapshot
+            if (isCompetition) { console.log("Competition detected, showing Verifier Modal."); const vI=document.getElementById('verifierModalInput'); if(vI)vI.value=''; showModal('verifierModal'); }
+            else { console.log("Not a competition, showing standard End Session Modal."); showModal('endSessionModal'); }
         }
 
-        // *** NEW: Handles save after Verifier Modal confirmation ***
+        // *** UPDATED: Uses snapshot data ***
         function confirmEndSessionWithVerifier() {
             console.log("Confirming End Session with Verifier.");
             const verifierInput = document.getElementById('verifierModalInput');
             if (!verifierInput) { alert("Error: Cannot find verifier input field."); return; }
             const verifierName = verifierInput.value.trim();
             if (!verifierName) { alert("Please enter the verifier's name."); verifierInput.focus(); return; }
-
-            hideModal('verifierModal'); // Hide this modal first
-
-            // Capture current state BEFORE calling save
-            const angler = currentAngler;
-            const date = currentDate;
-            const venue = currentVenue;
-            console.log("Calling saveScorecardData from Verifier flow with:", { angler, date, venue, verifierName });
-            saveScorecardData(angler, date, venue, verifierName); // Pass captured values AND verifier
+            hideModal('verifierModal');
+            if (!dataForSave) { console.error("Save aborted: dataForSave snapshot missing!"); alert("Critical error: Data missing."); return; }
+            console.log("Calling saveScorecardData from Verifier flow using snapshot.");
+            saveScorecardData(dataForSave, verifierName); // Pass snapshot and verifier
         }
 
-        // *** REFINED saveScorecardData function - ACCEPTS ARGUMENTS ***
-        function saveScorecardData(angler, date, venue, verifierName = null) {
-            // Log the data received by the function
-            console.log("saveScorecardData called. Received Args:", { angler, date, venue, verifierName });
-
-             // 1. Validation - Use the PASSED arguments, not globals directly
-             if (!angler || !date || !venue) {
-                 console.error("Save ABORTED: Missing essential data in arguments.", { angler, date, venue });
-                 // NOTE: Uses alert(), browser will add prefix.
-                 alert("Cannot save session: Missing Angler Name, Date, or Venue information at time of save initiation. Please return to registration details.");
-                 // Ensure modals are hidden
-                 hideModal('endSessionModal');
-                 hideModal('verifierModal');
-                 showPage('registrationPage'); // Guide user back to fix the missing data
-                 return; // Stop execution immediately
+        // *** REVISED saveScorecardData function - USES SNAPSHOT OBJECT ***
+        function saveScorecardData(snapshotData, verifierName = null) {
+            console.log("Executing saveScorecardData. Received Snapshot:", snapshotData, "Verifier:", verifierName);
+            // 1. Validation - Use the SNAPSHOT data
+             if (!snapshotData || !snapshotData.angler || !snapshotData.date || !snapshotData.venue) {
+                 console.error("Save ABORTED: Missing essential data in snapshot.", snapshotData);
+                 alert("Cannot save session: Missing Angler Name, Date, or Venue information in captured data.");
+                 hideModal('endSessionModal'); hideModal('verifierModal'); dataForSave = null; // Clear snapshot
+                 showPage('registrationPage'); return;
              }
-
-            // --- If validation passes, proceed with saving ---
             console.log("Validation passed. Proceeding with save.");
-
-            // 2. Prepare Data - Use arguments and potentially zone/peg globals (less critical)
-            const sessionData = {
-                currentAngler: angler, // Use arg
-                currentDate: date,     // Use arg
-                currentVenue: venue,   // Use arg
-                currentZone: currentZone, // Okay to use global here
-                currentPeg: currentPeg,     // Okay to use global here
-                verifier: verifierName,
-                notes: null, // Initialize notes field (saved separately via notes modal)
-                fishData: fishData || []
-            };
+            // 2. Prepare Data - Use snapshot data
+            const sessionData = { currentAngler: snapshotData.angler, currentDate: snapshotData.date, currentVenue: snapshotData.venue, currentZone: snapshotData.zone, currentPeg: snapshotData.peg, verifier: verifierName, notes: null, fishData: snapshotData.fishData || [] };
             const id = `scorecard_${Date.now()}`;
-
             // 3. Attempt Save to localStorage
-            try {
-                localStorage.setItem(id, JSON.stringify(sessionData));
-                console.log("Scorecard saved successfully to localStorage:", id);
-
-                // 4. Inform User (wait for acknowledgement)
+            try { localStorage.setItem(id, JSON.stringify(sessionData)); console.log("Scorecard saved successfully to localStorage:", id);
+                // 4. Inform User
                 alert("Scorecard saved successfully!");
-
-                // 5. Clean up and Navigate ONLY AFTER success alert is dismissed
-                console.log("Performing post-save cleanup and navigation...");
-                clearTempSession();
-                resetApp(); // This includes deactivateAppMode()
-                showPage('splashScreen'); // Navigate away
-                console.log("Cleanup and navigation complete.");
-
-            } catch(e) {
-                console.error("Save to localStorage failed:", e);
-                alert("Save failed. Local storage might be full or disabled.");
-                showPage(currentPage); // Stay on the current page
-            }
+                // 5. Clean up and Navigate
+                console.log("Performing post-save cleanup and navigation..."); clearTempSession(); resetApp(); showPage('splashScreen'); console.log("Cleanup and navigation complete.");
+            } catch(e) { console.error("Save to localStorage failed:", e); alert("Save failed. Local storage might be full or disabled."); dataForSave = null; showPage(currentPage); }
         }
 
 
@@ -616,7 +576,14 @@
         function showModal(modalId) { const modalElement = document.getElementById(modalId); if(modalElement) { const instance = bootstrap.Modal.getOrCreateInstance(modalElement, {backdrop: 'static', keyboard: false}); instance.show(); } else { console.error(`Modal element #${modalId} not found!`); } }
 
         // --- Application Reset ---
-        function resetApp() { console.log("Resetting app."); fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen'; deactivateAppMode(); try { document.getElementById('anglerName').value=''; document.getElementById('competitionDate').value=''; document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; toggleCompetitionFields(); document.getElementById('speciesInput').value=''; document.getElementById('customSpeciesInput').value=''; document.getElementById('customSpeciesInput').style.display='none'; document.getElementById('lengthInput').value=''; document.getElementById('fishLog').innerHTML=''; /* Verifier input removed */ populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm'; } catch(e) { console.error("Error resetting forms:", e); } }
+        function resetApp() {
+            console.log("Resetting app.");
+            fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen';
+            dataForSave = null; // <<<--- CLEAR THE SNAPSHOT VARIABLE
+            deactivateAppMode(); // Turn off back button block
+            try { /* ... rest of form clearing ... */ }
+            catch(e) { console.error("Error resetting forms:", e); }
+        }
 
         // --- Initialisation ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -648,12 +615,10 @@
                  if (refs.confirmEndBtn) {
                       refs.confirmEndBtn.addEventListener('click', function() {
                            console.log("Standard Confirm & Save button clicked.");
-                           // Capture current state BEFORE calling save
-                           const angler = currentAngler;
-                           const date = currentDate;
-                           const venue = currentVenue;
-                           console.log("Calling saveScorecardData from Standard flow with:", { angler, date, venue });
-                           saveScorecardData(angler, date, venue); // Pass captured values, verifier defaults to null
+                           // Use the snapshot data captured earlier
+                           if (!dataForSave) { console.error("Save aborted: dataForSave snapshot is missing!"); alert("Critical error: Data snapshot missing."); return; }
+                           console.log("Calling saveScorecardData from Standard flow using snapshot.");
+                           saveScorecardData(dataForSave); // Pass snapshot, verifier defaults to null
                       });
                  } else {
                       console.error("Missing: confirmEndBtn");
