@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+TEST<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -190,9 +190,7 @@
              <br>
              <button class="btn btn-outline-light btn-lg" id="viewScorecardsBtn">View Saved Scorecards <i class="bi bi-journal-bookmark ms-1"></i></button>
              <br>
-             <!-- ****** CLOSE APP BUTTON ADDED ****** -->
              <button class="btn btn-secondary btn-lg mt-3" id="closeAppBtn">Close App <i class="bi bi-x-circle ms-1"></i></button>
-             <!-- ****** END CLOSE APP BUTTON ****** -->
         </div>
     </div>
 
@@ -329,7 +327,7 @@
         function clearTempSession() { try { localStorage.removeItem('temp_session'); console.log("Temp cleared."); } catch (e) { console.error("Clear temp err:", e); } }
         function checkRestoreSession() { let data; try { const temp = localStorage.getItem('temp_session'); if (!temp) { showPage('splashScreen'); return; } data = JSON.parse(temp); if (!data || !Array.isArray(data.fishData)) throw new Error("Invalid format."); } catch (e) { console.error("Read temp err:", e); clearTempSession(); showPage('splashScreen'); return; } if (data.currentAngler || data.currentDate || data.currentVenue || data.fishData.length > 0) { console.log("Found session, show modal."); document.getElementById('restoreAngler').textContent=data.currentAngler||'N/A'; document.getElementById('restoreDate').textContent=data.currentDate?formatDate(data.currentDate):'N/A'; document.getElementById('restoreFishCount').textContent=data.fishData.length; const modalEl=document.getElementById('restoreSessionModal'); if(modalEl){let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false}); mI.show();}else{console.error("Restore modal missing.");clearTempSession();showPage('splashScreen');} } else { clearTempSession(); showPage('splashScreen'); } }
         function restoreSession() { console.log("Restore clicked."); let temp; try { const sS=localStorage.getItem('temp_session'); if(!sS)throw new Error("No data."); temp=JSON.parse(sS); if(!temp||!Array.isArray(temp.fishData))throw new Error("Invalid format."); } catch(e){console.error("Restore err:",e);alert("Failed restore.");startNewSession();return;} fishData=temp.fishData||[]; currentAngler=temp.currentAngler||null; currentDate=temp.currentDate||null; currentVenue=temp.currentVenue||null; currentZone=temp.currentZone||null; currentPeg=temp.currentPeg||null; const page=temp.currentPage||'registrationPage'; isAppActive=temp.isAppActive||false; historyHijacked=temp.historyHijacked||false; console.log("Restoring to:",page,"App active:",isAppActive); try{if(currentAngler)document.getElementById('anglerName').value=currentAngler; if(currentDate)document.getElementById('competitionDate').value=currentDate; if(currentVenue)document.getElementById('venueInput').value=currentVenue; const isComp=!!(currentZone||currentPeg); document.getElementById('isCompetition').checked=isComp; toggleCompetitionFields(); if(currentZone)document.getElementById('zoneInput').value=currentZone; if(currentPeg)document.getElementById('pegInput').value=currentPeg;}catch(e){console.error("Restore reg fields err:",e);} if(page==='fishingPage'||page==='tallyPage'){populateSpeciesDropdown(); if(page==='fishingPage'){updateFishLog();}else if(page==='tallyPage'){populateTallySummaryFields();populateTallyTable();}} hideModal('restoreSessionModal'); showPage(page); if(isAppActive && !historyHijacked){history.pushState({appActive:true},'',location.href); historyHijacked=true; console.log("Pushed history after restore.");} console.log("Session restored."); }
-        function startNewSession() { console.log("Start New."); clearTempSession(); resetApp(); hideModal('restoreSessionModal'); showPage('splashScreen'); }
+        function startNewSession() { console.log("Start New triggered (post-confirmation)."); clearTempSession(); resetApp(); hideModal('restoreSessionModal'); showPage('splashScreen'); } // Note: hideModal is called here, after confirmation logic handles the flow
 
         // --- UI Interaction ---
         function populateSpeciesDropdown() { const input=document.getElementById('speciesInput'); if(!input) {console.error("Species dropdown missing!"); return;} const cats=Object.keys(fishCategories).sort(); input.innerHTML='<option value="" selected disabled>Select species</option><option value="Other">Other</option>'; cats.forEach(cat=>{const group=document.createElement('optgroup'); group.label=cat; const species=[...fishCategories[cat]].sort(); species.forEach(s=>{const opt=document.createElement('option'); opt.value=s; opt.textContent=s; group.appendChild(opt);}); input.appendChild(group);}); console.log("Species dropdown populated."); }
@@ -580,15 +578,15 @@
                      endSessionBtn: document.getElementById('endSessionBtn'),
                      confirmEndBtn: document.getElementById('confirmEndBtn'),
                      backFromTallyBtn: document.getElementById('backFromTallyBtn'),
-                     closeModalBtn: document.getElementById('closeModalBtn'), // Note: This ID might not exist depending on which modal context it was intended for
+                     closeModalBtn: document.getElementById('closeModalBtn'),
                      restoreSessionBtn: document.getElementById('restoreSessionBtn'),
-                     startNewSessionBtn: document.getElementById('startNewSessionBtn'),
+                     startNewSessionBtn: document.getElementById('startNewSessionBtn'), // Reference needed for the listener below
                      anglerNameInput: document.getElementById('anglerName'),
                      competitionDateInput: document.getElementById('competitionDate'),
                      venueInput: document.getElementById('venueInput'),
                      zoneSelect: document.getElementById('zoneInput'),
                      pegSelect: document.getElementById('pegInput'),
-                     closeAppBtn: document.getElementById('closeAppBtn') // ****** REFERENCE FOR NEW BUTTON ******
+                     closeAppBtn: document.getElementById('closeAppBtn')
                  };
 
                  // Add listeners checking if ref exists
@@ -603,16 +601,28 @@
                  if (refs.confirmEndBtn) refs.confirmEndBtn.addEventListener('click', confirmEndSession);
                  if (refs.backFromTallyBtn) refs.backFromTallyBtn.addEventListener('click', backFromTally);
                  if (refs.restoreSessionBtn) refs.restoreSessionBtn.addEventListener('click', restoreSession);
-                 if (refs.startNewSessionBtn) refs.startNewSessionBtn.addEventListener('click', startNewSession);
 
-                 // ****** LISTENER FOR NEW BUTTON ******
+                 // ****** MODIFIED LISTENER FOR START NEW SESSION ******
+                 if (refs.startNewSessionBtn) {
+                     refs.startNewSessionBtn.addEventListener('click', () => {
+                         // Show confirmation dialog
+                         if (confirm("Discard the previous unsaved session data and start fresh? This action cannot be undone.")) {
+                             // User confirmed (clicked OK)
+                             startNewSession();
+                         } else {
+                             // User cancelled - do nothing, the modal remains open
+                             console.log("User cancelled starting a new session.");
+                         }
+                     });
+                 }
+                 // ****** END MODIFIED LISTENER ******
+
                  if (refs.closeAppBtn) {
                     refs.closeAppBtn.addEventListener('click', () => {
                         console.warn("Attempting to close window via window.close(). Note: This often fails due to browser security restrictions unless the window was opened by script.");
                         window.close();
                     });
                  }
-                 // ****** END LISTENER FOR NEW BUTTON ******
 
                  // Input listeners
                  if (refs.anglerNameInput) refs.anglerNameInput.addEventListener('input', () => { currentAngler = refs.anglerNameInput.value.trim(); saveTempSession(); });
