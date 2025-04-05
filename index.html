@@ -1,4 +1,4 @@
-bedrest<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -249,14 +249,14 @@ bedrest<!DOCTYPE html>
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to end your session? This will save the scorecard.</p>
-                    
+                    {/* <!-- Verifier Input Section (Added Here, initially hidden) --> */}
                     <div id="verifierEndModalSection" class="mt-3" style="display: none;">
                         <hr>
                         <label for="verifierEndModalInput" class="form-label"><strong>Competition Verifier</strong> <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="verifierEndModalInput" placeholder="Enter name of verifier" required>
                         <small class="text-muted">Required for competition scorecards.</small>
                     </div>
-                    
+                    {/* <!-- End Verifier Section --> */}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelEndSessionBtn">Cancel</button>
