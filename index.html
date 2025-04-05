@@ -1,4 +1,4 @@
-TEST VERSION<!DOCTYPE html>
+TEST 2<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -74,7 +74,7 @@ TEST VERSION<!DOCTYPE html>
         .form-control, .form-select { border-radius: 8px; margin-bottom: 15px; border: 1px solid #ced4da; }
         .form-control:focus, .form-select:focus { border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); }
         .form-check-label { color: #212529; }
-        /* Style for Verifier Field in Modal */
+        /* Style for Verifier Field */
         #verifierEndModalSection { display: none; } /* Hide by default */
 
         /* --- Tables --- */
@@ -257,11 +257,11 @@ TEST VERSION<!DOCTYPE html>
                      <p><strong>Date:</strong> <span id="restoreDate"></span></p>
                      <p><strong>Fish Caught:</strong> <span id="restoreFishCount"></span></p>
                  </div>
-                 {/* <!-- *** UPDATED Footer for Restore Modal - Order, Style, Centering *** --> */}
-                 <div class="modal-footer d-block text-center"> {/* Use d-block and text-center for stacking */}
-                     <button type="button" class="btn btn-success btn-lg mb-2" id="restoreSessionBtn">Restore Session</button> {/* Green, Large, Margin Bottom */}
-                     <br> {/* Force break */}
-                     <button type="button" class="btn btn-danger" id="startNewSessionBtn">Start New Session</button> {/* Red */}
+                 {/* <!-- UPDATED Footer for Restore Modal - Order, Style, Centering --> */}
+                 <div class="modal-footer d-block text-center">
+                     <button type="button" class="btn btn-success btn-lg mb-2" id="restoreSessionBtn">Restore Session</button>
+                     <br>
+                     <button type="button" class="btn btn-danger" id="startNewSessionBtn">Start New Session</button>
                  </div>
              </div>
          </div>
@@ -299,14 +299,13 @@ TEST VERSION<!DOCTYPE html>
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to end your session? This will save the scorecard.</p>
-                    {/* Verifier Input Section (Removed placeholder comments) */}
+                    {/* Verifier Input Section - Comments Removed */}
                     <div id="verifierEndModalSection" class="mt-3" style="display: none;">
                         <hr>
                         <label for="verifierEndModalInput" class="form-label"><strong>Competition Verifier</strong> <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="verifierEndModalInput" placeholder="Enter name of verifier" required>
                         <small class="text-muted">Required for competition scorecards.</small>
                     </div>
-                    {/* End Verifier Section */}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelEndSessionBtn">Cancel</button>
@@ -487,7 +486,7 @@ TEST VERSION<!DOCTYPE html>
                 showPage('fishingPage');
             }
         }
-        // Removed saveScorecardData function, logic merged into confirmEndSession
+        // Removed confirmEndSessionWithVerifier and saveScorecardData
 
         // --- Tally Page ---
         function populateTallySummaryFields() { try{document.getElementById('summaryAngler').textContent=currentAngler||'?'; document.getElementById('summaryDate').textContent=currentDate?formatDate(currentDate):'?'; document.getElementById('summaryVenue').textContent=currentVenue||'?'; document.getElementById('summaryZone').textContent=currentZone||'?'; document.getElementById('summaryPeg').textContent=currentPeg||'?'; document.getElementById('summaryVerifier').innerHTML = '';}catch(e){} }
@@ -528,12 +527,10 @@ TEST VERSION<!DOCTYPE html>
                      const lFS = lF ? `${lF.species || '?'}(${lF.length || '?'}cm)` : 'N/A';
                      const eK = key.replace(/'/g, "\\'");
 
-                     // Conditionally create View Note button HTML
                      const viewNoteButtonHtml = (data.notes && data.notes.trim() !== '')
                         ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${eK}', event)"><i class="bi bi-eye me-1"></i>View Note</button>`
                         : '';
 
-                     // Removed placeholder comments and reordered buttons
                      w.innerHTML = `<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest ? '<span class="badge ms-2">Latest</span>' : ''}</div>
                         <div class="scorecard-details" id="details_${key}">
                             <h6>Session Details</h6>
@@ -607,7 +604,7 @@ TEST VERSION<!DOCTYPE html>
         // --- End Notes Functions ---
 
 
-        // --- General Modal Hiding ---
+        // --- General Modal Hiding/Showing ---
         function hideModal(modalId) { const mE=document.getElementById(modalId); if(mE){const m=bootstrap.Modal.getInstance(mE); if(m){m.hide();}else{mE.classList.remove('show');mE.style.display='none';const b=document.querySelector('.modal-backdrop');if(b)b.remove();document.body.classList.remove('modal-open');document.body.style.overflow='';document.body.style.paddingRight='';}}}
         function showModal(modalId) { // Helper to show modals programmatically
             const modalElement = document.getElementById(modalId);
@@ -637,7 +634,7 @@ TEST VERSION<!DOCTYPE html>
                  // --- End Service Worker Registration ---
 
                  window.addEventListener('popstate', handleBackButton); window.addEventListener('beforeunload', handleBeforeUnload); console.log("Nav listeners attached.");
-                 const refs = { continueBtn: document.getElementById('continueBtn'), viewScorecardsBtn: document.getElementById('viewScorecardsBtn'), startRecordingBtn: document.getElementById('startRecordingBtn'), isCompetitionCheck: document.getElementById('isCompetition'), speciesSelect: document.getElementById('speciesInput'), addFishBtn: document.getElementById('addFishBtn'), backFromFishingBtn: document.getElementById('backFromFishingBtn'), endSessionBtn: document.getElementById('endSessionBtn'), confirmEndBtn: document.getElementById('confirmEndBtn'), backFromTallyBtn: document.getElementById('backFromTallyBtn'), closeModalBtn: document.getElementById('closeModalBtn'), restoreSessionBtn: document.getElementById('restoreSessionBtn'), startNewSessionBtn: document.getElementById('startNewSessionBtn'), anglerNameInput: document.getElementById('anglerName'), competitionDateInput: document.getElementById('competitionDate'), venueInput: document.getElementById('venueInput'), zoneSelect: document.getElementById('zoneInput'), pegSelect: document.getElementById('pegInput') };
+                 const refs = { continueBtn: document.getElementById('continueBtn'), viewScorecardsBtn: document.getElementById('viewScorecardsBtn'), startRecordingBtn: document.getElementById('startRecordingBtn'), isCompetitionCheck: document.getElementById('isCompetition'), speciesSelect: document.getElementById('speciesInput'), addFishBtn: document.getElementById('addFishBtn'), backFromFishingBtn: document.getElementById('backFromFishingBtn'), endSessionBtn: document.getElementById('endSessionBtn'), confirmEndBtn: document.getElementById('confirmEndBtn'), backFromTallyBtn: document.getElementById('backFromTallyBtn'), closeModalBtn: document.getElementById('closeModalBtn'), restoreSessionBtn: document.getElementById('restoreSessionBtn'), startNewSessionBtn: document.getElementById('startNewSessionBtn'), anglerNameInput: document.getElementById('anglerName'), competitionDateInput: document.getElementById('competitionDate'), venueInput: document.getElementById('venueInput'), zoneSelect: document.getElementById('zoneInput'), pegSelect: document.getElementById('pegInput') /* No verifier input ref needed here */ };
                  // Add listeners checking if ref exists
                  if (refs.continueBtn) refs.continueBtn.addEventListener('click', startApp);
                  if (refs.viewScorecardsBtn) refs.viewScorecardsBtn.addEventListener('click', showScorecardsModal);
