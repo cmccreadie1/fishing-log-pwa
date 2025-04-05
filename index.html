@@ -1,27 +1,26 @@
-PWA4<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sea Catch Scorer</title>
 
-    <!-- ================== PWA & Mobile Elements ================== -->
-    <link rel="manifest" href="manifest.json"> {/* <<< ADDED BACK */}
-    <meta name="theme-color" content="#007bff"> {/* <<< ADDED BACK */}
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png"> {/* <<< ADDED BACK */}
-    <meta name="mobile-web-app-capable" content="yes"> {/* <<< ADDED BACK */}
-    <meta name="apple-mobile-web-app-capable" content="yes"> {/* <<< ADDED BACK */}
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> {/* <<< ADDED BACK */}
-    <meta name="apple-mobile-web-app-title" content="Sea Scorer"> {/* <<< ADDED BACK */}
-    <meta name="application-name" content="Sea Scorer"> {/* <<< ADDED BACK */}
-    {/* ============================================================ */}
+    <!-- ================== PWA & Mobile Elements (Ensure these are present) ================== -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#007bff">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png"> {/* Adjust path if needed */}
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sea Scorer">
+    <meta name="application-name" content="Sea Scorer">
+    {/* ===================================================================================== */}
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS Styles remain the same as your working version */
-        /* --- Base & Global Styles --- */
+        /* CSS Styles remain the same */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Poppins', sans-serif; background: url('https://i.postimg.cc/pLFtxQWs/seacatchscorecard.jpg') no-repeat center/cover fixed; color: #fff; min-height: 100vh; }
         .container { background: rgba(0, 0, 0, 0.7); border-radius: 15px; padding: 20px; margin: 20px auto; max-width: 800px; z-index: 1; display: none; }
@@ -217,7 +216,7 @@ PWA4<!DOCTYPE html>
                      <p><strong>Date:</strong> <span id="restoreDate"></span></p>
                      <p><strong>Fish Caught:</strong> <span id="restoreFishCount"></span></p>
                  </div>
-                 {/* Footer with updated button styles - Comments removed */}
+                 <!-- Footer with updated button styles - Comments Removed -->
                  <div class="modal-footer d-block text-center">
                      <button type="button" class="btn btn-success btn-lg mb-2" id="restoreSessionBtn">Restore Session</button>
                      <br>
@@ -259,7 +258,7 @@ PWA4<!DOCTYPE html>
                 </div>
                 <div class="modal-body" id="endSessionModalBody">
                     <p>Are you sure you want to end your session? This will save the scorecard.</p>
-                    {/* Verifier Input Section - Dynamically added, Comments Removed */}
+                    <!-- Verifier Input Section - Dynamically added, Comments Removed -->
                     <div id="verifierEndModalSection" class="mt-3" style="display: none;">
                         <hr>
                         <label for="verifierEndModalInput" class="form-label"><strong>Competition Verifier</strong> <span class="text-danger">*</span></label>
@@ -307,7 +306,6 @@ PWA4<!DOCTYPE html>
     <!-- Application JS -->
     <script>
         // --- Global Variables ---
-        // *** UPDATED fishCategories object ***
         const fishCategories = {
             "Flatfish": [ "Brill", "Dab", "Flounder", "Halibut", "Megrim", "Plaice", "Sole (Dover)", "Sole (Lemon)", "Turbot" ],
             "Round Fish": [ "Bass", "Bream (Black)", "Bream (Gilthead)", "Bream (Red)", "Bream (Sea)", "Coalfish", "Cod", "Conger Eel", "Dogfish", "Dogfish (Black Mouth)", "Gurnard (Red)", "Gurnard (Tub)", "Haddock", "Hake", "John Dory", "Ling", "Mackerel", "Monkfish", "Mullet (Grey)", "Mullet (Red)", "Pollack", "Poor Cod", "Pouting", "Saithe", "Triggerfish", "Whiting" ], // Removed Smoothhound
