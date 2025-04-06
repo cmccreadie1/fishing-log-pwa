@@ -107,3 +107,17 @@ body {
 #tallyPage.card-section .catch-summary-details { margin-bottom: 20px; color: #495057; }
 #tallyPage.card-section tfoot td, #tallyPage.card-section tfoot strong { color: #212529; }
 #notesModal .modal-body textarea { resize: vertical; min-height: 100px; }
+/* --- Specific style to override dropdown background --- */
+.dropdown-menu {
+  background-color: #e7f1ff !important; /* Light blue background */
+  color: #212529 !important; /* Dark text color */
+}
+
+.dropdown-item {
+  color: #212529 !important; /* Dark text color for items */
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+  background-color: #f8f9fa !important; /* Very light gray on hover/focus */
+  color: #212529 !important; /* Ensure dark text on hover/focus */
+}
