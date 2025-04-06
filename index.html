@@ -29,7 +29,7 @@
             border-radius: 15px;
             padding: 20px;
             margin: 20px auto;
-            max-width: 800px; /* Wider container for content */
+            max-width: 800px;
             z-index: 1;
             display: none; /* Hide initially, show based on page */
         }
@@ -84,7 +84,6 @@
         .card-section .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: rgba(0, 0, 0, 0.03); }
         .card-section .table-bordered { border: 1px solid #dee2e6; }
         .card-section .table-hover tbody tr:hover > * { background-color: rgba(0, 0, 0, 0.06); }
-        .card-section .table-responsive { overflow-x: auto; /* Enable horizontal scroll for tables if needed */ }
 
         /* --- Unified Modal Style --- */
         .modal { z-index: 1050; } .modal-backdrop { z-index: 1040; opacity: 0.5; }
@@ -123,53 +122,6 @@
         #savedScorecardsModal .latest-scorecard.scorecard-entry .scorecard-item .badge { background-color: #007bff !important; color: white !important; font-weight: 600; }
         #olderScorecardsToggleContainer { padding-top: 10px; text-align: center;}
         #olderScorecardsToggleContainer .btn { margin: 5px; } /* Add spacing between View Older and Delete Older */
-
-        /* --- Fish Log Styles (Card-Based) --- */
-        .fish-log-container {
-            margin-top: 15px;
-            display: flex; /* Use flexbox for card layout */
-            flex-direction: column; /* Stack cards vertically */
-            gap: 10px; /* Spacing between fish cards */
-        }
-
-        .fish-card {
-            background-color: white;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 15px;
-            color: #212529;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            display: flex; /* Flex layout for content inside card */
-            flex-direction: row; /* Arrange species and length in a row */
-            justify-content: space-between; /* Space out content */
-            align-items: center; /* Vertically align items in the card */
-        }
-
-        .fish-card-details {
-            flex-grow: 1; /* Allow details to take up available space */
-        }
-
-        .fish-card-actions {
-            flex-shrink: 0; /* Prevent actions from shrinking */
-            margin-left: 15px; /* Space between details and actions */
-        }
-
-        .fish-card h5 {
-            margin-top: 0;
-            margin-bottom: 5px;
-            font-size: 1.1rem; /* Slightly larger species name */
-            color: #0056b3; /* Use heading color for species */
-        }
-
-        .fish-card p {
-            margin: 0; /* Reset paragraph margins in card */
-            font-size: 1rem;
-        }
-        .fish-card .initials {
-            font-style: italic;
-            color: #6c757d; /* Muted color for initials */
-            margin-left: 5px;
-        }
 
 
         /* --- Notes Modal --- */
@@ -243,10 +195,11 @@
             </div>
 
             <h2 class="mt-4">Fish Log</h2>
-            <div class="fish-log-container"> <!-- New container for fish log entries -->
-                <div id="fishLog">
-                    <!-- Fish entries will be dynamically added here as cards -->
-                </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead> <tr> <th>Species</th> <th>Length (cm)</th> <th id="verifiedByHeader" style="display:none;">Verified By</th> <th class="text-end">Action</th> </tr> </thead>
+                    <tbody id="fishLog"></tbody>
+                </table>
             </div>
 
             <!-- Verifier section removed -->
@@ -467,13 +420,13 @@
 
                 zone.disabled=!check; peg.disabled=!check;
                 initialsGroup.style.display = check ? 'block' : 'none'; // Show/hide initials input
-                verifiedByHeader.style.display = check ? 'none' : 'none'; // Hide "Verified By" column header in card layout - not needed
+                verifiedByHeader.style.display = check ? 'table-cell' : 'none'; // Show/hide "Verified By" column header
 
                 if(!check){
                     zone.value='';peg.value='';currentZone=null;currentPeg=null;
                     if (initialsInput) initialsInput.value = ''; // Clear initials input if competition is unchecked
                 }
-                updateFishLog(); // Re-render fish log
+                updateFishLog(); // Re-render fish log to show/hide "Verified By" column
             }catch(e){console.error("Toggle comp fields err:",e);}
         }
 
@@ -509,21 +462,20 @@
 
 
         function updateFishLog() {
-            const log = document.getElementById('fishLog');
-            const isCompetition = document.getElementById('isCompetition').checked;
+            const log=document.getElementById('fishLog');
+            const isCompetition = document.getElementById('isCompetition').checked; // Check competition status
+            const verifiedByHeader = document.getElementById('verifiedByHeader'); // Get the "Verified By" header
 
-            if (!log) return;
-            log.innerHTML = fishData.map((f, i) => {
-                const initialsSpan = isCompetition && f.initials ? `<span class="initials">(${f.initials})</span>` : ''; // Initials span, only if competition and initials exist
-                return `
-                    <div class="fish-card">
-                        <div class="fish-card-details">
-                            <h5>${f.species || '?'} ${initialsSpan}</h5> <p>Length: ${f.length || '?'} cm</p>
-                        </div>
-                        <div class="fish-card-actions">
-                            <button class="btn btn-danger btn-sm" onclick="deleteFish(${i})"><i class="bi bi-trash"></i></button>
-                        </div>
-                    </div>`;
+            if(!log) return;
+
+            verifiedByHeader.style.display = isCompetition ? 'table-cell' : 'none'; // Show/hide header
+
+            log.innerHTML = fishData.map((f,i)=> {
+                let verifiedByCell = '';
+                if (isCompetition) {
+                    verifiedByCell = `<td>${f.initials || '-'}</td>`; // Display initials if competition, or '-' if null/empty
+                }
+                return `<tr><td>${f.species||'?'}</td><td>${f.length||'?'}</td>${verifiedByCell}<td class="text-end"><button class="btn btn-danger btn-sm" onclick="deleteFish(${i})"><i class="bi bi-trash"></i></button></td></tr>`;
             }).join('');
         }
 
@@ -760,7 +712,7 @@
             event.stopPropagation(); console.log("Emailing:", key);
             alert("This will open your default email app. Notes are NOT included.");
 
-            let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || not data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error getting data: ${error.message}`); return; }
+            let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error getting data: ${error.message}`); return; }
             let body = "Sea Catch Scorecard\r\n=====================\r\n\r\n";
             body += "Session Details:\r\n"; body += `Angler: ${data.currentAngler||'?'}\r\n`; body += `Date: ${formatDate(data.currentDate||'')}\r\n`; body += `Venue: ${data.currentVenue||'?'}\r\n`; if(data.currentZone)body+=`Zone: ${data.currentZone}\r\n`; if(data.currentPeg)body+=`Peg: ${data.currentPeg}\r\n`; if(data.verifier)body+=`Verified By: ${data.verifier}\r\n`; body += "\r\n";
             body += "Catch List:\r\n"; if(data.fishData?.length>0){data.fishData.forEach((f,i)=>{body+=`${i+1}. ${f.species||'?'} - ${f.length||'?'} cm`; if(data.isCompetition) { body += ` - Verified by: ${f.initials || '-'}`;} body += `\r\n`;});}else{body+="No fish.\r\n";} body+="\r\n";
@@ -773,7 +725,7 @@
         }
 
         // --- Notes Modal Functions ---
-        function openNotesModal(key, event) { if(event) event.stopPropagation(); console.log('Opening notes modal for key:', key); const notesTextarea = document.getElementById('notesTextarea'), notesModalKeyInput = document.getElementById('notesModalScorecardKey'); if (!notesTextarea || !notesModalKeyInput || not notesModalInstance) { console.error('Notes modal elements/instance missing!'); alert('Error opening notes editor.'); return; } try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; notesTextarea.value=data.notes||''; } catch(e){ console.error('Error loading notes for modal:',e); notesTextarea.value=''; } notesModalKeyInput.value = key; notesModalInstance.show(); }
+        function openNotesModal(key, event) { if(event) event.stopPropagation(); console.log('Opening notes modal for key:', key); const notesTextarea = document.getElementById('notesTextarea'), notesModalKeyInput = document.getElementById('notesModalScorecardKey'); if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { console.error('Notes modal elements/instance missing!'); alert('Error opening notes editor.'); return; } try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; notesTextarea.value=data.notes||''; } catch(e){ console.error('Error loading notes for modal:',e); notesTextarea.value=''; } notesModalKeyInput.value = key; notesModalInstance.show(); }
         function saveNoteFromModal() { console.log('Save notes modal clicked.'); const notesTextarea = document.getElementById('notesTextarea'), notesModalKeyInput = document.getElementById('notesModalScorecardKey'); if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { alert('Error saving notes.'); return; } const key = notesModalKeyInput.value; const newNotes = notesTextarea.value; if (!key) { alert('Error: Scorecard key missing.'); return; } try { const dS = localStorage.getItem(key); if (!dS) throw new Error('Scorecard data not found.'); let data = JSON.parse(dS); data.notes = newNotes; localStorage.setItem(key, JSON.stringify(data)); console.log('Notes saved via modal for key:', key); notesModalInstance.hide(); setTimeout(loadScorecards, 150); } catch (e) { console.error('Error saving notes from modal:', e); alert(`Failed to save notes: ${e.message}`); } }
         function viewNote(key, event) { event.stopPropagation(); console.log('Viewing notes for key:', key); try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; const notes=data.notes||''; alert(`Notes for scorecard:\n--------------------\n${notes || '(No notes saved)'}`); } catch (e) { console.error('Error retrieving notes:', e); alert('Could not retrieve notes.'); } }
         // --- End Notes Functions ---
@@ -781,7 +733,8 @@
         // --- Delete Older Scorecards Functions ---
         function confirmDeleteOlderScorecards() {
             const displayLimit = 4; // Keep consistent
-            const scorecards => {
+            const scorecards = [];
+            try {
                 for (let i = 0; i < localStorage.length; i++) {
                     const key = localStorage.key(i);
                     if (key?.startsWith('scorecard_')) scorecards.push(key);
@@ -873,7 +826,7 @@
                const vI = document.getElementById('verifierEndModalInput'); if(vI) vI.value='';
                const vS = document.getElementById('verifierEndModalSection'); if(vS) vS.style.display='none';
                populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm';
-            } catch (e) { console.error("Error resetting forms:", e); }
+            } catch(e) { console.error("Error resetting forms:", e); }
         }
 
         // --- Initialisation ---
