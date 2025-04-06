@@ -29,7 +29,8 @@
             border-radius: 15px;
             padding: 20px;
             margin: 20px auto;
-            max-width: 800px;
+            width: 95%; /* Make container wider, responsive for mobile */
+            max-width: none; /* Remove max-width to allow full width on larger screens if needed */
             z-index: 1;
             display: none; /* Hide initially, show based on page */
         }
@@ -84,6 +85,7 @@
         .card-section .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: rgba(0, 0, 0, 0.03); }
         .card-section .table-bordered { border: 1px solid #dee2e6; }
         .card-section .table-hover tbody tr:hover > * { background-color: rgba(0, 0, 0, 0.06); }
+        .card-section .table-responsive { overflow-x: auto; /* Enable horizontal scroll for tables if needed */ }
 
         /* --- Unified Modal Style --- */
         .modal { z-index: 1050; } .modal-backdrop { z-index: 1040; opacity: 0.5; }
