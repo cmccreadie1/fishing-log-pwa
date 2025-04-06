@@ -35,14 +35,14 @@ body {
     z-index: 3;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-.card-section h2, .card-section h5, .modal-title { color: #0056b3; } /* Dark blue headings and modal titles - UPDATED & COMBINED */
+.card-section h2, .card-section h5, .modal-title { color: #0056b3; } /* Dark blue headings and modal titles */
 
 
 /* --- Buttons --- */
 .btn { padding: 12px 24px; font-size: 1.1rem; border-radius: 25px; border: none; margin: 10px; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; cursor: pointer; font-weight: 600; }
 .btn:disabled { cursor: not-allowed; opacity: 0.65; }
-.btn-primary { background-color: #007bff; color: white; } /* Primary buttons - UPDATED background-color */
-.btn-primary:hover { background-color: #0056b3; transform: scale(1.05); } /* Primary buttons hover - UPDATED background-color */
+.btn-primary { background-color: #007bff; color: white; } /* Primary buttons */
+.btn-primary:hover { background-color: #0056b3; transform: scale(1.05); } /* Primary buttons hover */
 .btn-secondary { background-color: #6c757d; color: white; } .btn-secondary:hover { background-color: #5a6268; transform: scale(1.05); }
 .btn-success { background-color: #198754; color: white; } .btn-success:hover { background-color: #157347; transform: scale(1.05); } /* Added Success */
 .btn-danger { background-color: #dc3545; color: white; } .btn-danger:hover { background-color: #c82333; transform: scale(1.05); }
@@ -53,8 +53,9 @@ body {
 
 /* --- Forms --- */
 .form-label { font-weight: 600; color: #495057; } /* Slightly softer label color */
-.form-control, .form-select { border-radius: 8px; margin-bottom: 15px; border: 1px solid #ced4da; }
-.form-control:focus, .form-select:focus { border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); }
+.form-control, .form-select { border-radius: 8px; margin-bottom: 15px; border: 1px solid #ced4da;  background-color: #ffffff; color: #212529; } /* Form inputs - added background-color and color */
+.form-select { appearance: auto; -webkit-appearance: auto; -moz-appearance: auto; } /* Reset appearance for form-select to remove default styling that might cause black background */
+.form-control:focus, .form-select:focus { border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); background-color: #ffffff; color: #212529; } /* Form inputs focus - added background-color and color to ensure they remain white/dark text on focus */
 .form-check-label { color: #212529; }
 
 /* --- Tables (Default Light Theme for card-sections) --- */
