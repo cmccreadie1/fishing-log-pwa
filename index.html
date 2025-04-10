@@ -171,6 +171,15 @@
         <!-- Fishing Page -->
         <div id="fishingPage" class="card-section page">
             <h2>Record Your Catch</h2>
+
+            <!-- ** START: ADDED MLS INFORMATION BOX - Shown only for Competitions ** -->
+            <div id="mlsInfoBox" class="alert alert-info" style="display: none;" role="alert">
+                <strong>Important MLS Information:</strong>
+                <br>
+                Please ensure you are recording your catches in accordance with the minimum landing sizes (MLS) and any other fishing regulations that apply to your specific location or event.
+            </div>
+            <!-- ** END: ADDED MLS INFORMATION BOX ** -->
+
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label for="speciesInput" class="form-label">Species</label>
@@ -228,8 +237,8 @@
                     <tbody id="tallyTable"></tbody>
                     <tfoot>
                         <tr> <td colspan="3" class="text-end"><strong>Total Length</strong></td> <td><strong id="tallyTotalLength">0 cm</strong></td> </tr>
-                        <tr> <td colspan="3" class="text-end"><strong>Species Count</strong></td> <td><strong id="tallySpeciesCount">0</strong></td> </tr>
-                        <tr> <td colspan="2" class="text-end"><strong>Longest Fish</strong></td> <td><strong id="longestFishSpecies">N/A</strong></td> <td><strong id="longestFishLength">0 cm</strong></td> </tr>
+                        <tr> <td colspan="3" class="text-end"><strong>Species Count</strong></td> <td><strong id="tallySpeciesCount">0</strong></td> </tr> 
+                        <tr> <td colspan="2" class="text-end"><strong>Longest Fish</strong></td> <td><strong id="longestFishSpecies">N/A</strong></td> <td><strong id="longestFishLength">0 cm</strong></td> </tr> 
                     </tfoot>
                 </table>
             </div>
@@ -355,9 +364,9 @@
         // --- Global Variables ---
         const fishCategories = {
             "Flatfish": [ "Brill", "Dab", "Flounder", "Halibut", "Megrim", "Plaice", "Sole (Dover)", "Sole (Lemon)", "Turbot" ],
-            "Round Fish": [ "Bass", "Bream (Black)", "Bream (Gilthead)", "Bream (Red)", "Bream (Sea)", "Coalfish", "Cod", "Conger Eel", "Dogfish", "Dogfish (Black Mouth)", "Gurnard (Red)", "Gurnard (Tub)", "Haddock", "Hake", "John Dory", "Ling", "Mackerel", "Monkfish", "Mullet (Grey)", "Mullet (Red)", "Pollack", "Poor Cod", "Pouting", "Saithe", "Triggerfish", "Whiting" ], // Removed Smoothhound
+            "Round Fish": [ "Bass", "Bream (Black)", "Bream (Gilthead)", "Bream (Red)", "Bream (Sea)", "Bull Huss", "Coalfish", "Cod", "Conger Eel", "Dogfish", "Dogfish (Black Mouth)", "Gurnard (Red)", "Gurnard (Tub)", "Haddock", "Hake", "John Dory", "Ling", "Mackerel", "Monkfish", "Mullet (Grey)", "Mullet (Red)", "Pollack", "Poor Cod", "Pouting", "Saithe", "Triggerfish", "Whiting" ], // ** ADDED "Bull Huss" HERE **
             "Rays and Skates": [ "Ray (Blonde)", "Ray (Small-eyed)", "Ray (Starry)", "Ray (Thornback)", "Skate" ],
-            "Sharks": [ "Shark (Blue)", "Shark (Porbeagle)", "Shark (Thresher)", "Smoothhound", "Smoothhound (Starry)", "Spurdog", "Tope" ], // Added Smoothhound
+            "Sharks": [ "Shark (Blue)", "Shark (Porbeagle)", "Shark (Thresher)", "Smoothhound", "Smoothhound (Starry)", "Spurdog", "Tope" ],
             "Wrasse": [ "Wrasse (Ballan)", "Wrasse (Cuckoo)" ]
         };
         let fishData = [];
@@ -417,10 +426,15 @@
                 const initialsGroup = document.getElementById('initialsInputGroup'); // Get the initials input group
                 const initialsInput = document.getElementById('initialsInput'); // Get the initials input field
                 const verifiedByHeader = document.getElementById('verifiedByHeader'); // Get the "Verified By" header
+                const mlsBox = document.getElementById('mlsInfoBox'); // ** GET THE MLS INFO BOX ELEMENT **
 
                 zone.disabled=!check; peg.disabled=!check;
                 initialsGroup.style.display = check ? 'block' : 'none'; // Show/hide initials input
                 verifiedByHeader.style.display = check ? 'table-cell' : 'none'; // Show/hide "Verified By" column header
+                // ** CONTROL MLS BOX VISIBILITY HERE **
+                if (mlsBox) {
+                    mlsBox.style.display = check ? 'block' : 'none';
+                }
 
                 if(!check){
                     zone.value='';peg.value='';currentZone=null;currentPeg=null;
