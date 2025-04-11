@@ -171,7 +171,6 @@
         <!-- Fishing Page -->
         <div id="fishingPage" class="card-section page">
             <h2>Record Your Catch</h2>
-
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label for="speciesInput" class="form-label">Species</label>
@@ -347,25 +346,6 @@
       </div>
     </div>
 
-    <!-- ** START: ADDED MLS INFORMATION MODAL - Shown only for Competitions ** -->
-    <div class="modal fade" id="mlsInfoModal" tabindex="-1" aria-labelledby="mlsInfoModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="mlsInfoModalLabel">Important MLS Information</h5>
-                    <!-- No close button in header to force "I Agree" button -->
-                </div>
-                <div class="modal-body">
-                    <p>Please ensure you are recording your catches in accordance with the minimum landing sizes (MLS) and any other fishing regulations that apply to your specific location or event.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="mlsAgreeBtn">I Agree</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- ** END: ADDED MLS INFORMATION MODAL ** -->
-
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -375,9 +355,9 @@
         // --- Global Variables ---
         const fishCategories = {
             "Flatfish": [ "Brill", "Dab", "Flounder", "Halibut", "Megrim", "Plaice", "Sole (Dover)", "Sole (Lemon)", "Turbot" ],
-            "Round Fish": [ "Bass", "Bream (Black)", "Bream (Gilthead)", "Bream (Red)", "Bream (Sea)", "Bull Huss", "Coalfish", "Cod", "Conger Eel", "Dogfish", "Dogfish (Black Mouth)", "Gurnard (Red)", "Gurnard (Tub)", "Haddock", "Hake", "John Dory", "Ling", "Mackerel", "Monkfish", "Mullet (Grey)", "Mullet (Red)", "Pollack", "Poor Cod", "Pouting", "Saithe", "Triggerfish", "Whiting" ], // ** ADDED "Bull Huss" HERE **
+            "Round Fish": [ "Bass", "Bream (Black)", "Bream (Gilthead)", "Bream (Red)", "Bream (Sea)", "Coalfish", "Cod", "Conger Eel", "Dogfish", "Dogfish (Black Mouth)", "Gurnard (Red)", "Gurnard (Tub)", "Haddock", "Hake", "John Dory", "Ling", "Mackerel", "Monkfish", "Mullet (Grey)", "Mullet (Red)", "Pollack", "Poor Cod", "Pouting", "Saithe", "Triggerfish", "Whiting" ], // Removed Smoothhound
             "Rays and Skates": [ "Ray (Blonde)", "Ray (Small-eyed)", "Ray (Starry)", "Ray (Thornback)", "Skate" ],
-            "Sharks": [ "Shark (Blue)", "Shark (Porbeagle)", "Shark (Thresher)", "Smoothhound", "Smoothhound (Starry)", "Spurdog", "Tope" ],
+            "Sharks": [ "Shark (Blue)", "Shark (Porbeagle)", "Shark (Thresher)", "Smoothhound", "Smoothhound (Starry)", "Spurdog", "Tope" ], // Added Smoothhound
             "Wrasse": [ "Wrasse (Ballan)", "Wrasse (Cuckoo)" ]
         };
         let fishData = [];
@@ -442,31 +422,16 @@
                 initialsGroup.style.display = check ? 'block' : 'none'; // Show/hide initials input
                 verifiedByHeader.style.display = check ? 'table-cell' : 'none'; // Show/hide "Verified By" column header
 
+                if(!check){
+                    zone.value='';peg.value='';currentZone=null;currentPeg=null;
+                    if (initialsInput) initialsInput.value = ''; // Clear initials input if competition is unchecked
+                }
                 updateFishLog(); // Re-render fish log to show/hide "Verified By" column
             }catch(e){console.error("Toggle comp fields err:",e);}
         }
 
         function startApp() { console.log("Start Fishing."); populateSpeciesDropdown(); showPage('registrationPage'); }
-        function startRecording() {
-            console.log("Record Catch.");
-            const nameEl=document.getElementById('anglerName'), dateEl=document.getElementById('competitionDate'), venueEl=document.getElementById('venueInput'), checkEl=document.getElementById('isCompetition'), zoneEl=document.getElementById('zoneInput'), pegEl=document.getElementById('pegInput');
-            if(!nameEl||!dateEl||!venueEl||!checkEl||!zoneEl||!pegEl){alert("Form elements missing.");return;}
-            const name=nameEl.value.trim(), date=dateEl.value, venue=venueEl.value.trim(), isComp=checkEl.checked, zone=zoneEl.value, peg=pegEl.value;
-            if(!name||!date||!venue){alert("Name, Date, Venue required.");return;}
-            if(isComp&&(!zone||!peg)){alert("Zone & Peg required for competition.");return;}
-            if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert("Valid date required.");return;}
-            currentAngler=name; currentDate=date; currentVenue=venue; currentZone=isComp?zone:null; currentPeg=isComp?peg:null;
-            const isActuallyCompetition = !!(currentZone && currentPeg);
-            console.log("Start recording data:",{currentAngler,currentDate,currentVenue,currentZone,currentPeg,isCompetition:isActuallyCompetition});
-            saveTempSession();
-            updateFishLog();
-            showPage('fishingPage');
-
-            // ** SHOW MLS MODAL IF COMPETITION **
-            if (isActuallyCompetition) {
-                showModal('mlsInfoModal'); // Show the MLS info modal
-            }
-        }
+        function startRecording() { console.log("Record Catch."); const nameEl=document.getElementById('anglerName'), dateEl=document.getElementById('competitionDate'), venueEl=document.getElementById('venueInput'), checkEl=document.getElementById('isCompetition'), zoneEl=document.getElementById('zoneInput'), pegEl=document.getElementById('pegInput'); if(!nameEl||!dateEl||!venueEl||!checkEl||!zoneEl||!pegEl){alert("Form elements missing.");return;} const name=nameEl.value.trim(), date=dateEl.value, venue=venueEl.value.trim(), isComp=checkEl.checked, zone=zoneEl.value, peg=pegEl.value; if(!name||!date||!venue){alert("Name, Date, Venue required.");return;} if(isComp&&(!zone||!peg)){alert("Zone & Peg required for competition.");return;} if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert("Valid date required.");return;} currentAngler=name; currentDate=date; currentVenue=venue; currentZone=isComp?zone:null; currentPeg=isComp?peg:null; const isActuallyCompetition = !!(currentZone && currentPeg); console.log("Start recording data:",{currentAngler,currentDate,currentVenue,currentZone,currentPeg,isCompetition:isActuallyCompetition}); saveTempSession(); updateFishLog(); showPage('fishingPage'); }
         function addFish() {
             console.log("Add Fish.");
             const spEl=document.getElementById('speciesInput');
@@ -879,10 +844,7 @@
                  // --- End Service Worker Registration ---
 
                  window.addEventListener('popstate', handleBackButton); window.addEventListener('beforeunload', handleBeforeUnload); console.log("Nav listeners attached.");
-                 const refs = { continueBtn: document.getElementById('continueBtn'), viewScorecardsBtn: document.getElementById('viewScorecardsBtn'), startRecordingBtn: document.getElementById('startRecordingBtn'), isCompetitionCheck: document.getElementById('isCompetition'), speciesSelect: document.getElementById('speciesInput'), addFishBtn: document.getElementById('addFishBtn'), backFromFishingBtn: document.getElementById('backFromFishingBtn'), endSessionBtn: document.getElementById('endSessionBtn'), confirmEndBtn: document.getElementById('confirmEndBtn'), backFromTallyBtn: document.getElementById('backFromTallyBtn'), closeModalBtn: document.getElementById('closeModalBtn'), restoreSessionBtn: document.getElementById('restoreSessionBtn'), startNewSessionBtn: document.getElementById('startNewSessionBtn'), anglerNameInput: document.getElementById('anglerName'), competitionDateInput: document.getElementById('competitionDate'), venueInput: document.getElementById('venueInput'), zoneSelect: document.getElementById('zoneInput'), pegSelect: document.getElementById('pegInput'), initialsInput: document.getElementById('initialsInput'), initialsInputGroup: document.getElementById('initialsInputGroup'), verifiedByHeader: document.getElementById('verifiedByHeader'),
-                    mlsAgreeBtn: document.getElementById('mlsAgreeBtn'), // ** ADD MLS AGREE BUTTON REF **
-                    mlsInfoModalElement: document.getElementById('mlsInfoModal')  // ** ADD MLS MODAL ELEMENT REF **
-                 };
+                 const refs = { continueBtn: document.getElementById('continueBtn'), viewScorecardsBtn: document.getElementById('viewScorecardsBtn'), startRecordingBtn: document.getElementById('startRecordingBtn'), isCompetitionCheck: document.getElementById('isCompetition'), speciesSelect: document.getElementById('speciesInput'), addFishBtn: document.getElementById('addFishBtn'), backFromFishingBtn: document.getElementById('backFromFishingBtn'), endSessionBtn: document.getElementById('endSessionBtn'), confirmEndBtn: document.getElementById('confirmEndBtn'), backFromTallyBtn: document.getElementById('backFromTallyBtn'), closeModalBtn: document.getElementById('closeModalBtn'), restoreSessionBtn: document.getElementById('restoreSessionBtn'), startNewSessionBtn: document.getElementById('startNewSessionBtn'), anglerNameInput: document.getElementById('anglerName'), competitionDateInput: document.getElementById('competitionDate'), venueInput: document.getElementById('venueInput'), zoneSelect: document.getElementById('zoneInput'), pegSelect: document.getElementById('pegInput'), initialsInput: document.getElementById('initialsInput'), initialsInputGroup: document.getElementById('initialsInputGroup'), verifiedByHeader: document.getElementById('verifiedByHeader') };
                  // Add listeners checking if ref exists
                  if (refs.continueBtn) refs.continueBtn.addEventListener('click', startApp);
                  if (refs.viewScorecardsBtn) refs.viewScorecardsBtn.addEventListener('click', showScorecardsModal);
@@ -916,10 +878,6 @@
                  if (refs.zoneSelect) refs.zoneSelect.addEventListener('change', () => { currentZone = refs.isCompetitionCheck?.checked ? refs.zoneSelect.value : null; saveTempSession(); });
                  if (refs.pegSelect) refs.pegSelect.addEventListener('change', () => { currentPeg = refs.isCompetitionCheck?.checked ? refs.pegSelect.value : null; saveTempSession(); });
                  if (refs.initialsInput) refs.initialsInput.addEventListener('input', () => { saveTempSession(); });
-
-                 // Initialize the MLS Info modal instance (No need to initialize instance if just showing/hiding)
-                 if (refs.mlsInfoModalElement) { /* No need to initialize instance if just showing/hiding */ }
-                 else { console.error("MLS Info Modal element (#mlsInfoModal) not found in HTML!"); }
 
 
                  // Initialize the notes modal instance
