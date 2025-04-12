@@ -17,17 +17,8 @@
     <style>
         /* --- Base & Global Styles --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: url('https://i.postimg.cc/pLFtxQWs/seacatchscorecard.jpg') no-repeat center/cover fixed;
-            color: #fff;
-            min-height: 100vh;
-            overscroll-behavior-y: contain;
-        }
-        .container {
-            background: rgba(0, 0, 0, 0.75); border-radius: 15px; padding: 25px;
-            margin: 20px auto; max-width: 960px; z-index: 1; display: none;
-        }
+        body { font-family: 'Poppins', sans-serif; background: url('https://i.postimg.cc/pLFtxQWs/seacatchscorecard.jpg') no-repeat center/cover fixed; color: #fff; min-height: 100vh; overscroll-behavior-y: contain; }
+        .container { background: rgba(0, 0, 0, 0.75); border-radius: 15px; padding: 25px; margin: 20px auto; max-width: 960px; z-index: 1; display: none; }
         .page { display: none; }
 
         /* --- Splash Screen --- */
@@ -63,13 +54,12 @@
         #verifierEndModalSection { display: none; }
 
         /* --- Tables --- */
-        .card-section .table { background: white; color: #212529; margin-top: 15px; border-collapse: separate; border-spacing: 0; width: 100%; table-layout: auto; /* Allow columns to size more naturally now */ }
+        .card-section .table { background: white; color: #212529; margin-top: 15px; border-collapse: separate; border-spacing: 0; width: 100%; table-layout: auto; }
         .table-responsive { margin-bottom: 1rem; border: 1px solid #dee2e6; border-radius: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .card-section .table thead { background-color: #e9ecef; color: #495057; font-weight: 600; border-bottom: 2px solid #dee2e6;}
-        .card-section .table th, .card-section .table td { border-color: #dee2e6; vertical-align: middle; padding: 0.85rem 0.75rem; border-bottom: 1px solid #dee2e6; border-right: 1px solid #dee2e6; /* overflow: hidden; text-overflow: ellipsis; /* Allow text wrapping now */ white-space: normal; /* Allow wrapping */ }
-        /* Adjustments for first/last cell borders */
-        .card-section .table th:first-child, .card-section .table td:first-child { border-left: 0; padding-left: 1rem; } /* More padding left */
-        .card-section .table th:last-child, .card-section .table td:last-child { border-right: 0; padding-right: 1rem; } /* More padding right */
+        .card-section .table th, .card-section .table td { border-color: #dee2e6; vertical-align: middle; padding: 0.85rem 0.75rem; border-bottom: 1px solid #dee2e6; border-right: 1px solid #dee2e6; white-space: normal; }
+        .card-section .table th:first-child, .card-section .table td:first-child { border-left: 0; padding-left: 1rem; }
+        .card-section .table th:last-child, .card-section .table td:last-child { border-right: 0; padding-right: 1rem; }
         .card-section .table tbody tr:last-child td { border-bottom: 0; }
         .card-section .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: #eef5ff; }
         .card-section .table-hover tbody tr:hover > * { background-color: rgba(0, 123, 255, 0.1); }
@@ -77,51 +67,27 @@
 
         /* --- Specific Table Styles --- */
         #fishingPage .table { margin-top: 0; margin-bottom: 0; }
-        /* Column Widths (adjust as needed) */
         #fishingPage th.photo-col { width: 65px; text-align: center; }
         #fishingPage td.photo-col { text-align: center; }
-        #fishingPage th.species-col { /* Let species take remaining width */ }
+        #fishingPage th.species-col { /* Auto width */ }
         #fishingPage th.length-col { width: 90px; text-align: right;}
         #fishingPage td.length-col { text-align: right;}
-        #fishingPage th.verified-col { width: 100px; text-align: center; }
-        #fishingPage td.verified-col { text-align: center; }
+        #fishingPage th.verified-col { width: 90px; text-align: center; } /* Reinstated */
+        #fishingPage td.verified-col { text-align: center; } /* Reinstated */
+        /* NEW: Style for Delete Action Column/Button */
+        #fishingPage th.delete-col { width: 60px; text-align: center;}
+        #fishingPage td.delete-col { text-align: center;}
+        .delete-icon-btn { background: none; border: none; padding: 0 0.3rem; color: #dc3545; cursor: pointer; font-size: 1.2rem; vertical-align: middle; }
+        .delete-icon-btn:hover { color: #a71d2a; }
 
-        #tallyPage.card-section .table { margin-top: 20px; }
+        #tallyPage.card-section .table { margin-top: 20px; table-layout: auto; }
         #tallyPage.card-section tfoot td, #tallyPage.card-section tfoot strong { color: #212529; font-weight: 600; }
         #tallyPage.card-section .catch-summary-details { margin-bottom: 25px; color: #495057; line-height: 1.6; }
 
         /* --- Fish Log Specific --- */
-        .thumbnail-container {
-            display: inline-block; vertical-align: middle;
-            cursor: pointer; width: 40px; height: 40px; text-align: center;
-            line-height: 40px; border: 1px solid #eee; border-radius: 4px;
-            background-color: #f8f9fa; overflow: hidden;
-        }
+        .thumbnail-container { display: inline-block; vertical-align: middle; cursor: pointer; width: 40px; height: 40px; text-align: center; line-height: 40px; border: 1px solid #eee; border-radius: 4px; background-color: #f8f9fa; overflow: hidden; }
         .fish-thumbnail { width: 100%; height: 100%; object-fit: cover; border-radius: 0; border: none; }
         .no-photo-icon { font-size: 1.5rem; color: #adb5bd; vertical-align: middle; }
-
-        /* Styles for Amend Mode */
-        .fish-log-row.amend-active {
-             background-color: #fffbe6 !important; /* Light yellow background */
-        }
-        .delete-icon-btn { /* Style for the delete icon button */
-            background: none;
-            border: none;
-            padding: 0 0.3rem; /* Small padding */
-            color: #dc3545; /* Danger color */
-            cursor: pointer;
-            font-size: 1.2rem; /* Slightly larger icon */
-            vertical-align: middle;
-            margin-right: 0.5rem; /* Space before photo */
-        }
-        .delete-icon-btn:hover {
-             color: #a71d2a; /* Darker red on hover */
-        }
-        #toggleAmendBtn.active { /* Style for button when amend mode is active */
-            background-color: #ffc107; /* Warning color */
-            color: black;
-            border-color: #ffc107;
-        }
 
 
         /* --- Unified Modal Style --- */
@@ -132,10 +98,9 @@
         .modal-title { color: #0056b3; font-weight: 700; }
         .modal-header .btn-close { filter: none; background-size: 0.75em; }
         .modal-body { background-color: #ffffff; color: #212529; padding: 20px; }
-        #restoreSessionModal .modal-body, #endSessionModal .modal-body { color: #212529 !important; }
+        #restoreSessionModal .modal-body, #endSessionModal .modal-body, #confirmPhotoModal .modal-body { color: #212529 !important; }
 
         /* --- Saved Scorecards Modal --- */
-        /* (Styles remain largely the same as previous version) */
         #savedScorecardsList.card-section { background: transparent; border: none; padding: 0; margin: 0; }
         #savedScorecardsModal .scorecard-entry { border: 1px solid #dee2e6; border-radius: 8px; margin-bottom: 15px; background-color: #ffffff; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
         #savedScorecardsModal .scorecard-item { cursor: pointer; padding: 12px 15px; border-bottom: 1px solid #dee2e6; color: #212529; transition: background-color 0.2s; }
@@ -149,7 +114,7 @@
         #savedScorecardsModal .scorecard-details h6:first-of-type { margin-top: 0; }
         #savedScorecardsModal .scorecard-details p { margin-bottom: 8px; color: #212529; }
         #savedScorecardsModal .scorecard-details hr { margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #dee2e6; background-color: transparent; height: 1px; opacity: 1; }
-        #savedScorecardsModal .scorecard-details .table { margin-bottom: 15px; background-color: #ffffff; color: #212529; border: 1px solid #dee2e6; table-layout: auto;} /* Allow table inside details to auto-size */
+        #savedScorecardsModal .scorecard-details .table { margin-bottom: 15px; background-color: #ffffff; color: #212529; border: 1px solid #dee2e6; table-layout: auto;}
         #savedScorecardsModal .scorecard-details .table thead { background-color: #f8f9fa; color: #495057; }
         #savedScorecardsModal .scorecard-details .table th, #savedScorecardsModal .scorecard-details .table td { border-color: #dee2e6; border-bottom-width: 1px; vertical-align: middle;}
         #savedScorecardsModal .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: rgba(0, 0, 0, 0.03); }
@@ -243,12 +208,8 @@
                      <input type="text" id="initialsInput" class="form-control" placeholder="Enter Initials (e.g., AB)" maxlength="3" style="text-transform:uppercase">
                 </div>
             </div>
-            <!-- Buttons Above Table -->
+            <!-- REMOVED Take Photo Button here -->
             <div class="button-group-center mb-4">
-                 <!-- NEW: Take Photo Button (Initially Disabled) -->
-                 <button class="btn btn-info" id="takePhotoLastBtn" disabled>
-                    <i class="bi bi-camera-fill me-1"></i> Photo for Last
-                </button>
                 <button class="btn btn-primary" id="addFishBtn">
                     <i class="bi bi-plus-circle me-1"></i> Add Fish
                 </button>
@@ -258,16 +219,16 @@
             </div>
 
             <h2 class="mt-4">Fish Log</h2>
-             <!-- Added table-responsive wrapper -->
             <div class="table-responsive">
                 <table class="table table-striped table-hover table-bordered">
                     <thead>
                         <tr>
-                            <!-- Removed Actions Column, Added classes for width/alignment -->
+                            <!-- Added classes and reinstated verified col -->
                             <th class="photo-col">Photo</th>
                             <th class="species-col">Species</th>
                             <th class="length-col">Length</th>
                             <th id="verifiedByHeader" class="verified-col" style="display:none;">Verified</th>
+                            <th class="delete-col">Del</th> <!-- New Delete Column -->
                         </tr>
                     </thead>
                     <tbody id="fishLog">
@@ -276,12 +237,7 @@
                 </table>
             </div>
 
-            <!-- NEW: Amend Button Below Table -->
-            <div class="text-center mt-3 mb-3">
-                 <button class="btn btn-outline-secondary" id="toggleAmendBtn">
-                    <i class="bi bi-pencil-square me-1"></i> Amend Log
-                </button>
-            </div>
+            <!-- REMOVED Amend Button -->
 
             <div class="button-group-center mt-4">
                 <button class="btn btn-success" id="endSessionBtn"><i class="bi bi-check-circle me-1"></i> End & Save Session</button>
@@ -330,77 +286,54 @@
     <!-- Modals -->
     <!-- Restore Session Modal -->
     <div class="modal fade" id="restoreSessionModal" tabindex="-1" aria-labelledby="restoreSessionModalLabel" aria-hidden="true">
-         <div class="modal-dialog">
-             <div class="modal-content">
-                 <div class="modal-header"> <h5 class="modal-title" id="restoreSessionModalLabel">Restore Previous Session?</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> </div>
-                 <div class="modal-body"> An unsaved session was found. Would you like to restore it? <p class="mt-3"><strong>Angler:</strong> <span id="restoreAngler"></span></p> <p><strong>Date:</strong> <span id="restoreDate"></span></p> <p><strong>Fish Caught:</strong> <span id="restoreFishCount"></span></p> </div>
-                 <div class="modal-footer button-group-center d-block"> <button type="button" class="btn btn-success btn-lg mb-2" id="restoreSessionBtn">Restore Session</button> <br> <button type="button" class="btn btn-danger" id="startNewSessionBtn">Start New Session</button> </div>
-             </div>
-         </div>
+         <div class="modal-dialog"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title" id="restoreSessionModalLabel">Restore Previous Session?</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> </div> <div class="modal-body"> An unsaved session was found. Would you like to restore it? <p class="mt-3"><strong>Angler:</strong> <span id="restoreAngler"></span></p> <p><strong>Date:</strong> <span id="restoreDate"></span></p> <p><strong>Fish Caught:</strong> <span id="restoreFishCount"></span></p> </div> <div class="modal-footer button-group-center d-block"> <button type="button" class="btn btn-success btn-lg mb-2" id="restoreSessionBtn">Restore Session</button> <br> <button type="button" class="btn btn-danger" id="startNewSessionBtn">Start New Session</button> </div> </div> </div>
      </div>
 
     <!-- Saved Scorecards Modal -->
     <div class="modal fade" id="savedScorecardsModal" tabindex="-1" aria-labelledby="savedScorecardsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header"> <h5 class="modal-title" id="savedScorecardsModalLabel">Saved Scorecards</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> </div>
-                <div class="modal-body"> <div id="savedScorecardsList" class="card-section"> <p class="placeholder-glow"><span class="placeholder col-12"></span></p> </div> <div id="olderScorecardsToggleContainer" class="text-center mt-3"></div> </div>
-                <div class="modal-footer"> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> </div>
-            </div>
-        </div>
+        <div class="modal-dialog modal-lg modal-dialog-scrollable"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title" id="savedScorecardsModalLabel">Saved Scorecards</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> </div> <div class="modal-body"> <div id="savedScorecardsList" class="card-section"> <p class="placeholder-glow"><span class="placeholder col-12"></span></p> </div> <div id="olderScorecardsToggleContainer" class="text-center mt-3"></div> </div> <div class="modal-footer"> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> </div> </div> </div>
     </div>
 
     <!-- End Session Confirmation Modal -->
     <div class="modal fade" id="endSessionModal" tabindex="-1" aria-labelledby="endSessionModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header"> <h5 class="modal-title" id="endSessionModalLabel">Confirm End Session</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> </div>
-                <div class="modal-body"> <p>Are you sure you want to end your session? This will save the scorecard.</p> <div id="verifierEndModalSection" class="mt-3" style="display: none;"> <hr> <label for="verifierEndModalInput" class="form-label"><strong>Competition Verifier</strong> <span class="text-danger">*</span></label> <input type="text" class="form-control" id="verifierEndModalInput" placeholder="Enter name of verifier" required> <small class="text-muted">Required for competition scorecards.</small> </div> </div>
-                <div class="modal-footer"> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelEndSessionBtn">Cancel</button> <button type="button" class="btn btn-danger" id="confirmEndBtn">Confirm & Save</button> </div>
-            </div>
-        </div>
+        <div class="modal-dialog"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title" id="endSessionModalLabel">Confirm End Session</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> </div> <div class="modal-body"> <p>Are you sure you want to end your session? This will save the scorecard.</p> <div id="verifierEndModalSection" class="mt-3" style="display: none;"> <hr> <label for="verifierEndModalInput" class="form-label"><strong>Competition Verifier</strong> <span class="text-danger">*</span></label> <input type="text" class="form-control" id="verifierEndModalInput" placeholder="Enter name of verifier" required> <small class="text-muted">Required for competition scorecards.</small> </div> </div> <div class="modal-footer"> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelEndSessionBtn">Cancel</button> <button type="button" class="btn btn-danger" id="confirmEndBtn">Confirm & Save</button> </div> </div> </div>
     </div>
 
     <!-- Notes Modal -->
     <div class="modal fade" id="notesModal" tabindex="-1" aria-labelledby="notesModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header"> <h5 class="modal-title" id="notesModalLabel">Session Notes</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> </div>
-          <div class="modal-body"> <input type="hidden" id="notesModalScorecardKey"> <div class="mb-3"> <label for="notesTextarea" class="form-label">Enter your notes below:</label> <textarea class="form-control" id="notesTextarea" rows="5"></textarea> </div> </div>
-          <div class="modal-footer"> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> <button type="button" class="btn btn-primary" onclick="saveNoteFromModal()">Save Notes</button> </div>
-        </div>
-      </div>
+      <div class="modal-dialog modal-dialog-centered"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title" id="notesModalLabel">Session Notes</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> </div> <div class="modal-body"> <input type="hidden" id="notesModalScorecardKey"> <div class="mb-3"> <label for="notesTextarea" class="form-label">Enter your notes below:</label> <textarea class="form-control" id="notesTextarea" rows="5"></textarea> </div> </div> <div class="modal-footer"> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> <button type="button" class="btn btn-primary" onclick="saveNoteFromModal()">Save Notes</button> </div> </div> </div>
     </div>
 
     <!-- MLS Information Modal -->
     <div class="modal fade" id="mlsInfoModal" tabindex="-1" aria-labelledby="mlsInfoModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header"> <h5 class="modal-title" id="mlsInfoModalLabel">Important MLS Information</h5> </div>
-                <div class="modal-body"> <p>Please ensure you are recording your catches in accordance with the minimum landing sizes (MLS) and any other fishing regulations that apply to your specific location or event.</p> </div>
-                <div class="modal-footer"> <button type="button" class="btn btn-primary" id="mlsAgreeBtn">OK</button> </div>
-            </div>
-        </div>
+        <div class="modal-dialog"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title" id="mlsInfoModalLabel">Important MLS Information</h5> </div> <div class="modal-body"> <p>Please ensure you are recording your catches in accordance with the minimum landing sizes (MLS) and any other fishing regulations that apply to your specific location or event.</p> </div> <div class="modal-footer"> <button type="button" class="btn btn-primary" id="mlsAgreeBtn">OK</button> </div> </div> </div>
     </div>
 
     <!-- Camera Modal -->
     <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-fullscreen">
-        <div class="modal-content">
-          <div class="modal-header"> <h5 class="modal-title" id="cameraModalLabel">Take Photo</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cancelCameraButtonHeader"></button> </div>
-          <div class="modal-body"> <video id="cameraVideo" playsinline autoplay muted></video> <canvas id="cameraCanvas"></canvas> </div>
-          <div id="cameraControls"> <button type="button" class="btn btn-light" id="takePhotoButton" aria-label="Take Photo"></button> </div>
-        </div>
-      </div>
+      <div class="modal-dialog modal-fullscreen"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title" id="cameraModalLabel">Take Photo</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cancelCameraButtonHeader"></button> </div> <div class="modal-body"> <video id="cameraVideo" playsinline autoplay muted></video> <canvas id="cameraCanvas"></canvas> </div> <div id="cameraControls"> <button type="button" class="btn btn-light" id="takePhotoButton" aria-label="Take Photo"></button> </div> </div> </div>
     </div>
 
     <!-- Image Viewer Modal -->
     <div class="modal fade" id="imageViewerModal" tabindex="-1" aria-labelledby="imageViewerModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-dialog modal-lg modal-dialog-centered"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title" id="imageViewerModalLabel">Fish Photo</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> </div> <div class="modal-body"> <img id="fullImageView" src="#" alt="Full fish photo"> </div> <div class="modal-footer"> <button type="button" class="btn btn-info" id="shareImageBtn"><i class="bi bi-share-fill me-1"></i> Share</button> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> </div> </div> </div>
+    </div>
+
+    <!-- NEW: Confirm Photo Modal -->
+    <div class="modal fade" id="confirmPhotoModal" tabindex="-1" aria-labelledby="confirmPhotoModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
-          <div class="modal-header"> <h5 class="modal-title" id="imageViewerModalLabel">Fish Photo</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> </div>
-          <div class="modal-body"> <img id="fullImageView" src="#" alt="Full fish photo"> </div>
-          <div class="modal-footer"> <button type="button" class="btn btn-info" id="shareImageBtn"><i class="bi bi-share-fill me-1"></i> Share</button> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> </div>
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmPhotoModalLabel">Add Photo?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Add a photo for this fish now?
+          </div>
+          <div class="modal-footer justify-content-center"> <!-- Center buttons -->
+            <button type="button" class="btn btn-success" id="confirmPhotoYesBtn">Yes</button>
+            <button type="button" class="btn btn-secondary" id="confirmPhotoNoBtn">No</button>
+          </div>
         </div>
       </div>
     </div>
@@ -431,14 +364,15 @@
         let notesModalInstance = null;
         let cameraModalInstance = null;
         let imageViewerModalInstance = null;
+        let confirmPhotoModalInstance = null; // NEW
         let db = null;
         let currentStream = null;
         let currentFishIdForPhoto = null;
         let currentImageBlobForViewer = null;
         let currentImageIdForViewer = null;
         let isDropdownPopulated = false;
-        let lastAddedFishId = null; // NEW: Track last fish added for photo button
-        let isAmendMode = false; // NEW: Track if amend mode is active
+        // let lastAddedFishId = null; // No longer needed for button enabling
+        let pendingFishData = null; // NEW: Store fish data before asking for photo
 
         // --- Constants ---
         const DB_NAME = 'SeaCatchDB';
@@ -465,45 +399,89 @@
         function handleBeforeUnload(event) { /* ... Same ... */ if (isAppActive) { console.log("beforeunload prompt."); event.preventDefault(); event.returnValue = ''; return ''; } else { console.log("beforeunload allowed."); } }
 
         // --- Session Management ---
-        function saveTempSession() { /* ... Same ... */ if (!isAppActive) return; const temp = { fishData: fishData||[], currentAngler, currentDate, currentVenue, currentZone, currentPeg, currentPage, isAppActive, historyHijacked, isCompetition: !!(currentZone && currentPeg), lastAddedFishId /* Save last ID */ }; try { localStorage.setItem('temp_session', JSON.stringify(temp)); } catch (e) { console.error("Save temp err:", e); if(e.name === 'QuotaExceededError'){ alert("Warning: Could not save session progress, local storage might be full.");}} }
+        function saveTempSession() { /* ... Same ... */ if (!isAppActive) return; const temp = { fishData: fishData||[], currentAngler, currentDate, currentVenue, currentZone, currentPeg, currentPage, isAppActive, historyHijacked, isCompetition: !!(currentZone && currentPeg) /* lastAddedFishId removed */ }; try { localStorage.setItem('temp_session', JSON.stringify(temp)); } catch (e) { console.error("Save temp err:", e); if(e.name === 'QuotaExceededError'){ alert("Warning: Could not save session progress, local storage might be full.");}} }
         function clearTempSession() { /* ... Same ... */ try { localStorage.removeItem('temp_session'); console.log("Temp cleared."); } catch (e) { console.error("Clear temp err:", e); } }
         function checkRestoreSession() { /* ... Same ... */ let data; try { const temp = localStorage.getItem('temp_session'); if (!temp) { setTodaysDate(); showPage('splashScreen'); return; } data = JSON.parse(temp); if (!data || !Array.isArray(data.fishData)) throw new Error("Invalid format."); } catch (e) { console.error("Read temp err:", e); clearTempSession(); setTodaysDate(); showPage('splashScreen'); return; } if (data.currentAngler || data.currentDate || data.currentVenue || data.fishData.length > 0) { console.log("Found session, show modal."); document.getElementById('restoreAngler').textContent=data.currentAngler||'N/A'; document.getElementById('restoreDate').textContent=data.currentDate?formatDate(data.currentDate):'N/A'; document.getElementById('restoreFishCount').textContent=data.fishData.length; const modalEl=document.getElementById('restoreSessionModal'); if(modalEl){let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false}); mI.show();}else{console.error("Restore modal missing.");clearTempSession();setTodaysDate();showPage('splashScreen');} } else { clearTempSession(); setTodaysDate(); showPage('splashScreen'); } }
-        // --- UPDATE: restoreSession handles lastAddedFishId ---
-        function restoreSession() { console.log("Restore clicked."); let temp; try { const sS=localStorage.getItem('temp_session'); if(!sS)throw new Error("No data."); temp=JSON.parse(sS); if(!temp||!Array.isArray(temp.fishData))throw new Error("Invalid format."); } catch(e){console.error("Restore err:",e);alert("Failed restore.");startNewSession();return;} fishData=temp.fishData||[]; currentAngler=temp.currentAngler||null; currentDate=temp.currentDate||null; currentVenue=temp.currentVenue||null; currentZone=temp.currentZone||null; currentPeg=temp.currentPeg||null; const page=temp.currentPage||'registrationPage'; isAppActive=temp.isAppActive||false; historyHijacked=temp.historyHijacked||false; const restoredIsCompetition = temp.isCompetition === true; lastAddedFishId = temp.lastAddedFishId || null; /* Restore last ID */ isAmendMode = false; /* Ensure amend mode is off on restore */ console.log("Restoring to:",page,"App active:",isAppActive, "Is Competition:", restoredIsCompetition, "Last Fish ID:", lastAddedFishId); try{ if(currentAngler)document.getElementById('anglerName').value=currentAngler; if(currentDate)document.getElementById('competitionDate').value=currentDate; if(currentVenue)document.getElementById('venueInput').value=currentVenue; document.getElementById('isCompetition').checked=restoredIsCompetition; toggleCompetitionFields(false); if(currentZone)document.getElementById('zoneInput').value=currentZone; if(currentPeg)document.getElementById('pegInput').value=currentPeg; }catch(e){console.error("Restore reg fields err:",e);} if(page==='fishingPage'||page==='tallyPage'){populateSpeciesDropdown(); if(page==='fishingPage'){updateFishLog(); document.getElementById('takePhotoLastBtn').disabled = !lastAddedFishId; /* Enable button if last ID exists */ document.getElementById('toggleAmendBtn').classList.remove('active'); document.getElementById('toggleAmendBtn').innerHTML = '<i class="bi bi-pencil-square me-1"></i> Amend Log';}else if(page==='tallyPage'){populateTallySummaryFields();populateTallyTable();}} hideModal('restoreSessionModal'); showPage(page); if(isAppActive && !historyHijacked){history.pushState({appActive:true},'',location.href); historyHijacked=true; console.log("Pushed history after restore.");} console.log("Session restored."); }
-        function startNewSession() { console.log("Start New Session confirmed after prompt."); clearTempSession(); resetApp(); hideModal('restoreSessionModal'); showPage('splashScreen'); }
+        function restoreSession() { /* ... Same ... */ console.log("Restore clicked."); let temp; try { const sS=localStorage.getItem('temp_session'); if(!sS)throw new Error("No data."); temp=JSON.parse(sS); if(!temp||!Array.isArray(temp.fishData))throw new Error("Invalid format."); } catch(e){console.error("Restore err:",e);alert("Failed restore.");startNewSession();return;} fishData=temp.fishData||[]; currentAngler=temp.currentAngler||null; currentDate=temp.currentDate||null; currentVenue=temp.currentVenue||null; currentZone=temp.currentZone||null; currentPeg=temp.currentPeg||null; const page=temp.currentPage||'registrationPage'; isAppActive=temp.isAppActive||false; historyHijacked=temp.historyHijacked||false; const restoredIsCompetition = temp.isCompetition === true; /* lastAddedFishId removed */ console.log("Restoring to:",page,"App active:",isAppActive, "Is Competition:", restoredIsCompetition); try{ if(currentAngler)document.getElementById('anglerName').value=currentAngler; if(currentDate)document.getElementById('competitionDate').value=currentDate; if(currentVenue)document.getElementById('venueInput').value=currentVenue; document.getElementById('isCompetition').checked=restoredIsCompetition; toggleCompetitionFields(false); if(currentZone)document.getElementById('zoneInput').value=currentZone; if(currentPeg)document.getElementById('pegInput').value=currentPeg; }catch(e){console.error("Restore reg fields err:",e);} if(page==='fishingPage'||page==='tallyPage'){populateSpeciesDropdown(); if(page==='fishingPage'){updateFishLog();}else if(page==='tallyPage'){populateTallySummaryFields();populateTallyTable();}} hideModal('restoreSessionModal'); showPage(page); if(isAppActive && !historyHijacked){history.pushState({appActive:true},'',location.href); historyHijacked=true; console.log("Pushed history after restore.");} console.log("Session restored."); }
+        function startNewSession() { /* ... Same ... */ console.log("Start New Session confirmed after prompt."); clearTempSession(); resetApp(); hideModal('restoreSessionModal'); showPage('splashScreen'); }
 
         // --- UI Interaction ---
-        function populateSpeciesDropdown() { /* ... Same ... */ if (isDropdownPopulated) { /*console.log("Species dropdown already populated.");*/ return; } console.log("Populating species dropdown..."); const input = document.getElementById('speciesInput'); if (!input) { console.error("Species dropdown (#speciesInput) missing!"); return; } try { /*console.log("Fish Categories data:", JSON.stringify(fishCategories));*/ const cats = Object.keys(fishCategories).sort(); input.innerHTML = '<option value="" selected disabled>Select a species</option><option value="Other">Other (specify)</option>'; if (Object.keys(fishCategories).length === 0) { console.warn("fishCategories object is empty!"); input.innerHTML = '<option value="" selected disabled>Error: No species loaded</option>'; return; } cats.forEach(cat => { /*console.log("Processing category:", cat);*/ const group = document.createElement('optgroup'); group.label = cat; const species = Array.isArray(fishCategories[cat]) ? [...fishCategories[cat]].sort() : []; if (species.length === 0) { console.warn(`No species array found for category: ${cat}`); } species.forEach(s => { const opt = document.createElement('option'); opt.value = s; opt.textContent = s; group.appendChild(opt); }); input.appendChild(group); }); isDropdownPopulated = true; console.log("Species dropdown populated successfully."); } catch (error) { console.error("Error during species dropdown population:", error); input.innerHTML = '<option value="" selected disabled>Error loading species</option>'; } }
+        function populateSpeciesDropdown() { /* ... Same ... */ if (isDropdownPopulated) { return; } console.log("Populating species dropdown..."); const input = document.getElementById('speciesInput'); if (!input) { console.error("Species dropdown (#speciesInput) missing!"); return; } try { /*console.log("Fish Categories data:", JSON.stringify(fishCategories));*/ const cats = Object.keys(fishCategories).sort(); input.innerHTML = '<option value="" selected disabled>Select a species</option><option value="Other">Other (specify)</option>'; if (Object.keys(fishCategories).length === 0) { console.warn("fishCategories object is empty!"); input.innerHTML = '<option value="" selected disabled>Error: No species loaded</option>'; return; } cats.forEach(cat => { const group = document.createElement('optgroup'); group.label = cat; const species = Array.isArray(fishCategories[cat]) ? [...fishCategories[cat]].sort() : []; if (species.length === 0) { console.warn(`No species array found for category: ${cat}`); } species.forEach(s => { const opt = document.createElement('option'); opt.value = s; opt.textContent = s; group.appendChild(opt); }); input.appendChild(group); }); isDropdownPopulated = true; console.log("Species dropdown populated successfully."); } catch (error) { console.error("Error during species dropdown population:", error); input.innerHTML = '<option value="" selected disabled>Error loading species</option>'; } }
         function toggleCustomSpeciesInput() { /* ... Same ... */ const sel=document.getElementById('speciesInput'), custom=document.getElementById('customSpeciesInput'); if(!sel||!custom)return; custom.style.display=sel.value==='Other'?'block':'none'; if(sel.value!=='Other')custom.value=''; }
         function toggleCompetitionFields(updateLog = true) { /* ... Same ... */ try{ const check=document.getElementById('isCompetition').checked; const zone=document.getElementById('zoneInput'); const peg=document.getElementById('pegInput'); const initialsGroup = document.getElementById('initialsInputGroup'); const verifiedByHeader = document.getElementById('verifiedByHeader'); zone.disabled=!check; peg.disabled=!check; initialsGroup.style.display = check ? 'block' : 'none'; if (verifiedByHeader) verifiedByHeader.style.display = check ? 'table-cell' : 'none'; if (updateLog) { updateFishLog(); } }catch(e){console.error("Toggle comp fields err:",e);} }
         function setTodaysDate() { /* ... Same ... */ try { const dateInput = document.getElementById('competitionDate'); if (dateInput && !dateInput.value) { const today = new Date(); const formattedDate = formatDateForInput(today); dateInput.value = formattedDate; currentDate = formattedDate; console.log("Set date input to today:", formattedDate); } } catch (e) { console.error("Error setting today's date:", e); } }
         function startApp() { /* ... Same ... */ console.log("Start Fishing triggered."); setTodaysDate(); populateSpeciesDropdown(); showPage('registrationPage'); }
         function startRecording() { /* ... Same ... */ console.log("Record Catch triggered."); const nameEl=document.getElementById('anglerName'), dateEl=document.getElementById('competitionDate'), venueEl=document.getElementById('venueInput'), checkEl=document.getElementById('isCompetition'), zoneEl=document.getElementById('zoneInput'), pegEl=document.getElementById('pegInput'); if(!nameEl||!dateEl||!venueEl||!checkEl||!zoneEl||!pegEl){alert("Form elements missing.");return;} const name=nameEl.value.trim(), date=dateEl.value, venue=venueEl.value.trim(), isComp=checkEl.checked, zone=zoneEl.value, peg=pegEl.value; if(!name||!date||!venue){alert("Name, Date, Venue required.");return;} if(isComp&&(!zone||!peg)){alert("Zone & Peg required for competition.");return;} if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert("Valid date required.");return;} currentAngler=name; currentDate=date; currentVenue=venue; currentZone=isComp?zone:null; currentPeg=isComp?peg:null; const isActuallyCompetition = !!(currentZone && currentPeg); console.log("Start recording data:",{currentAngler,currentDate,currentVenue,currentZone,currentPeg,isCompetition:isActuallyCompetition}); populateSpeciesDropdown(); saveTempSession(); updateFishLog(); showPage('fishingPage'); if (isActuallyCompetition) { showModal('mlsInfoModal'); } }
-        // --- UPDATE: addFish enables Take Photo button ---
+
+        // --- UPDATE: addFish now shows confirm photo modal ---
         function addFish() {
-            console.log("Add Fish.");
+            console.log("Add Fish button clicked. Validating...");
             const spEl=document.getElementById('speciesInput'), custEl=document.getElementById('customSpeciesInput'), lenEl=document.getElementById('lengthInput'), initialsEl = document.getElementById('initialsInput');
-            const takePhotoBtn = document.getElementById('takePhotoLastBtn');
             const isCompetition = document.getElementById('isCompetition').checked;
 
-            if(!spEl||!custEl||!lenEl || !takePhotoBtn){alert("Add fish elements missing.");return;}
+            if(!spEl||!custEl||!lenEl){alert("Add fish elements missing.");return;}
             let species=spEl.value; const lenVal=lenEl.value.trim(); let length; let initials = null;
             if(!lenVal){alert("Length required.");return;} length=Math.round(parseFloat(lenVal));
             if(isNaN(length)||length<=0||length>500){alert("Valid length (1-500cm) required.");return;}
             if(species==='Other'){species=custEl.value.trim();if(!species){alert("Custom species name required.");return;}if(!/^[a-zA-Z\s'-]+$/.test(species)){alert("Invalid species chars.");return;}}else if(!species){alert("Select species.");return;}
             if (isCompetition && initialsEl) { initials = initialsEl.value.trim().toUpperCase(); }
 
+            // Validation passed, prepare data but don't add yet
             const fishId = generateUUID();
-            fishData.push({ id: fishId, species, length, initials: initials || null, imageId: null });
-            lastAddedFishId = fishId; // Store ID of the fish just added
-            takePhotoBtn.disabled = false; // Enable the photo button
+            pendingFishData = { id: fishId, species, length, initials: initials || null, imageId: null };
+            console.log("Fish data validated. Stored pending:", pendingFishData);
 
-            console.log("Added:",{id: fishId, species,length, initials});
-            updateFishLog();
-            spEl.value='';custEl.value='';lenEl.value=''; if(initialsEl) initialsEl.value=''; toggleCustomSpeciesInput();saveTempSession();
+            // Show the confirm photo modal
+            if (confirmPhotoModalInstance) {
+                 confirmPhotoModalInstance.show();
+            } else {
+                 console.error("Confirm photo modal instance not ready!");
+                 // Fallback: just add the fish without asking for photo
+                 handleConfirmPhoto(false);
+            }
         }
 
-        // --- UPDATE: updateFishLog adds delete icon in Amend Mode ---
+        // --- NEW: Handle Confirm Photo Modal Choice ---
+        function handleConfirmPhoto(shouldTakePhoto) {
+            hideModal('confirmPhotoModal');
+            console.log(`Photo confirmation: ${shouldTakePhoto}`);
+
+            if (!pendingFishData) {
+                 console.error("Cannot confirm photo, pendingFishData is null!");
+                 return;
+            }
+
+            // Add the fish data to the main array
+            fishData.push(pendingFishData);
+            const addedFishId = pendingFishData.id;
+            console.log("Added fish to main data:", pendingFishData);
+
+            // Clear pending data
+            pendingFishData = null;
+
+            // Reset form fields
+            try {
+                document.getElementById('speciesInput').value = '';
+                document.getElementById('customSpeciesInput').value = '';
+                document.getElementById('customSpeciesInput').style.display = 'none';
+                document.getElementById('lengthInput').value = '';
+                const initialsInput = document.getElementById('initialsInput');
+                if(initialsInput) initialsInput.value = '';
+            } catch(e) { console.error("Error resetting form fields after add:", e); }
+
+
+            // Update log and save session
+            updateFishLog();
+            saveTempSession();
+
+            // Open camera if requested
+            if (shouldTakePhoto) {
+                openCamera(addedFishId);
+            }
+        }
+
+
+        // --- UPDATE: updateFishLog adds Delete icon, NO Amend Mode ---
         async function updateFishLog() {
             const logBody = document.getElementById('fishLog');
             const isCompetition = document.getElementById('isCompetition').checked;
@@ -514,10 +492,12 @@
 
             logBody.innerHTML = ''; // Clear existing log body
 
+            const colCount = 3 + (isCompetition ? 1 : 0) + 1; // Photo, Species, Length, [Verified], Delete
+
             if (fishData.length === 0) {
                  const row = logBody.insertRow();
                  const cell = row.insertCell();
-                 cell.colSpan = isCompetition ? 4 : 3; // Adjusted colspan (no actions column)
+                 cell.colSpan = colCount;
                  cell.className = 'text-center text-muted p-3';
                  cell.textContent = 'No fish added yet.';
                  return;
@@ -525,33 +505,15 @@
 
             for (const [i, f] of fishData.entries()) {
                  const row = logBody.insertRow();
-                 if (isAmendMode) {
-                     row.classList.add('amend-active'); // Add class for styling if needed
-                 }
 
-                 // 1. Photo/Thumbnail Cell (with optional delete icon)
+                 // 1. Photo/Thumbnail Cell
                  const photoCell = row.insertCell();
-                 photoCell.className = 'photo-col'; // Class for width styling
-                 if (isAmendMode) {
-                      // Add Delete Icon Button
-                      const deleteBtn = document.createElement('button');
-                      deleteBtn.type = 'button';
-                      deleteBtn.className = 'delete-icon-btn';
-                      deleteBtn.title = 'Delete this fish';
-                      deleteBtn.innerHTML = '<i class="bi bi-x-circle-fill"></i>';
-                      deleteBtn.addEventListener('click', (e) => {
-                           e.stopPropagation();
-                           deleteFish(i);
-                      });
-                      photoCell.appendChild(deleteBtn);
-                 }
-                 // Add Thumbnail Container (always present)
+                 photoCell.className = 'photo-col';
                  const thumbContainer = document.createElement('span');
                  thumbContainer.className = 'thumbnail-container';
-                 thumbContainer.id = `thumb-container-${f.id}`; // Give container ID for updates
-                 thumbContainer.innerHTML = '<i class="bi bi-camera no-photo-icon"></i>'; // Default icon
+                 thumbContainer.id = `thumb-container-${f.id}`;
+                 thumbContainer.innerHTML = '<i class="bi bi-camera no-photo-icon"></i>';
                  photoCell.appendChild(thumbContainer);
-
 
                  // 2. Species Cell
                  row.insertCell().textContent = f.species || '?';
@@ -568,45 +530,36 @@
                       initialsCell.textContent = f.initials || '-';
                  }
 
+                 // 5. Delete Cell (Reintroduced)
+                 const deleteCell = row.insertCell();
+                 deleteCell.className = 'delete-col';
+                 const deleteBtn = document.createElement('button');
+                 deleteBtn.type = 'button';
+                 deleteBtn.className = 'delete-icon-btn';
+                 deleteBtn.title = 'Delete this fish';
+                 deleteBtn.innerHTML = '<i class="bi bi-x-circle-fill"></i>';
+                 deleteBtn.addEventListener('click', (e) => {
+                      e.stopPropagation();
+                      deleteFish(i);
+                 });
+                 deleteCell.appendChild(deleteBtn);
+
                  // Load thumbnail if exists
                  if (f.imageId) {
-                      loadThumbnail(f.id, f.imageId); // Pass fish ID (f.id)
+                      loadThumbnail(f.id, f.imageId);
                  }
             }
         }
 
-        // --- UPDATE: loadThumbnail targets container span ---
-        async function loadThumbnail(fishId, imageId) {
-            // Target the container span, not the cell
-            const container = document.getElementById(`thumb-container-${fishId}`);
-            if (!container || !imageId) return;
+        // --- loadThumbnail (no changes needed from previous) ---
+        async function loadThumbnail(fishId, imageId) { const container = document.getElementById(`thumb-container-${fishId}`); if (!container || !imageId) return; container.innerHTML = '<div class="spinner-border spinner-border-sm text-secondary" role="status"><span class="visually-hidden">Loading...</span></div>'; container.onclick = null; try { const blob = await getImageFromDb(imageId); if (blob) { const url = URL.createObjectURL(blob); container.innerHTML = `<img src="${url}" alt="Fish thumbnail" class="fish-thumbnail">`; container.onclick = () => { console.log(`Thumbnail clicked, showing image: ${imageId}`); showFullscreenImage(imageId); }; } else { container.innerHTML = `<i class="bi bi-image-alt no-photo-icon" title="Image missing"></i>`; } } catch (error) { console.error(`Error loading thumbnail for ${imageId}:`, error); container.innerHTML = `<i class="bi bi-exclamation-triangle-fill text-danger no-photo-icon" title="Error loading image"></i>`; } }
 
-            container.innerHTML = '<div class="spinner-border spinner-border-sm text-secondary" role="status"><span class="visually-hidden">Loading...</span></div>'; // Spinner
-            container.onclick = null; // Disable click while loading
 
-            try {
-                const blob = await getImageFromDb(imageId);
-                if (blob) {
-                    const url = URL.createObjectURL(blob);
-                    container.innerHTML = `<img src="${url}" alt="Fish thumbnail" class="fish-thumbnail">`;
-                    container.onclick = () => {
-                         console.log(`Thumbnail clicked, showing image: ${imageId}`);
-                         showFullscreenImage(imageId);
-                    };
-                } else {
-                   container.innerHTML = `<i class="bi bi-image-alt no-photo-icon" title="Image missing"></i>`;
-                }
-            } catch (error) {
-                console.error(`Error loading thumbnail for ${imageId}:`, error);
-                container.innerHTML = `<i class="bi bi-exclamation-triangle-fill text-danger no-photo-icon" title="Error loading image"></i>`;
-            }
-        }
-
-        // --- UPDATE: deleteFish disables photo button if last added is deleted ---
+        // --- UPDATE: deleteFish no longer needs to handle lastAddedFishId button ---
         async function deleteFish(idx) {
              if (idx >= 0 && idx < fishData.length) {
                  const fishToDelete = fishData[idx];
-                 const { id, species, length, initials, imageId } = fishToDelete;
+                 const { id, species, length, imageId } = fishToDelete; // Removed initials from destructure here, not needed for confirm msg
                  let confirmMessage = `Delete ${species || '?'} (${length || '?'}cm)?`;
                  if (imageId) { confirmMessage += " Photo will also be deleted."; }
 
@@ -615,15 +568,7 @@
                      try {
                          if (imageId) { await deleteImageFromDb(imageId); }
                          fishData.splice(idx, 1);
-
-                         // If the deleted fish was the last one added, disable the photo button
-                         if (id === lastAddedFishId) {
-                              lastAddedFishId = null; // Clear the ID
-                              const takePhotoBtn = document.getElementById('takePhotoLastBtn');
-                              if(takePhotoBtn) takePhotoBtn.disabled = true;
-                         }
-
-                         updateFishLog(); // Re-render the log (will reflect amend mode state)
+                         updateFishLog(); // Re-render the log
                          saveTempSession();
                      } catch (error) {
                          console.error("Error during fish/image deletion:", error);
@@ -634,20 +579,11 @@
              } else { console.error("Invalid delete idx:", idx); }
         }
 
-        function backFromFishing() { /* ... Same ... */ console.log("Back from Fishing."); stopCameraStream(); isAmendMode = false; /* Exit amend mode */ showPage('registrationPage'); }
+        function backFromFishing() { /* ... Same ... */ console.log("Back from Fishing."); stopCameraStream(); /* isAmendMode removed */ showPage('registrationPage'); }
 
 
         // --- Camera Functions ---
-        // --- NEW: takePhotoForLastFish Button Handler ---
-        function takePhotoForLastFish() {
-             if (lastAddedFishId) {
-                 console.log(`Take Photo button clicked for last added fish: ${lastAddedFishId}`);
-                 openCamera(lastAddedFishId);
-             } else {
-                 console.warn("Take Photo button clicked, but no lastAddedFishId is set.");
-                 alert("Please add a fish first before taking its photo.");
-             }
-         }
+        // --- REMOVED takePhotoForLastFish ---
         async function openCamera(fishId) { /* ... Same ... */ console.log("Opening camera for fish ID:", fishId); currentFishIdForPhoto = fishId; const video = document.getElementById('cameraVideo'); if (!video || !cameraModalInstance) { console.error("Camera video or modal instance missing!"); return; } if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert("Camera access is not supported by your browser."); return; } try { const constraints = { video: { facingMode: "environment" } }; currentStream = await navigator.mediaDevices.getUserMedia(constraints); video.srcObject = currentStream; video.play(); cameraModalInstance.show(); console.log("Camera stream started."); } catch (err) { console.error("Error accessing camera:", err); if (err.name === "NotAllowedError") { alert("Camera permission denied. Please allow camera access."); } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") { try { console.log("Trying front camera..."); const frontConstraints = { video: { facingMode: "user" } }; currentStream = await navigator.mediaDevices.getUserMedia(frontConstraints); video.srcObject = currentStream; video.play(); cameraModalInstance.show(); console.log("Front camera stream started."); } catch (fallbackErr) { console.error("Error accessing front camera:", fallbackErr); alert(`Could not access camera. Error: ${fallbackErr.message}`); } } else { alert(`Could not access camera. Error: ${err.message}`); } } }
         function stopCameraStream() { /* ... Same ... */ if (currentStream) { currentStream.getTracks().forEach(track => track.stop()); console.log("Camera stream stopped."); currentStream = null; const video = document.getElementById('cameraVideo'); if (video) video.srcObject = null; } }
         async function takeSnapshot() { /* ... Same ... */ console.log("Taking snapshot..."); const video = document.getElementById('cameraVideo'); const canvas = document.getElementById('cameraCanvas'); if (!video || !canvas || !currentFishIdForPhoto) { console.error("Missing video, canvas, or fish ID."); stopCameraStream(); hideModal('cameraModal'); return; } const context = canvas.getContext('2d'); canvas.width = video.videoWidth; canvas.height = video.videoHeight; context.drawImage(video, 0, 0, canvas.width, canvas.height); stopCameraStream(); canvas.toBlob(async (blob) => { if (blob) { const imageId = `img_${currentFishIdForPhoto}_${Date.now()}`; console.log(`Generated Blob. Saving with ID: ${imageId}`); try { await saveImageToDb(imageId, blob); const fishIndex = fishData.findIndex(f => f.id === currentFishIdForPhoto); if (fishIndex !== -1) { fishData[fishIndex].imageId = imageId; console.log("Updated fishData with imageId:", fishData[fishIndex]); saveTempSession(); updateFishLog(); } else { console.error("Could not find fish with ID", currentFishIdForPhoto); } } catch (error) { console.error("Error saving image blob to DB:", error); alert("Failed to save the photo."); } } else { console.error("Canvas toBlob failed."); alert("Failed to capture photo data."); } hideModal('cameraModal'); currentFishIdForPhoto = null; }, 'image/jpeg', 0.9); }
@@ -666,7 +602,54 @@
         function showScorecardsModal() { /* ... Same ... */ console.log("View Scorecards."); const modalEl=document.getElementById('savedScorecardsModal'), listEl=document.getElementById('savedScorecardsList'); if(modalEl&&listEl){listEl.innerHTML='<div class="text-center p-3"><div class="spinner-border text-primary"><span class="visually-hidden">Load...</span></div></div>'; let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false});mI.show();setTimeout(loadScorecards,50);}else{console.error("Scorecard modal/list missing.");alert("Err show modal.");}}
         async function loadScorecards() { /* ... Same ... */ console.log("Loading scorecards..."); const savedScorecardsList = document.getElementById('savedScorecardsList'); const olderScorecardsToggleContainer = document.getElementById('olderScorecardsToggleContainer'); if (!savedScorecardsList || !olderScorecardsToggleContainer) { console.error("CRITICAL: Modal list or toggle container missing!"); return; } savedScorecardsList.innerHTML = ''; olderScorecardsToggleContainer.innerHTML = ''; const scorecards = []; let loadError = false; try { for (let i=0; i<localStorage.length; i++){ const key=localStorage.key(i); if (key?.startsWith('scorecard_')){ const dS=localStorage.getItem(key); if(dS){ try { const data=JSON.parse(dS); if(data?.currentAngler && data.currentDate && data.currentVenue){ const tS=parseInt(key.split('_')[1],10); if(!isNaN(tS)){scorecards.push({key,data,timestamp:tS});}} else {console.warn("Skip invalid card:",key);}} catch(e){console.error("Parse err:",key,e);}}}}} catch (e) { console.error("LS err:",e); savedScorecardsList.innerHTML='<p class="text-danger p-3">Load failed.</p>'; loadError=true; } if(loadError) return; scorecards.sort((a,b)=>b.timestamp-a.timestamp); if (scorecards.length===0){ savedScorecardsList.innerHTML='<p class="text-center p-3">No saved scorecards.</p>'; return; } console.log(`Total scorecards found: ${scorecards.length}`); const displayLimit = 4; try { const initial = scorecards.slice(0, displayLimit); initial.forEach(({ key, data }, index) => { const el = createScorecardElement(key, data, index === 0); if (el) savedScorecardsList.appendChild(el); }); } catch(e) { console.error("Err initial loop:", e); savedScorecardsList.innerHTML += '<p class="text-danger p-3">Err display initial.</p>'; } if (scorecards.length > displayLimit) { const olderCount = scorecards.length - displayLimit; const showOlderBtn = document.createElement('button'); showOlderBtn.id = 'showOlderBtn'; showOlderBtn.className = 'btn btn-outline-secondary'; showOlderBtn.textContent = `View ${olderCount} Older Scorecard${olderCount > 1 ? 's' : ''}`; showOlderBtn.onclick = function() { console.log("'Older' clicked."); try { const older = scorecards.slice(displayLimit); older.forEach(({ key, data }) => { const el = createScorecardElement(key, data, false); if (el) savedScorecardsList.appendChild(el); }); olderScorecardsToggleContainer.innerHTML = ''; } catch(e) { console.error("Err create/append older:", e); olderScorecardsToggleContainer.innerHTML = '<p class="text-danger">Err display older.</p>'; } }; olderScorecardsToggleContainer.appendChild(showOlderBtn); const deleteOlderBtn = document.createElement('button'); deleteOlderBtn.id = 'deleteOlderBtn'; deleteOlderBtn.className = 'btn btn-danger'; deleteOlderBtn.textContent = 'Delete Older Scorecards'; deleteOlderBtn.onclick = confirmDeleteOlderScorecards; olderScorecardsToggleContainer.appendChild(deleteOlderBtn); } }
         function createScorecardElement (key, data, isLatest) { /* ... Same ... */ try { const wrapperDiv = document.createElement('div'); wrapperDiv.className = `scorecard-entry${isLatest ? ' latest-scorecard' : ''}`; wrapperDiv.id = `entry-${key}`; let tL = 0, fC = 0, sp = new Set(), lF = null; const fish = data.fishData || []; fish.forEach(f => { const l = f.length || 0; fC++; tL += l; if (f.species) sp.add(f.species); if (!lF || l > (lF.length || 0)) lF = f; }); const spC = sp.size; const lFS = lF ? `${lF.species || '?'}(${lF.length || '?'}cm)` : 'N/A'; const eK = key.replace(/'/g, "\\'"); const viewNoteButtonHtml = (data.notes && data.notes.trim() !== '') ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${eK}', event)"><i class="bi bi-eye me-1"></i>View Note</button>` : ''; let catchTableHTML = '<p class="ms-2">No fish recorded.</p>'; if (fish.length > 0) { const verifiedHeader = data.isCompetition ? '<th>Verified</th>' : ''; const fishRowsPlaceholderId = `fish-rows-${key}`; catchTableHTML = `<div class="table-responsive"><table class="table table-sm table-striped table-bordered"><thead><tr><th>#</th><th>Photo</th><th>Species</th><th>Len(cm)</th>${verifiedHeader}</tr></thead><tbody id="${fishRowsPlaceholderId}"><tr><td colspan="5" class="text-center p-2"><div class="spinner-border spinner-border-sm"><span class="visually-hidden">Loading fish...</span></div></td></tr></tbody></table></div>`; loadFishRowsForScorecard(key, data, fishRowsPlaceholderId); } wrapperDiv.innerHTML = `<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest ? '<span class="badge ms-2">Latest</span>' : ''}</div> <div class="scorecard-details" id="details_${key}"> <h6>Session Details</h6> <p><strong>Angler:</strong> ${data.currentAngler || '?'}</p> <p><strong>Venue:</strong> ${data.currentVenue || '?'}</p> <p><strong>Date:</strong> ${formatDate(data.currentDate || '')}</p> ${data.currentZone ? `<p><strong>Zone:</strong> ${data.currentZone}</p>` : ''} ${data.currentPeg ? `<p><strong>Peg:</strong> ${data.currentPeg}</p>` : ''} ${data.verifier ? `<p><strong>Verified By:</strong> ${data.verifier}</p>` : ''} <hr> <h6>Catch (${fC})</h6> ${catchTableHTML} ${fish.length > 0 ? `<hr><h6>Summary</h6><p><strong>Total Len:</strong> ${tL}cm</p><p><strong>Species:</strong> ${spC}</p><p><strong>Longest:</strong> ${lFS}</p>` : ''} <div class="btn-actions-group"> ${viewNoteButtonHtml} <button class="btn btn-outline-secondary btn-sm" onclick="openNotesModal('${eK}', event)"><i class="bi bi-pencil me-1"></i>Add/Edit Note</button> <button class="btn btn-info btn-sm" onclick="emailScorecard('${eK}', event)"><i class="bi bi-envelope me-1"></i>Email</button> <button class="btn btn-danger btn-sm" onclick="deleteScorecard('${eK}', event)"><i class="bi bi-trash me-1"></i>Delete</button> </div> </div>`; return wrapperDiv; } catch (elementError) { console.error(`Err create el for ${key}:`, elementError); const errDiv = document.createElement('div'); errDiv.className = 'alert alert-warning p-2 my-2'; errDiv.textContent = `Err display card ${key.slice(-4)}`; return errDiv; } }
-        async function loadFishRowsForScorecard(scorecardKey, scorecardData, targetBodyId) { /* ... Same ... */ const fish = scorecardData.fishData || []; const tableBody = document.getElementById(targetBodyId); if (!tableBody) return; if (fish.length === 0) { tableBody.innerHTML = '<tr><td colspan="5" class="text-center p-2">No fish recorded.</td></tr>'; return; } let rowsHtml = ''; for (const [i, f] of fish.entries()) { const verifiedCell = scorecardData.isCompetition ? `<td>${f.initials || '-'}</td>` : ''; let thumbHtml = '<span class="thumbnail-container"><i class="bi bi-camera no-photo-icon"></i></span>'; if (f.imageId) { try { const blob = await getImageFromDb(f.imageId); if (blob) { const url = URL.createObjectURL(blob); thumbHtml = `<span class="thumbnail-container" onclick="showFullscreenImage('${f.imageId}')"><img src="${url}" alt="Fish thumbnail" class="fish-thumbnail"></span>`; } else { thumbHtml = `<span class="thumbnail-container"><i class="bi bi-image-alt no-photo-icon" title="Image missing"></i></span>`; } } catch (err) { console.error(`Error loading saved thumb ${f.imageId}:`, err); thumbHtml = `<span class="thumbnail-container"><i class="bi bi-exclamation-triangle-fill text-danger no-photo-icon" title="Error load"></i></span>`; } } rowsHtml += `<tr><td>${i + 1}</td><td>${thumbHtml}</td><td>${f.species || '?'}</td><td>${f.length || '?'}</td>${verifiedCell}</tr>`; } tableBody.innerHTML = rowsHtml; }
+        // --- FIX: loadFishRowsForScorecard with more error checks ---
+        async function loadFishRowsForScorecard(scorecardKey, scorecardData, targetBodyId) {
+            const fish = scorecardData.fishData || [];
+            const tableBody = document.getElementById(targetBodyId);
+            if (!tableBody) {
+                 console.error(`Target body not found for saved scorecard: ${targetBodyId}`);
+                 return; // Exit if target doesn't exist
+            }
+
+            if (fish.length === 0) {
+                 tableBody.innerHTML = '<tr><td colspan="5" class="text-center p-2">No fish recorded for this scorecard.</td></tr>';
+                 return;
+            }
+
+            let rowsHtml = '';
+            console.log(`Loading ${fish.length} fish rows for scorecard ${scorecardKey}`);
+            try {
+                 for (const [i, f] of fish.entries()) {
+                      const verifiedCell = scorecardData.isCompetition ? `<td>${f.initials || '-'}</td>` : '';
+                      let thumbHtml = '<span class="thumbnail-container"><i class="bi bi-camera no-photo-icon"></i></span>'; // Default
+
+                      if (f.imageId) {
+                           try {
+                                const blob = await getImageFromDb(f.imageId);
+                                if (blob) {
+                                     const url = URL.createObjectURL(blob);
+                                     thumbHtml = `<span class="thumbnail-container" onclick="showFullscreenImage('${f.imageId}')"><img src="${url}" alt="Fish thumbnail" class="fish-thumbnail"></span>`;
+                                     // Don't revoke URL here, viewer modal handles it on close
+                                } else {
+                                     console.warn(`Image blob not found in DB for ID: ${f.imageId}`);
+                                     thumbHtml = `<span class="thumbnail-container"><i class="bi bi-image-alt no-photo-icon" title="Image missing"></i></span>`;
+                                }
+                           } catch (err) {
+                                console.error(`Error loading saved thumb ${f.imageId}:`, err);
+                                thumbHtml = `<span class="thumbnail-container"><i class="bi bi-exclamation-triangle-fill text-danger no-photo-icon" title="Error load"></i></span>`;
+                           }
+                      }
+
+                      rowsHtml += `<tr><td>${i + 1}</td><td>${thumbHtml}</td><td>${f.species || '?'}</td><td>${f.length || '?'}</td>${verifiedCell}</tr>`;
+                 }
+                 // Set the HTML *after* the loop finishes
+                 tableBody.innerHTML = rowsHtml;
+                 console.log(`Successfully loaded fish rows for scorecard ${scorecardKey}`);
+            } catch (loopError) {
+                console.error(`Error occurred while building rows for ${scorecardKey}:`, loopError);
+                tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-danger p-2">Error loading fish details.</td></tr>';
+            }
+        }
         function toggleScorecardDetails(key, element){ /* ... Same ... */ console.log("Toggle:",key); const d=document.getElementById(`details_${key}`), i=element.querySelector('i.bi'); if(d){const v=d.style.display==='block'; d.style.display=v?'none':'block'; if(i){i.classList.toggle('bi-chevron-right',v);i.classList.toggle('bi-chevron-down',!v);} element.classList.toggle('details-visible',!v);}else{console.error("Details missing:",key);}}
         async function deleteScorecard(key, event){ /* ... Same ... */ event.stopPropagation(); console.log("Delete scorecard key:", key); let data; try { data = JSON.parse(localStorage.getItem(key) || '{}'); } catch (e) { data = {}; } const fishList = data.fishData || []; const imageIdsToDelete = fishList.map(f => f.imageId).filter(id => !!id); let sN = `card ${key.slice(-6)}`; try { sN = `card for ${data.currentAngler || '?'} on ${formatDate(data.currentDate || '')}`; } catch (e) {} if (confirm(`Delete ${sN}? This will also delete ${imageIdsToDelete.length} associated photo(s). Cannot undo.`)) { try { if (imageIdsToDelete.length > 0) { console.log("Deleting images from DB:", imageIdsToDelete); const deletePromises = imageIdsToDelete.map(id => deleteImageFromDb(id)); await Promise.allSettled(deletePromises); console.log("Image deletion from DB attempted."); } localStorage.removeItem(key); console.log("Deleted scorecard metadata from localStorage:", key); loadScorecards(); } catch (e) { console.error("Delete scorecard/images error:", e); alert("Failed to delete scorecard or some associated images."); loadScorecards(); } } else { console.log("Delete cancel."); } }
         function emailScorecard(key, event) { /* ... Same ... */ event.stopPropagation(); console.log("Emailing:", key); alert("This will open your default email app. Photos and Notes are NOT included."); let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error getting data: ${error.message}`); return; } let body = "Sea Catch Scorecard\r\n=====================\r\n\r\n"; body += "Session Details:\r\n"; body += `Angler: ${data.currentAngler||'?'}\r\n`; body += `Date: ${formatDate(data.currentDate||'')}\r\n`; body += `Venue: ${data.currentVenue||'?'}\r\n`; if(data.currentZone)body+=`Zone: ${data.currentZone}\r\n`; if(data.currentPeg)body+=`Peg: ${data.currentPeg}\r\n`; if(data.verifier)body+=`Verified By: ${data.verifier}\r\n`; body += "\r\n"; body += "Catch List:\r\n"; if(data.fishData?.length>0){data.fishData.forEach((f,i)=>{body+=`${i+1}. ${f.species||'?'} - ${f.length||'?'} cm`; if(data.isCompetition) { body += ` - Verified by: ${f.initials || '-'}`;} body += `\r\n`;});}else{body+="No fish.\r\n";} body+="\r\n"; let tL=0,fC=0,sp=new Set(),lF=null; const fish=data.fishData||[]; fish.forEach(f=>{const l=f.length||0;fC++;tL+=l;if(f.species)sp.add(f.species);if(!lF||l>(lF.length||0))lF=f;}); const spC=sp.size; const lFS=lF?`${lF.species||'?'}(${lF.length||'?'}cm)`:'N/A'; body += "Summary:\r\n"; body += `Total Fish: ${fC}\r\n`; body += `Total Length: ${tL} cm\r\n`; body += `Unique Species: ${spC}\r\n`; body += `Longest Fish: ${lFS}\r\n\r\n=====================\r\n`; const subject = `Fishing Scorecard: ${data.currentVenue||'?'} - ${formatDate(data.currentDate||'')}`; const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`; if(mailtoUrl.length>1800){console.warn(`Mailto long (${mailtoUrl.length})`); alert("Warning: Scorecard long.");} console.log("Mailto len:", mailtoUrl.length); try{window.open(mailtoUrl,'_self');}catch(e){console.error("Mailto err:",e);alert("Could not open email client.");} }
@@ -689,56 +672,10 @@
         function hideModal(modalId) { /* ... Same ... */ const mE=document.getElementById(modalId); if(mE){const m=bootstrap.Modal.getInstance(mE); if(m){m.hide();}else{mE.classList.remove('show');mE.style.display='none';const b=document.querySelector('.modal-backdrop');if(b)b.remove();document.body.classList.remove('modal-open');document.body.style.overflow='';document.body.style.paddingRight='';}}}
         function showModal(modalId) { /* ... Same ... */ const modalElement = document.getElementById(modalId); if(modalElement) { const instance = bootstrap.Modal.getOrCreateInstance(modalElement, {backdrop: 'static', keyboard: false}); instance.show(); } else { console.error(`Modal element #${modalId} not found!`); } }
 
-        // --- Amend Mode Toggle ---
-        function toggleAmendMode() {
-             isAmendMode = !isAmendMode; // Toggle the state
-             const btn = document.getElementById('toggleAmendBtn');
-             console.log("Toggling amend mode. New state:", isAmendMode);
-
-             if (btn) {
-                 if (isAmendMode) {
-                     btn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Done Amending';
-                     btn.classList.add('active'); // Add 'active' class for styling
-                     btn.classList.remove('btn-outline-secondary');
-                     btn.classList.add('btn-warning'); // Change color to indicate active state
-                 } else {
-                     btn.innerHTML = '<i class="bi bi-pencil-square me-1"></i> Amend Log';
-                     btn.classList.remove('active');
-                     btn.classList.add('btn-outline-secondary');
-                     btn.classList.remove('btn-warning');
-                 }
-             }
-             updateFishLog(); // Re-render the table to show/hide delete icons
-         }
-
+        // --- Amend Mode Toggle --- REMOVED toggleAmendMode function
 
         // --- Application Reset ---
-        function resetApp() {
-            console.log("Resetting app.");
-            fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen';
-            stopCameraStream(); deactivateAppMode(); isDropdownPopulated = false;
-            lastAddedFishId = null; // Reset last added fish
-            isAmendMode = false; // Ensure amend mode is off
-            try {
-               document.getElementById('anglerName').value=''; setTodaysDate(); document.getElementById('venueInput').value='';
-               document.getElementById('isCompetition').checked=false; toggleCompetitionFields(false);
-               document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value='';
-               const speciesInput = document.getElementById('speciesInput'); if (speciesInput) { speciesInput.innerHTML = '<option value="" selected disabled>Select a species</option><option value="Other">Other (specify)</option>'; }
-               const customSpeciesInput = document.getElementById('customSpeciesInput'); if (customSpeciesInput) { customSpeciesInput.value = ''; customSpeciesInput.style.display = 'none'; }
-               document.getElementById('lengthInput').value=''; document.getElementById('initialsInput').value='';
-               document.getElementById('fishLog').innerHTML='';
-               // Reset buttons
-               const takePhotoBtn = document.getElementById('takePhotoLastBtn'); if (takePhotoBtn) takePhotoBtn.disabled = true;
-               const amendBtn = document.getElementById('toggleAmendBtn'); if (amendBtn) { amendBtn.innerHTML = '<i class="bi bi-pencil-square me-1"></i> Amend Log'; amendBtn.classList.remove('active', 'btn-warning'); amendBtn.classList.add('btn-outline-secondary'); }
-               // Reset Verifier Modal
-               const vI = document.getElementById('verifierEndModalInput'); if(vI) vI.value='';
-               const vS = document.getElementById('verifierEndModalSection'); if(vS) vS.style.display='none';
-               // Reset Tally
-               populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML='';
-               document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0';
-               document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm';
-            } catch(e) { console.error("Error resetting forms:", e); }
-        }
+        function resetApp() { /* ... Updated to remove amend mode reset ... */ console.log("Resetting app."); fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen'; stopCameraStream(); deactivateAppMode(); isDropdownPopulated = false; pendingFishData = null; /* Clear pending fish */ try { document.getElementById('anglerName').value=''; setTodaysDate(); document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; toggleCompetitionFields(false); document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; const speciesInput = document.getElementById('speciesInput'); if (speciesInput) { speciesInput.innerHTML = '<option value="" selected disabled>Select a species</option><option value="Other">Other (specify)</option>'; } const customSpeciesInput = document.getElementById('customSpeciesInput'); if (customSpeciesInput) { customSpeciesInput.value = ''; customSpeciesInput.style.display = 'none'; } document.getElementById('lengthInput').value=''; document.getElementById('initialsInput').value=''; document.getElementById('fishLog').innerHTML=''; const vI = document.getElementById('verifierEndModalInput'); if(vI) vI.value=''; const vS = document.getElementById('verifierEndModalSection'); if(vS) vS.style.display='none'; populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm'; } catch(e) { console.error("Error resetting forms:", e); } }
 
         // --- Initialisation ---
         document.addEventListener('DOMContentLoaded', async () => {
@@ -747,42 +684,45 @@
                  await initDb();
                  if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/Sea-Catch-Scorer/sw.js').then(reg => console.log('SW registered scope: ', reg.scope)).catch(err => console.error('SW registration failed: ', err)); }); } else { console.log('Service workers not supported.'); }
                  window.addEventListener('popstate', handleBackButton); window.addEventListener('beforeunload', handleBeforeUnload); console.log("Nav listeners attached.");
-                 // Refs including new buttons
-                 const refs = { continueBtn: document.getElementById('continueBtn'), viewScorecardsBtn: document.getElementById('viewScorecardsBtn'), startRecordingBtn: document.getElementById('startRecordingBtn'), isCompetitionCheck: document.getElementById('isCompetition'), speciesSelect: document.getElementById('speciesInput'), addFishBtn: document.getElementById('addFishBtn'), backFromFishingBtn: document.getElementById('backFromFishingBtn'), endSessionBtn: document.getElementById('endSessionBtn'), confirmEndBtn: document.getElementById('confirmEndBtn'), backFromTallyBtn: document.getElementById('backFromTallyBtn'), restoreSessionBtn: document.getElementById('restoreSessionBtn'), startNewSessionBtn: document.getElementById('startNewSessionBtn'), anglerNameInput: document.getElementById('anglerName'), competitionDateInput: document.getElementById('competitionDate'), venueInput: document.getElementById('venueInput'), zoneSelect: document.getElementById('zoneInput'), pegSelect: document.getElementById('pegInput'), initialsInput: document.getElementById('initialsInput'), mlsAgreeBtn: document.getElementById('mlsAgreeBtn'), takePhotoButton: document.getElementById('takePhotoButton'), cancelCameraButtonHeader: document.getElementById('cancelCameraButtonHeader'), shareImageBtn: document.getElementById('shareImageBtn'), takePhotoLastBtn: document.getElementById('takePhotoLastBtn'), toggleAmendBtn: document.getElementById('toggleAmendBtn') };
+                 const refs = { continueBtn: document.getElementById('continueBtn'), viewScorecardsBtn: document.getElementById('viewScorecardsBtn'), startRecordingBtn: document.getElementById('startRecordingBtn'), isCompetitionCheck: document.getElementById('isCompetition'), speciesSelect: document.getElementById('speciesInput'), addFishBtn: document.getElementById('addFishBtn'), backFromFishingBtn: document.getElementById('backFromFishingBtn'), endSessionBtn: document.getElementById('endSessionBtn'), confirmEndBtn: document.getElementById('confirmEndBtn'), backFromTallyBtn: document.getElementById('backFromTallyBtn'), restoreSessionBtn: document.getElementById('restoreSessionBtn'), startNewSessionBtn: document.getElementById('startNewSessionBtn'), anglerNameInput: document.getElementById('anglerName'), competitionDateInput: document.getElementById('competitionDate'), venueInput: document.getElementById('venueInput'), zoneSelect: document.getElementById('zoneInput'), pegSelect: document.getElementById('pegInput'), initialsInput: document.getElementById('initialsInput'), mlsAgreeBtn: document.getElementById('mlsAgreeBtn'), takePhotoButton: document.getElementById('takePhotoButton'), cancelCameraButtonHeader: document.getElementById('cancelCameraButtonHeader'), shareImageBtn: document.getElementById('shareImageBtn'), confirmPhotoYesBtn: document.getElementById('confirmPhotoYesBtn'), confirmPhotoNoBtn: document.getElementById('confirmPhotoNoBtn') /* Removed takePhotoLastBtn, toggleAmendBtn */ };
                  // Init Modals
                  const notesModalElement = document.getElementById('notesModal'); if (notesModalElement) { notesModalInstance = new bootstrap.Modal(notesModalElement); } else { console.error("#notesModal not found!"); }
                  const cameraModalElement = document.getElementById('cameraModal'); if (cameraModalElement) { cameraModalInstance = new bootstrap.Modal(cameraModalElement); cameraModalElement.addEventListener('hidden.bs.modal', stopCameraStream); } else { console.error("#cameraModal not found!"); }
                  const imageViewerModalElement = document.getElementById('imageViewerModal'); if (imageViewerModalElement) { imageViewerModalInstance = new bootstrap.Modal(imageViewerModalElement); } else { console.error("#imageViewerModal not found!"); }
+                 const confirmPhotoModalElement = document.getElementById('confirmPhotoModal'); if (confirmPhotoModalElement) { confirmPhotoModalInstance = new bootstrap.Modal(confirmPhotoModalElement); } else { console.error("#confirmPhotoModal not found!"); }
                  // Add Listeners
                  if (refs.continueBtn) refs.continueBtn.addEventListener('click', startApp);
                  if (refs.viewScorecardsBtn) refs.viewScorecardsBtn.addEventListener('click', showScorecardsModal);
                  if (refs.startRecordingBtn) refs.startRecordingBtn.addEventListener('click', startRecording);
                  if (refs.isCompetitionCheck) refs.isCompetitionCheck.addEventListener('change', () => { toggleCompetitionFields(); saveTempSession(); });
                  if (refs.speciesSelect) refs.speciesSelect.addEventListener('change', toggleCustomSpeciesInput);
-                 if (refs.addFishBtn) refs.addFishBtn.addEventListener('click', addFish);
+                 if (refs.addFishBtn) refs.addFishBtn.addEventListener('click', addFish); // Now triggers modal
                  if (refs.backFromFishingBtn) refs.backFromFishingBtn.addEventListener('click', backFromFishing);
                  if (refs.endSessionBtn) refs.endSessionBtn.addEventListener('click', showEndSessionModal);
                  if (refs.confirmEndBtn) refs.confirmEndBtn.addEventListener('click', confirmEndSession);
                  if (refs.backFromTallyBtn) refs.backFromTallyBtn.addEventListener('click', backFromTally);
                  if (refs.startNewSessionBtn) { refs.startNewSessionBtn.addEventListener('click', () => { if (confirm("Starting a new session will discard the currently unsaved session data. Are you sure?")) { startNewSession(); } }); }
                  if (refs.restoreSessionBtn) refs.restoreSessionBtn.addEventListener('click', restoreSession);
+                 // Input Listeners
                  if (refs.anglerNameInput) refs.anglerNameInput.addEventListener('input', () => { currentAngler = refs.anglerNameInput.value.trim(); saveTempSession(); });
                  if (refs.competitionDateInput) refs.competitionDateInput.addEventListener('change', () => { currentDate = refs.competitionDateInput.value; saveTempSession(); });
                  if (refs.venueInput) refs.venueInput.addEventListener('input', () => { currentVenue = refs.venueInput.value.trim(); saveTempSession(); });
                  if (refs.zoneSelect) refs.zoneSelect.addEventListener('change', () => { currentZone = refs.isCompetitionCheck?.checked ? refs.zoneSelect.value : null; saveTempSession(); });
                  if (refs.pegSelect) refs.pegSelect.addEventListener('change', () => { currentPeg = refs.isCompetitionCheck?.checked ? refs.pegSelect.value : null; saveTempSession(); });
                  if (refs.initialsInput) refs.initialsInput.addEventListener('input', saveTempSession);
+                 // Modal Buttons
                  if (refs.mlsAgreeBtn) { refs.mlsAgreeBtn.addEventListener('click', () => hideModal('mlsInfoModal')); }
                  if (refs.takePhotoButton) refs.takePhotoButton.addEventListener('click', takeSnapshot);
                  if (refs.cancelCameraButtonHeader) refs.cancelCameraButtonHeader.addEventListener('click', stopCameraStream);
                  if (refs.shareImageBtn) refs.shareImageBtn.addEventListener('click', shareImage);
-                 // NEW Button Listeners
-                 if (refs.takePhotoLastBtn) refs.takePhotoLastBtn.addEventListener('click', takePhotoForLastFish);
-                 if (refs.toggleAmendBtn) refs.toggleAmendBtn.addEventListener('click', toggleAmendMode);
+                 // NEW Photo Confirm Modal Buttons
+                 if (refs.confirmPhotoYesBtn) refs.confirmPhotoYesBtn.addEventListener('click', () => handleConfirmPhoto(true));
+                 if (refs.confirmPhotoNoBtn) refs.confirmPhotoNoBtn.addEventListener('click', () => handleConfirmPhoto(false));
+                 // REMOVED Amend Button Listener
 
 
-                 setTodaysDate(); // Set date before checking restore
-                 checkRestoreSession(); // Check restore last
+                 setTodaysDate();
+                 checkRestoreSession();
 
                  console.log("Initialization complete.");
             } catch (error) { console.error("Fatal init error:", error); document.body.innerHTML = `<div class="alert alert-danger m-5">App Error: ${error.message}. Please check console, allow permissions, and refresh.</div>`; }
