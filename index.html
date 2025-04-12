@@ -59,7 +59,7 @@
         .card-section h5 { color: #0056b3; margin-bottom: 1rem; }
 
         /* --- Buttons --- */
-        .btn { padding: 12px 24px; font-size: 1.1rem; border-radius: 25px; border: none; margin: 5px; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; cursor: pointer; font-weight: 600; vertical-align: middle; } /* Added vertical-align */
+        .btn { padding: 12px 24px; font-size: 1.1rem; border-radius: 25px; border: none; margin: 5px; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; cursor: pointer; font-weight: 600; vertical-align: middle; }
         .btn:disabled { cursor: not-allowed; opacity: 0.65; }
         .btn-primary { background-color: #007bff; color: white; } .btn-primary:hover { background-color: #0056b3; transform: scale(1.05); }
         .btn-secondary { background-color: #6c757d; color: white; } .btn-secondary:hover { background-color: #5a6268; transform: scale(1.05); }
@@ -70,7 +70,6 @@
         .btn-outline-light { border: 2px solid #f8f9fa; color: #f8f9fa; background-color: transparent; } .btn-outline-light:hover { background-color: #f8f9fa; color: #000; }
         .btn-sm { padding: 5px 10px; font-size: 0.9rem; border-radius: 20px; font-weight: normal; margin: 2px; }
         .btn-lg { padding: 14px 28px; font-size: 1.25rem; margin: 10px; }
-        /* Button groups for better spacing */
         .button-group-center { text-align: center; margin-top: 20px; }
         .button-group-center .btn { margin-left: 8px; margin-right: 8px; }
 
@@ -84,7 +83,7 @@
         #verifierEndModalSection { display: none; }
 
         /* --- Tables --- */
-        .card-section .table { background: white; color: #212529; margin-top: 15px; border-collapse: separate; border-spacing: 0; width: 100%; } /* Added width */
+        .card-section .table { background: white; color: #212529; margin-top: 15px; border-collapse: separate; border-spacing: 0; width: 100%; }
         .table-responsive { margin-bottom: 1rem; border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .card-section .table thead { background-color: #e9ecef; color: #495057; font-weight: 600; border-bottom: 2px solid #dee2e6;}
         .card-section .table th, .card-section .table td { border-color: #dee2e6; vertical-align: middle; padding: 0.85rem 0.75rem; border-bottom: 1px solid #dee2e6; border-right: 1px solid #dee2e6; }
@@ -97,48 +96,31 @@
 
         /* --- Specific Table Styles --- */
         #fishingPage .table { margin-top: 0; margin-bottom: 0; }
-        /* Ensure text-end works for action column header */
-        #fishingPage th.actions-header { text-align: right; }
+        #fishingPage th.actions-header { text-align: right; padding-right: 1rem; /* Ensure padding for buttons */ }
         #tallyPage.card-section .table { margin-top: 20px; }
         #tallyPage.card-section tfoot td, #tallyPage.card-section tfoot strong { color: #212529; font-weight: 600; }
         #tallyPage.card-section .catch-summary-details { margin-bottom: 25px; color: #495057; line-height: 1.6; }
 
         /* --- Fish Log Specific --- */
         .fish-actions {
-             text-align: right; /* Ensure alignment */
-             white-space: nowrap; /* Prevent buttons wrapping */
+             text-align: right;
+             white-space: nowrap;
         }
+        /* --- IMPORTANT: Ensure buttons in actions cell are displayed --- */
         .fish-actions .btn {
             margin-left: 5px;
-            vertical-align: middle; /* Align buttons nicely */
-            display: inline-block !important; /* Ensure buttons are visible */
+            vertical-align: middle;
+            display: inline-block !important; /* Force display */
+            visibility: visible !important; /* Force visibility */
         }
         .thumbnail-container {
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 8px;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            text-align: center;
-            line-height: 40px;
-            border: 1px solid #eee; /* Add slight border */
-            border-radius: 4px;
-            background-color: #f8f9fa; /* Light background for icon */
-            overflow: hidden; /* Clip image if needed */
+            display: inline-block; vertical-align: middle; margin-right: 8px;
+            cursor: pointer; width: 40px; height: 40px; text-align: center;
+            line-height: 40px; border: 1px solid #eee; border-radius: 4px;
+            background-color: #f8f9fa; overflow: hidden;
         }
-        .fish-thumbnail {
-            width: 100%; /* Fill container */
-            height: 100%;
-            object-fit: cover;
-            border-radius: 0; /* No radius on image itself */
-            border: none; /* No border on image itself */
-        }
-        .no-photo-icon {
-            font-size: 1.5rem;
-            color: #adb5bd;
-            vertical-align: middle;
-        }
+        .fish-thumbnail { width: 100%; height: 100%; object-fit: cover; border-radius: 0; border: none; }
+        .no-photo-icon { font-size: 1.5rem; color: #adb5bd; vertical-align: middle; }
 
 
         /* --- Unified Modal Style --- */
@@ -211,6 +193,7 @@
         <div id="registrationPage" class="card-section page">
             <h2>Angler Registration</h2>
             <div class="mb-3"> <label for="anglerName" class="form-label">Angler Name</label> <input type="text" id="anglerName" class="form-control" placeholder="Enter your name"> </div>
+            <!-- Date input: Value will be set by JS -->
             <div class="mb-3"> <label for="competitionDate" class="form-label">Date</label> <input type="date" id="competitionDate" class="form-control"> </div>
             <div class="mb-3"> <label for="venueInput" class="form-label">Venue</label> <input type="text" id="venueInput" class="form-control" placeholder="Enter venue"> </div>
             <div class="mb-3 form-check"> <input type="checkbox" class="form-check-input" id="isCompetition"> <label class="form-check-label" for="isCompetition">Competition</label> </div>
@@ -246,8 +229,8 @@
                 <div class="col-md-4 mb-3">
                     <label for="speciesInput" class="form-label">Species</label>
                     <select id="speciesInput" class="form-select">
-                         <option value="" selected disabled>Select a species</option>
-                         <option value="Other">Other (specify)</option>
+                         <!-- Options populated by JS -->
+                         <option value="" selected disabled>Loading species...</option>
                     </select>
                     <input type="text" id="customSpeciesInput" class="form-control mt-2" placeholder="Enter custom species" style="display: none;">
                 </div>
@@ -274,11 +257,12 @@
                             <th>Species</th>
                             <th>Length (cm)</th>
                             <th id="verifiedByHeader" style="display:none;">Verified By</th>
-                            <!-- Added class for text-align -->
                             <th class="actions-header">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="fishLog"></tbody>
+                    <tbody id="fishLog">
+                        <!-- Rows populated by JS -->
+                    </tbody>
                 </table>
             </div>
 
@@ -464,7 +448,7 @@
              "Rays and Skates": [ "Ray (Blonde)", "Ray (Small-eyed)", "Ray (Starry)", "Ray (Thornback)", "Skate" ],
              "Sharks": [ "Shark (Blue)", "Shark (Porbeagle)", "Shark (Thresher)", "Smoothhound", "Smoothhound (Starry)", "Spurdog", "Tope" ],
              "Wrasse": [ "Wrasse (Ballan)", "Wrasse (Cuckoo)" ]
-        }; // MAKE SURE THIS IS POPULATED WITH YOUR ACTUAL LIST
+        }; // ENSURE THIS IS CORRECT
         let fishData = [];
         let currentAngler = null;
         let currentDate = null;
@@ -482,7 +466,7 @@
         let currentFishIdForPhoto = null;
         let currentImageBlobForViewer = null;
         let currentImageIdForViewer = null;
-        let isDropdownPopulated = false; // Flag to track dropdown status
+        let isDropdownPopulated = false; // Flag for dropdown
 
         // --- Constants ---
         const DB_NAME = 'SeaCatchDB';
@@ -491,6 +475,14 @@
 
         // --- Utility Functions ---
         function formatDate(dateString) { if (!dateString) return 'N/A'; try { const d = new Date(dateString + 'T00:00:00Z'); return isNaN(d.getTime()) ? dateString : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }); } catch (e) { console.error("Date format err:", e); return dateString; } }
+        // --- NEW: Format Date for Input ---
+        function formatDateForInput(date) {
+             const d = new Date(date);
+             const year = d.getFullYear();
+             const month = (d.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+             const day = d.getDate().toString().padStart(2, '0');
+             return `${year}-${month}-${day}`;
+         }
         function showPage(pageId) { console.log("Show page:", pageId); document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); const target = document.getElementById(pageId); if (target) { target.style.display = pageId === 'splashScreen' ? 'flex' : 'block'; currentPage = pageId; const container = document.querySelector('.container'); if(container) container.style.display = (pageId === 'splashScreen') ? 'none' : 'block'; if(pageId !== 'splashScreen' && !isAppActive) { activateAppMode(); } else if (pageId === 'splashScreen' && isAppActive) { deactivateAppMode(); } if (pageId !== 'splashScreen') { saveTempSession(); } } else { console.error("Page missing:", pageId, ". Defaulting splash."); const splash = document.getElementById('splashScreen'), container = document.querySelector('.container'); if(splash) splash.style.display = 'flex'; if(container) container.style.display = 'none'; currentPage = 'splashScreen'; deactivateAppMode(); } }
         function generateUUID() { return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16) ); }
 
@@ -510,33 +502,39 @@
         // --- Session Management ---
         function saveTempSession() { /* ... Same as previous ... */ if (!isAppActive) return; const temp = { fishData: fishData||[], currentAngler, currentDate, currentVenue, currentZone, currentPeg, currentPage, isAppActive, historyHijacked, isCompetition: !!(currentZone && currentPeg) }; try { localStorage.setItem('temp_session', JSON.stringify(temp)); } catch (e) { console.error("Save temp err:", e); if(e.name === 'QuotaExceededError'){ alert("Warning: Could not save session progress, local storage might be full. Saved scorecards are unaffected for now.");}} }
         function clearTempSession() { /* ... Same as previous ... */ try { localStorage.removeItem('temp_session'); console.log("Temp cleared."); } catch (e) { console.error("Clear temp err:", e); } }
-        function checkRestoreSession() { /* ... Same as previous ... */ let data; try { const temp = localStorage.getItem('temp_session'); if (!temp) { showPage('splashScreen'); return; } data = JSON.parse(temp); if (!data || !Array.isArray(data.fishData)) throw new Error("Invalid format."); } catch (e) { console.error("Read temp err:", e); clearTempSession(); showPage('splashScreen'); return; } if (data.currentAngler || data.currentDate || data.currentVenue || data.fishData.length > 0) { console.log("Found session, show modal."); document.getElementById('restoreAngler').textContent=data.currentAngler||'N/A'; document.getElementById('restoreDate').textContent=data.currentDate?formatDate(data.currentDate):'N/A'; document.getElementById('restoreFishCount').textContent=data.fishData.length; const modalEl=document.getElementById('restoreSessionModal'); if(modalEl){let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false}); mI.show();}else{console.error("Restore modal missing.");clearTempSession();showPage('splashScreen');} } else { clearTempSession(); showPage('splashScreen'); } }
-        function restoreSession() { /* ... Same as previous ... */ console.log("Restore clicked."); let temp; try { const sS=localStorage.getItem('temp_session'); if(!sS)throw new Error("No data."); temp=JSON.parse(sS); if(!temp||!Array.isArray(temp.fishData))throw new Error("Invalid format."); } catch(e){console.error("Restore err:",e);alert("Failed restore.");startNewSession();return;} fishData=temp.fishData||[]; currentAngler=temp.currentAngler||null; currentDate=temp.currentDate||null; currentVenue=temp.currentVenue||null; currentZone=temp.currentZone||null; currentPeg=temp.currentPeg||null; const page=temp.currentPage||'registrationPage'; isAppActive=temp.isAppActive||false; historyHijacked=temp.historyHijacked||false; const restoredIsCompetition = temp.isCompetition === true; console.log("Restoring to:",page,"App active:",isAppActive, "Is Competition:", restoredIsCompetition); try{ if(currentAngler)document.getElementById('anglerName').value=currentAngler; if(currentDate)document.getElementById('competitionDate').value=currentDate; if(currentVenue)document.getElementById('venueInput').value=currentVenue; document.getElementById('isCompetition').checked=restoredIsCompetition; toggleCompetitionFields(false); if(currentZone)document.getElementById('zoneInput').value=currentZone; if(currentPeg)document.getElementById('pegInput').value=currentPeg; }catch(e){console.error("Restore reg fields err:",e);} if(page==='fishingPage'||page==='tallyPage'){populateSpeciesDropdown(); if(page==='fishingPage'){updateFishLog();}else if(page==='tallyPage'){populateTallySummaryFields();populateTallyTable();}} hideModal('restoreSessionModal'); showPage(page); if(isAppActive && !historyHijacked){history.pushState({appActive:true},'',location.href); historyHijacked=true; console.log("Pushed history after restore.");} console.log("Session restored."); }
+        function checkRestoreSession() { /* ... Same as previous ... */ let data; try { const temp = localStorage.getItem('temp_session'); if (!temp) { setTodaysDate(); showPage('splashScreen'); return; } /* Set date if no temp */ data = JSON.parse(temp); if (!data || !Array.isArray(data.fishData)) throw new Error("Invalid format."); } catch (e) { console.error("Read temp err:", e); clearTempSession(); setTodaysDate(); showPage('splashScreen'); return; } if (data.currentAngler || data.currentDate || data.currentVenue || data.fishData.length > 0) { console.log("Found session, show modal."); document.getElementById('restoreAngler').textContent=data.currentAngler||'N/A'; document.getElementById('restoreDate').textContent=data.currentDate?formatDate(data.currentDate):'N/A'; document.getElementById('restoreFishCount').textContent=data.fishData.length; const modalEl=document.getElementById('restoreSessionModal'); if(modalEl){let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false}); mI.show();}else{console.error("Restore modal missing.");clearTempSession();setTodaysDate();showPage('splashScreen');} } else { clearTempSession(); setTodaysDate(); showPage('splashScreen'); } }
+        function restoreSession() { /* ... Same as previous ... */ console.log("Restore clicked."); let temp; try { const sS=localStorage.getItem('temp_session'); if(!sS)throw new Error("No data."); temp=JSON.parse(sS); if(!temp||!Array.isArray(temp.fishData))throw new Error("Invalid format."); } catch(e){console.error("Restore err:",e);alert("Failed restore.");startNewSession();return;} fishData=temp.fishData||[]; currentAngler=temp.currentAngler||null; currentDate=temp.currentDate||null; currentVenue=temp.currentVenue||null; currentZone=temp.currentZone||null; currentPeg=temp.currentPeg||null; const page=temp.currentPage||'registrationPage'; isAppActive=temp.isAppActive||false; historyHijacked=temp.historyHijacked||false; const restoredIsCompetition = temp.isCompetition === true; console.log("Restoring to:",page,"App active:",isAppActive, "Is Competition:", restoredIsCompetition); try{ if(currentAngler)document.getElementById('anglerName').value=currentAngler; if(currentDate)document.getElementById('competitionDate').value=currentDate; /* Date is restored here */ if(currentVenue)document.getElementById('venueInput').value=currentVenue; document.getElementById('isCompetition').checked=restoredIsCompetition; toggleCompetitionFields(false); if(currentZone)document.getElementById('zoneInput').value=currentZone; if(currentPeg)document.getElementById('pegInput').value=currentPeg; }catch(e){console.error("Restore reg fields err:",e);} if(page==='fishingPage'||page==='tallyPage'){populateSpeciesDropdown(); if(page==='fishingPage'){updateFishLog();}else if(page==='tallyPage'){populateTallySummaryFields();populateTallyTable();}} hideModal('restoreSessionModal'); showPage(page); if(isAppActive && !historyHijacked){history.pushState({appActive:true},'',location.href); historyHijacked=true; console.log("Pushed history after restore.");} console.log("Session restored."); }
         function startNewSession() { /* ... Same as previous ... */ console.log("Start New Session confirmed after prompt."); clearTempSession(); resetApp(); hideModal('restoreSessionModal'); showPage('splashScreen'); }
 
         // --- UI Interaction ---
-        // --- UPDATED: populateSpeciesDropdown ---
+        // --- FIX: populateSpeciesDropdown with logging & try-catch ---
         function populateSpeciesDropdown() {
             if (isDropdownPopulated) {
                  console.log("Species dropdown already populated.");
-                 return; // Don't repopulate if already done
+                 return;
             }
-            console.log("Populating species dropdown..."); // Added log
+            console.log("Populating species dropdown...");
             const input = document.getElementById('speciesInput');
-            if (!input) { console.error("Species dropdown missing!"); return; }
+            if (!input) { console.error("Species dropdown (#speciesInput) missing!"); return; }
 
             try {
-                 console.log("Fish Categories data:", fishCategories); // Check data
+                 console.log("Fish Categories data:", JSON.stringify(fishCategories)); // Log data
                  const cats = Object.keys(fishCategories).sort();
-                 input.innerHTML = '<option value="" selected disabled>Select a species</option><option value="Other">Other (specify)</option>'; // Reset options
+                 input.innerHTML = '<option value="" selected disabled>Select a species</option><option value="Other">Other (specify)</option>'; // Reset
+
+                 if (Object.keys(fishCategories).length === 0) {
+                     console.warn("fishCategories object is empty!");
+                     input.innerHTML = '<option value="" selected disabled>Error: No species loaded</option>';
+                     return; // Stop if no data
+                 }
 
                  cats.forEach(cat => {
+                      console.log("Processing category:", cat); // Log category
                       const group = document.createElement('optgroup');
                       group.label = cat;
-                      // Ensure fishCategories[cat] is an array before sorting/iterating
                       const species = Array.isArray(fishCategories[cat]) ? [...fishCategories[cat]].sort() : [];
                       if (species.length === 0) {
-                           console.warn(`No species found for category: ${cat}`);
+                           console.warn(`No species array found for category: ${cat}`);
                       }
                       species.forEach(s => {
                            const opt = document.createElement('option');
@@ -546,20 +544,39 @@
                       });
                       input.appendChild(group);
                  });
-                 isDropdownPopulated = true; // Set flag
+                 isDropdownPopulated = true;
                  console.log("Species dropdown populated successfully.");
             } catch (error) {
                  console.error("Error during species dropdown population:", error);
-                 // Optionally provide fallback or user message
                  input.innerHTML = '<option value="" selected disabled>Error loading species</option>';
             }
         }
         function toggleCustomSpeciesInput() { /* ... Same as previous ... */ const sel=document.getElementById('speciesInput'), custom=document.getElementById('customSpeciesInput'); if(!sel||!custom)return; custom.style.display=sel.value==='Other'?'block':'none'; if(sel.value!=='Other')custom.value=''; }
         function toggleCompetitionFields(updateLog = true) { /* ... Same as previous ... */ try{ const check=document.getElementById('isCompetition').checked; const zone=document.getElementById('zoneInput'); const peg=document.getElementById('pegInput'); const initialsGroup = document.getElementById('initialsInputGroup'); const verifiedByHeader = document.getElementById('verifiedByHeader'); zone.disabled=!check; peg.disabled=!check; initialsGroup.style.display = check ? 'block' : 'none'; if (verifiedByHeader) verifiedByHeader.style.display = check ? 'table-cell' : 'none'; if (updateLog) { updateFishLog(); } }catch(e){console.error("Toggle comp fields err:",e);} }
-        function startApp() { console.log("Start Fishing."); populateSpeciesDropdown(); showPage('registrationPage'); }
-        // --- UPDATED: startRecording ---
+        // --- FIX: Auto-set date in startApp ---
+        function setTodaysDate() {
+             try {
+                 const dateInput = document.getElementById('competitionDate');
+                 if (dateInput && !dateInput.value) { // Only set if not already set (e.g., by restore)
+                      const today = new Date();
+                      const formattedDate = formatDateForInput(today); // Use helper function
+                      dateInput.value = formattedDate;
+                      currentDate = formattedDate; // Update global variable
+                      console.log("Set date input to today:", formattedDate);
+                 }
+             } catch (e) {
+                 console.error("Error setting today's date:", e);
+             }
+         }
+        function startApp() {
+            console.log("Start Fishing triggered.");
+            setTodaysDate(); // Set date first
+            populateSpeciesDropdown(); // Ensure dropdown is ready
+            showPage('registrationPage');
+        }
+        // --- FIX: Ensure dropdown populated in startRecording ---
         function startRecording() {
-            console.log("Record Catch.");
+            console.log("Record Catch triggered.");
             const nameEl=document.getElementById('anglerName'), dateEl=document.getElementById('competitionDate'), venueEl=document.getElementById('venueInput'), checkEl=document.getElementById('isCompetition'), zoneEl=document.getElementById('zoneInput'), pegEl=document.getElementById('pegInput');
             if(!nameEl||!dateEl||!venueEl||!checkEl||!zoneEl||!pegEl){alert("Form elements missing.");return;}
             const name=nameEl.value.trim(), date=dateEl.value, venue=venueEl.value.trim(), isComp=checkEl.checked, zone=zoneEl.value, peg=pegEl.value;
@@ -570,22 +587,22 @@
             const isActuallyCompetition = !!(currentZone && currentPeg);
             console.log("Start recording data:",{currentAngler,currentDate,currentVenue,currentZone,currentPeg,isCompetition:isActuallyCompetition});
 
-            populateSpeciesDropdown(); // Ensure dropdown is populated before showing page
+            populateSpeciesDropdown(); // Ensure dropdown is populated AGAIN just before showing
             saveTempSession();
-            updateFishLog(); // Update log content
-            showPage('fishingPage'); // Show the page
+            updateFishLog();
+            showPage('fishingPage');
 
             if (isActuallyCompetition) { showModal('mlsInfoModal'); }
         }
         function addFish() { /* ... Same as previous (with fishId) ... */ console.log("Add Fish."); const spEl=document.getElementById('speciesInput'), custEl=document.getElementById('customSpeciesInput'), lenEl=document.getElementById('lengthInput'), initialsEl = document.getElementById('initialsInput'); const isCompetition = document.getElementById('isCompetition').checked; if(!spEl||!custEl||!lenEl){alert("Add fish elements missing.");return;} let species=spEl.value; const lenVal=lenEl.value.trim(); let length; let initials = null; if(!lenVal){alert("Length required.");return;} length=Math.round(parseFloat(lenVal)); if(isNaN(length)||length<=0||length>500){alert("Valid length (1-500cm) required.");return;} if(species==='Other'){species=custEl.value.trim();if(!species){alert("Custom species name required.");return;}if(!/^[a-zA-Z\s'-]+$/.test(species)){alert("Invalid species chars.");return;}}else if(!species){alert("Select species.");return;} if (isCompetition && initialsEl) { initials = initialsEl.value.trim().toUpperCase(); } const fishId = generateUUID(); fishData.push({ id: fishId, species, length, initials: initials || null, imageId: null }); console.log("Added:",{id: fishId, species,length, initials}); updateFishLog(); spEl.value='';custEl.value='';lenEl.value=''; if(initialsEl) initialsEl.value=''; toggleCustomSpeciesInput();saveTempSession(); }
 
-        // --- UPDATED: updateFishLog using createElement & addEventListener ---
+        // --- FIX: updateFishLog using createElement & addEventListener ---
         async function updateFishLog() {
             const logBody = document.getElementById('fishLog');
             const isCompetition = document.getElementById('isCompetition').checked;
             const verifiedByHeader = document.getElementById('verifiedByHeader');
 
-            if (!logBody) { console.error("Fish log body not found!"); return; }
+            if (!logBody) { console.error("Fish log body (#fishLog) not found!"); return; }
             if (verifiedByHeader) { verifiedByHeader.style.display = isCompetition ? 'table-cell' : 'none'; }
 
             logBody.innerHTML = ''; // Clear existing log body
@@ -599,13 +616,15 @@
                  return;
             }
 
+            console.log(`Updating fish log with ${fishData.length} items.`); // Log update start
             for (const [i, f] of fishData.entries()) {
+                 console.log(`Processing fish index ${i}, ID: ${f.id}`); // Log each fish
                  const row = logBody.insertRow();
 
                  // 1. Photo/Thumbnail Cell
                  const thumbCell = row.insertCell();
                  thumbCell.id = `thumb-cell-${f.id}`;
-                 thumbCell.innerHTML = `<span class="thumbnail-container"><i class="bi bi-camera no-photo-icon"></i></span>`; // Default state
+                 thumbCell.innerHTML = `<span class="thumbnail-container"><i class="bi bi-camera no-photo-icon"></i></span>`;
 
                  // 2. Species Cell
                  row.insertCell().textContent = f.species || '?';
@@ -620,39 +639,60 @@
 
                  // 5. Actions Cell - Build buttons manually
                  const actionsCell = row.insertCell();
-                 actionsCell.className = 'fish-actions'; // Use class for styling
+                 actionsCell.className = 'fish-actions'; // Use class for styling (text-end, nowrap)
 
-                 // Take Photo Button
-                 const photoButton = document.createElement('button');
-                 photoButton.className = 'btn btn-info btn-sm';
-                 photoButton.title = 'Take Photo';
-                 photoButton.innerHTML = '<i class="bi bi-camera-fill"></i>';
-                 photoButton.addEventListener('click', () => openCamera(f.id));
-                 actionsCell.appendChild(photoButton);
+                 try {
+                     // Take Photo Button
+                     const photoButton = document.createElement('button');
+                     photoButton.type = 'button'; // Explicitly set type
+                     photoButton.className = 'btn btn-info btn-sm';
+                     photoButton.title = 'Take Photo';
+                     photoButton.innerHTML = '<i class="bi bi-camera-fill"></i>';
+                     console.log(`Adding photo button listener for fish ID: ${f.id}`); // Log listener add
+                     photoButton.addEventListener('click', (e) => {
+                         e.stopPropagation(); // Prevent potential row clicks
+                         console.log(`Photo button clicked for fish ID: ${f.id}`);
+                         openCamera(f.id);
+                     });
+                     actionsCell.appendChild(photoButton);
 
-                 // Delete Button
-                 const deleteButton = document.createElement('button');
-                 deleteButton.className = 'btn btn-danger btn-sm';
-                 deleteButton.title = 'Delete Fish';
-                 deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
-                 deleteButton.addEventListener('click', () => deleteFish(i));
-                 actionsCell.appendChild(deleteButton);
+                     // Delete Button
+                     const deleteButton = document.createElement('button');
+                     deleteButton.type = 'button'; // Explicitly set type
+                     deleteButton.className = 'btn btn-danger btn-sm';
+                     deleteButton.title = 'Delete Fish';
+                     deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
+                     console.log(`Adding delete button listener for fish index: ${i}`); // Log listener add
+                     deleteButton.addEventListener('click', (e) => {
+                         e.stopPropagation(); // Prevent potential row clicks
+                         console.log(`Delete button clicked for fish index: ${i}`);
+                         deleteFish(i);
+                     });
+                     actionsCell.appendChild(deleteButton);
+
+                     console.log(`Buttons added for fish ID: ${f.id}`); // Confirm buttons appended
+
+                 } catch (buttonError) {
+                     console.error(`Error creating buttons for fish index ${i}:`, buttonError);
+                     actionsCell.textContent = 'Error'; // Indicate button creation failed
+                 }
 
                  // Load thumbnail if exists (async)
                  if (f.imageId) {
                       loadThumbnail(f.id, f.imageId);
                  }
             }
+            console.log("Finished updating fish log."); // Log update end
         }
 
-        // --- loadThumbnail (Add click handler properly) ---
+        // --- loadThumbnail (Added spinner, fixed click handler scope) ---
         async function loadThumbnail(fishId, imageId) {
             const thumbCell = document.getElementById(`thumb-cell-${fishId}`);
             if (!thumbCell || !imageId) return;
             const container = thumbCell.querySelector('.thumbnail-container');
             if (!container) return;
 
-            container.innerHTML = '<div class="spinner-border spinner-border-sm text-secondary" role="status"><span class="visually-hidden">Loading...</span></div>'; // Show spinner while loading
+            container.innerHTML = '<div class="spinner-border spinner-border-sm text-secondary" role="status"><span class="visually-hidden">Loading...</span></div>'; // Spinner
             container.onclick = null; // Disable click while loading
 
             try {
@@ -660,8 +700,11 @@
                 if (blob) {
                     const url = URL.createObjectURL(blob);
                     container.innerHTML = `<img src="${url}" alt="Fish thumbnail" class="fish-thumbnail">`;
-                    // Don't revoke here, handled by viewer close
-                    container.onclick = () => showFullscreenImage(imageId); // Enable click
+                    // IMPORTANT: Ensure the imageId is correctly captured in the click scope
+                    container.onclick = () => {
+                         console.log(`Thumbnail clicked, showing image: ${imageId}`);
+                         showFullscreenImage(imageId);
+                    };
                 } else {
                    container.innerHTML = `<i class="bi bi-image-alt no-photo-icon" title="Image missing"></i>`;
                 }
@@ -720,17 +763,53 @@
         function hideModal(modalId) { const mE=document.getElementById(modalId); if(mE){const m=bootstrap.Modal.getInstance(mE); if(m){m.hide();}else{mE.classList.remove('show');mE.style.display='none';const b=document.querySelector('.modal-backdrop');if(b)b.remove();document.body.classList.remove('modal-open');document.body.style.overflow='';document.body.style.paddingRight='';}}}
         function showModal(modalId) { const modalElement = document.getElementById(modalId); if(modalElement) { const instance = bootstrap.Modal.getOrCreateInstance(modalElement, {backdrop: 'static', keyboard: false}); instance.show(); } else { console.error(`Modal element #${modalId} not found!`); } }
 
-        // --- Application Reset (no changes needed from previous) ---
-        function resetApp() { console.log("Resetting app."); fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen'; stopCameraStream(); deactivateAppMode(); isDropdownPopulated = false; /* Reset flag */ try { document.getElementById('anglerName').value=''; document.getElementById('competitionDate').value=''; document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; toggleCompetitionFields(false); document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; document.getElementById('speciesInput').innerHTML = '<option value="" selected disabled>Select a species</option><option value="Other">Other (specify)</option>'; /* Reset dropdown HTML */ document.getElementById('customSpeciesInput').value=''; document.getElementById('customSpeciesInput').style.display='none'; document.getElementById('lengthInput').value=''; document.getElementById('initialsInput').value=''; document.getElementById('fishLog').innerHTML=''; const vI = document.getElementById('verifierEndModalInput'); if(vI) vI.value=''; const vS = document.getElementById('verifierEndModalSection'); if(vS) vS.style.display='none'; populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm'; } catch(e) { console.error("Error resetting forms:", e); } }
+        // --- Application Reset ---
+        // --- FIX: Reset dropdown flag and HTML ---
+        function resetApp() {
+            console.log("Resetting app.");
+            fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen';
+            stopCameraStream();
+            deactivateAppMode();
+            isDropdownPopulated = false; // Reset dropdown populated flag
+            try {
+               document.getElementById('anglerName').value='';
+               setTodaysDate(); // Set date to today on reset
+               document.getElementById('venueInput').value='';
+               document.getElementById('isCompetition').checked=false;
+               toggleCompetitionFields(false); // Don't update log yet
+               document.getElementById('zoneInput').value='';
+               document.getElementById('pegInput').value='';
+               // Reset species dropdown HTML and state
+               const speciesInput = document.getElementById('speciesInput');
+               if (speciesInput) {
+                    speciesInput.innerHTML = '<option value="" selected disabled>Select a species</option><option value="Other">Other (specify)</option>';
+               }
+               const customSpeciesInput = document.getElementById('customSpeciesInput');
+               if (customSpeciesInput) {
+                   customSpeciesInput.value = '';
+                   customSpeciesInput.style.display = 'none';
+               }
+               document.getElementById('lengthInput').value='';
+               document.getElementById('initialsInput').value='';
+               document.getElementById('fishLog').innerHTML='';
+               const vI = document.getElementById('verifierEndModalInput'); if(vI) vI.value='';
+               const vS = document.getElementById('verifierEndModalSection'); if(vS) vS.style.display='none';
+               populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML='';
+               document.getElementById('tallyTotalLength').textContent='0 cm';
+               document.getElementById('tallySpeciesCount').textContent='0';
+               document.getElementById('longestFishSpecies').textContent='N/A';
+               document.getElementById('longestFishLength').textContent='0 cm';
+            } catch(e) { console.error("Error resetting forms:", e); }
+        }
 
-        // --- Initialisation (no changes needed from previous) ---
+        // --- Initialisation ---
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log("DOM loaded.");
+            console.log("DOM loaded. Initializing...");
             try {
                  await initDb();
                  if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/Sea-Catch-Scorer/sw.js').then(reg => console.log('SW registered scope: ', reg.scope)).catch(err => console.error('SW registration failed: ', err)); }); } else { console.log('Service workers not supported.'); }
                  window.addEventListener('popstate', handleBackButton); window.addEventListener('beforeunload', handleBeforeUnload); console.log("Nav listeners attached.");
-                 const refs = { continueBtn: document.getElementById('continueBtn'), viewScorecardsBtn: document.getElementById('viewScorecardsBtn'), startRecordingBtn: document.getElementById('startRecordingBtn'), isCompetitionCheck: document.getElementById('isCompetition'), speciesSelect: document.getElementById('speciesInput'), addFishBtn: document.getElementById('addFishBtn'), backFromFishingBtn: document.getElementById('backFromFishingBtn'), endSessionBtn: document.getElementById('endSessionBtn'), confirmEndBtn: document.getElementById('confirmEndBtn'), backFromTallyBtn: document.getElementById('backFromTallyBtn'), restoreSessionBtn: document.getElementById('restoreSessionBtn'), startNewSessionBtn: document.getElementById('startNewSessionBtn'), anglerNameInput: document.getElementById('anglerName'), competitionDateInput: document.getElementById('competitionDate'), venueInput: document.getElementById('venueInput'), zoneSelect: document.getElementById('zoneInput'), pegSelect: document.getElementById('pegInput'), initialsInput: document.getElementById('initialsInput'), mlsAgreeBtn: document.getElementById('mlsAgreeBtn'), takePhotoButton: document.getElementById('takePhotoButton'), cancelCameraButtonHeader: document.getElementById('cancelCameraButtonHeader'), shareImageBtn: document.getElementById('shareImageBtn') };
+                 const refs = { /* ... All refs from previous code ... */ continueBtn: document.getElementById('continueBtn'), viewScorecardsBtn: document.getElementById('viewScorecardsBtn'), startRecordingBtn: document.getElementById('startRecordingBtn'), isCompetitionCheck: document.getElementById('isCompetition'), speciesSelect: document.getElementById('speciesInput'), addFishBtn: document.getElementById('addFishBtn'), backFromFishingBtn: document.getElementById('backFromFishingBtn'), endSessionBtn: document.getElementById('endSessionBtn'), confirmEndBtn: document.getElementById('confirmEndBtn'), backFromTallyBtn: document.getElementById('backFromTallyBtn'), restoreSessionBtn: document.getElementById('restoreSessionBtn'), startNewSessionBtn: document.getElementById('startNewSessionBtn'), anglerNameInput: document.getElementById('anglerName'), competitionDateInput: document.getElementById('competitionDate'), venueInput: document.getElementById('venueInput'), zoneSelect: document.getElementById('zoneInput'), pegSelect: document.getElementById('pegInput'), initialsInput: document.getElementById('initialsInput'), mlsAgreeBtn: document.getElementById('mlsAgreeBtn'), takePhotoButton: document.getElementById('takePhotoButton'), cancelCameraButtonHeader: document.getElementById('cancelCameraButtonHeader'), shareImageBtn: document.getElementById('shareImageBtn') };
                  const notesModalElement = document.getElementById('notesModal'); if (notesModalElement) { notesModalInstance = new bootstrap.Modal(notesModalElement); } else { console.error("#notesModal not found!"); }
                  const cameraModalElement = document.getElementById('cameraModal'); if (cameraModalElement) { cameraModalInstance = new bootstrap.Modal(cameraModalElement); cameraModalElement.addEventListener('hidden.bs.modal', stopCameraStream); } else { console.error("#cameraModal not found!"); }
                  const imageViewerModalElement = document.getElementById('imageViewerModal'); if (imageViewerModalElement) { imageViewerModalInstance = new bootstrap.Modal(imageViewerModalElement); } else { console.error("#imageViewerModal not found!"); }
@@ -747,7 +826,7 @@
                  if (refs.startNewSessionBtn) { refs.startNewSessionBtn.addEventListener('click', () => { if (confirm("Starting a new session will discard the currently unsaved session data. Are you sure?")) { startNewSession(); } }); }
                  if (refs.restoreSessionBtn) refs.restoreSessionBtn.addEventListener('click', restoreSession);
                  if (refs.anglerNameInput) refs.anglerNameInput.addEventListener('input', () => { currentAngler = refs.anglerNameInput.value.trim(); saveTempSession(); });
-                 if (refs.competitionDateInput) refs.competitionDateInput.addEventListener('change', () => { currentDate = refs.competitionDateInput.value; saveTempSession(); });
+                 if (refs.competitionDateInput) refs.competitionDateInput.addEventListener('change', () => { currentDate = refs.competitionDateInput.value; saveTempSession(); }); // Update currentDate on change
                  if (refs.venueInput) refs.venueInput.addEventListener('input', () => { currentVenue = refs.venueInput.value.trim(); saveTempSession(); });
                  if (refs.zoneSelect) refs.zoneSelect.addEventListener('change', () => { currentZone = refs.isCompetitionCheck?.checked ? refs.zoneSelect.value : null; saveTempSession(); });
                  if (refs.pegSelect) refs.pegSelect.addEventListener('change', () => { currentPeg = refs.isCompetitionCheck?.checked ? refs.pegSelect.value : null; saveTempSession(); });
@@ -756,7 +835,12 @@
                  if (refs.takePhotoButton) refs.takePhotoButton.addEventListener('click', takeSnapshot);
                  if (refs.cancelCameraButtonHeader) refs.cancelCameraButtonHeader.addEventListener('click', stopCameraStream);
                  if (refs.shareImageBtn) refs.shareImageBtn.addEventListener('click', shareImage);
-                 checkRestoreSession();
+
+                 // Set today's date *before* checking restore, so it's set if no restore happens
+                 setTodaysDate();
+                 checkRestoreSession(); // Check restore *after* setting up everything else
+
+                 console.log("Initialization complete.");
             } catch (error) { console.error("Fatal init error:", error); document.body.innerHTML = `<div class="alert alert-danger m-5">App Error: ${error.message}. Please check console, allow permissions, and refresh.</div>`; }
         });
     </script>
