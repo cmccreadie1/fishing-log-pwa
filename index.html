@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,42 +22,48 @@
         body {
             font-family: 'Poppins', sans-serif;
             background: url('https://i.postimg.cc/pLFtxQWs/seacatchscorecard.jpg') no-repeat center/cover fixed;
-            color: #fff; /* Default text color (mostly for splash) */
+            color: #fff;
             min-height: 100vh;
+            overscroll-behavior-y: contain; /* Prevent pull-to-refresh issues */
         }
-        .container { /* Wrapper for main content cards */
-            background: rgba(0, 0, 0, 0.7); /* Dark, semi-transparent wrapper */
+        .container {
+            background: rgba(0, 0, 0, 0.75);
             border-radius: 15px;
-            padding: 20px;
+            /* MODIFIED: Increased padding for more internal space */
+            padding: 25px; /* Was 20px */
             margin: 20px auto;
-            max-width: 800px;
+            max-width: 960px;
             z-index: 1;
-            display: none; /* Hide initially, show based on page */
+            display: none;
         }
-        .page { display: none; } /* Hide pages by default */
+        .page { display: none; }
 
         /* --- Splash Screen --- */
         .splash-screen {
-            display: flex; /* Initially shown via JS */
+            display: flex;
             flex-direction: column; justify-content: flex-end; align-items: center;
             padding: 40px; height: 100vh; width: 100%;
             position: fixed; top: 0; left: 0; z-index: 2;
         }
 
-        /* --- Main Content Card Style (Registration, Fishing, Tally) --- */
+        /* --- Main Content Card Style --- */
         .card-section {
-            background: rgba(255, 255, 255, 0.92); /* Slightly more opaque white */
-            border-radius: 15px; padding: 25px; margin: 20px 0; /* Increased padding */
-            border: 1px solid #dee2e6; /* Lighter border */
-            color: #212529; /* Dark text for content */
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            /* MODIFIED: Increased vertical padding */
+            padding: 30px 25px; /* Was 25px padding */
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+            color: #212529;
             z-index: 3;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
-        .card-section h2 { color: #0056b3; } /* Dark blue headings */
-        .card-section h5 { color: #0056b3; }
+        /* MODIFIED: Adjusted heading margin */
+        .card-section h2 { color: #0056b3; margin-bottom: 1.2rem; /* Added bottom margin */ }
+        .card-section h5 { color: #0056b3; margin-bottom: 1rem; }
 
         /* --- Buttons --- */
-        .btn { padding: 12px 24px; font-size: 1.1rem; border-radius: 25px; border: none; margin: 10px; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; cursor: pointer; font-weight: 600; }
+        .btn { padding: 12px 24px; font-size: 1.1rem; border-radius: 25px; border: none; margin: 5px; /* Reduced default margin slightly */ transition: transform 0.2s, background-color 0.2s, border-color 0.2s; cursor: pointer; font-weight: 600; }
         .btn:disabled { cursor: not-allowed; opacity: 0.65; }
         .btn-primary { background-color: #007bff; color: white; } .btn-primary:hover { background-color: #0056b3; transform: scale(1.05); }
         .btn-secondary { background-color: #6c757d; color: white; } .btn-secondary:hover { background-color: #5a6268; transform: scale(1.05); }
@@ -65,31 +72,63 @@
         .btn-info { background-color: #0dcaf0; color: black; } .btn-info:hover { background-color: #31d2f2; transform: scale(1.05); color: black;}
         .btn-outline-secondary { border: 2px solid #6c757d; color: #6c757d; background-color: transparent; } .btn-outline-secondary:hover { background-color: #6c757d; color: white; }
         .btn-outline-light { border: 2px solid #f8f9fa; color: #f8f9fa; background-color: transparent; } .btn-outline-light:hover { background-color: #f8f9fa; color: #000; }
-        .btn-sm { padding: 5px 10px; font-size: 0.9rem; border-radius: 20px; font-weight: normal; }
-        .btn-lg { padding: 14px 28px; font-size: 1.25rem; }
+        .btn-sm { padding: 5px 10px; font-size: 0.9rem; border-radius: 20px; font-weight: normal; margin: 2px; }
+        .btn-lg { padding: 14px 28px; font-size: 1.25rem; margin: 10px; }
+        /* Button groups for better spacing */
+        .button-group-center { text-align: center; margin-top: 20px; } /* Added margin top */
+        .button-group-center .btn { margin-left: 8px; margin-right: 8px; }
 
 
         /* --- Forms --- */
-        .form-label { font-weight: 600; color: #495057; }
-        .form-control, .form-select { border-radius: 8px; margin-bottom: 15px; border: 1px solid #ced4da; }
+        /* MODIFIED: Increased bottom margin */
+        .mb-3 { margin-bottom: 1.3rem !important; } /* More spacing between form fields */
+        .form-label { font-weight: 600; color: #495057; margin-bottom: 0.5rem; }
+        .form-control, .form-select { border-radius: 8px; border: 1px solid #ced4da; }
         .form-control:focus, .form-select:focus { border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); }
         .form-check-label { color: #212529; }
-        /* Style for Verifier Field in Modal */
-        #verifierEndModalSection { display: none; } /* Hide by default */
+        #verifierEndModalSection { display: none; }
 
         /* --- Tables --- */
-        .card-section .table { background: white; border-radius: 8px; color: #212529; border: 1px solid #dee2e6; margin-top: 15px; }
-        .card-section .table thead { background-color: #f8f9fa; }
-        .card-section .table th, .card-section .table td { border-color: #dee2e6; vertical-align: middle; }
-        .card-section .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: rgba(0, 0, 0, 0.03); }
-        .card-section .table-bordered { border: 1px solid #dee2e6; }
-        .card-section .table-hover tbody tr:hover > * { background-color: rgba(0, 0, 0, 0.06); }
+        .card-section .table { background: white; color: #212529; margin-top: 15px; border-collapse: separate; border-spacing: 0; } /* Use separate for consistent borders with radius */
+        .table-responsive { margin-bottom: 1rem; border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .card-section .table thead { background-color: #e9ecef; color: #495057; font-weight: 600; border-bottom: 2px solid #dee2e6;}
+        .card-section .table th, .card-section .table td { border-color: #dee2e6; vertical-align: middle; padding: 0.85rem 0.75rem; border-bottom: 1px solid #dee2e6; border-right: 1px solid #dee2e6; }
+        .card-section .table th:first-child, .card-section .table td:first-child { border-left: 0; }
+        .card-section .table th:last-child, .card-section .table td:last-child { border-right: 0; }
+        .card-section .table tbody tr:last-child td { border-bottom: 0; }
+        .card-section .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: #eef5ff; }
+        .card-section .table-hover tbody tr:hover > * { background-color: rgba(0, 123, 255, 0.1); }
+        .card-section .table-bordered th, .card-section .table-bordered td { border: 1px solid #dee2e6; } /* Keep for explicit border */
+
+        /* --- Specific Table Styles --- */
+        #fishingPage .table { margin-top: 0; margin-bottom: 0; }
+        #tallyPage.card-section .table { margin-top: 20px; }
+        #tallyPage.card-section tfoot td, #tallyPage.card-section tfoot strong { color: #212529; font-weight: 600; }
+        #tallyPage.card-section .catch-summary-details { margin-bottom: 25px; color: #495057; line-height: 1.6; }
+
+        /* --- Fish Log Specific --- */
+        .fish-actions .btn { margin-left: 5px; }
+        .thumbnail-container {
+            display: inline-block; /* Or flex */
+            vertical-align: middle;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        .fish-thumbnail {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            object-fit: cover; /* Crop image nicely */
+            border: 1px solid #ccc;
+        }
+        .no-photo-icon { font-size: 1.5rem; color: #adb5bd; vertical-align: middle; }
+
 
         /* --- Unified Modal Style --- */
         .modal { z-index: 1050; } .modal-backdrop { z-index: 1040; opacity: 0.5; }
         .modal-content { background: #f8f9fa; color: #212529; border: 1px solid #dee2e6; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .modal-header { background-color: #e9ecef; color: #212529; border-bottom: 1px solid #dee2e6; border-top-left-radius: 15px; border-top-right-radius: 15px; }
-        .modal-footer { background-color: #e9ecef; border-top: 1px solid #dee2e6; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; display: flex; justify-content: flex-end; flex-wrap: wrap; }
+        .modal-footer { background-color: #e9ecef; border-top: 1px solid #dee2e6; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; display: flex; justify-content: flex-end; flex-wrap: wrap; padding: 0.75rem 1rem; } /* Standard padding */
         .modal-title { color: #0056b3; font-weight: 700; }
         .modal-header .btn-close { filter: none; background-size: 0.75em; }
         .modal-body { background-color: #ffffff; color: #212529; padding: 20px; }
@@ -109,7 +148,7 @@
         #savedScorecardsModal .scorecard-details h6:first-of-type { margin-top: 0; }
         #savedScorecardsModal .scorecard-details p { margin-bottom: 8px; color: #212529; }
         #savedScorecardsModal .scorecard-details hr { margin-top: 15px; margin-bottom: 15px; border-top: 1px solid #dee2e6; background-color: transparent; height: 1px; opacity: 1; }
-        #savedScorecardsModal .scorecard-details .table { margin-bottom: 15px; background-color: #ffffff; color: #212529; border: 1px solid #dee2e6; }
+        #savedScorecardsModal .scorecard-details .table { margin-bottom: 15px; background-color: #ffffff; color: #212529; border: 1px solid #dee2e6; } /* Ensure table inside details is styled */
         #savedScorecardsModal .scorecard-details .table thead { background-color: #f8f9fa; color: #495057; }
         #savedScorecardsModal .scorecard-details .table th, #savedScorecardsModal .scorecard-details .table td { border-color: #dee2e6; border-bottom-width: 1px; vertical-align: middle;}
         #savedScorecardsModal .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: rgba(0, 0, 0, 0.03); }
@@ -121,16 +160,31 @@
         #savedScorecardsModal .latest-scorecard.scorecard-entry .scorecard-item { border-bottom: 1px solid rgba(0, 123, 255, 0.3); background-color: #e7f1ff; }
         #savedScorecardsModal .latest-scorecard.scorecard-entry .scorecard-item .badge { background-color: #007bff !important; color: white !important; font-weight: 600; }
         #olderScorecardsToggleContainer { padding-top: 10px; text-align: center;}
-        #olderScorecardsToggleContainer .btn { margin: 5px; } /* Add spacing between View Older and Delete Older */
-
+        #olderScorecardsToggleContainer .btn { margin: 5px; }
 
         /* --- Notes Modal --- */
         #notesModal .modal-body textarea { resize: vertical; min-height: 100px; }
 
-        #tallyPage.card-section .table { margin-top: 20px; }
-        #tallyPage.card-section .catch-summary-details { margin-bottom: 20px; color: #495057; }
-        #tallyPage.card-section tfoot td, #tallyPage.card-section tfoot strong { color: #212529; }
-        .table-responsive { margin-bottom: 1rem; }
+        /* --- NEW: Camera Modal Styles --- */
+        #cameraModal .modal-dialog { max-width: 100%; margin: 0; height: 100%; }
+        #cameraModal .modal-content { height: 100%; border-radius: 0; background-color: #000; }
+        #cameraModal .modal-header { border-bottom: 0; background-color: rgba(0,0,0,0.5); position: absolute; top: 0; left: 0; right: 0; z-index: 10; }
+        #cameraModal .modal-title { color: #fff; }
+        #cameraModal .btn-close { filter: brightness(0) invert(1); } /* Make close button white */
+        #cameraModal .modal-body { padding: 0; display: flex; justify-content: center; align-items: center; height: 100%; }
+        #cameraVideo { display: block; width: 100%; height: 100%; object-fit: cover; }
+        #cameraCanvas { display: none; } /* Hidden canvas */
+        #cameraControls { position: absolute; bottom: 0; left: 0; right: 0; background-color: rgba(0,0,0,0.5); padding: 20px; text-align: center; z-index: 10; }
+        #takePhotoButton { border-radius: 50%; width: 70px; height: 70px; padding: 0; background-color: #fff; border: 5px solid #ccc; }
+        #takePhotoButton:hover { background-color: #eee; }
+        #cancelCameraButton { /* Style if needed */ }
+
+        /* --- NEW: Image Viewer Modal Styles --- */
+        #imageViewerModal .modal-dialog { max-width: 95%; margin: 1.75rem auto; } /* Allow larger view */
+        #imageViewerModal .modal-content { background-color: #f8f9fa; }
+        #imageViewerModal .modal-body { text-align: center; padding: 1rem; }
+        #fullImageView { max-width: 100%; max-height: 80vh; /* Limit height */ display: block; margin: 0 auto 1rem auto; border: 1px solid #ccc; border-radius: 8px; }
+        #imageViewerModal .modal-footer { justify-content: space-between; } /* Space out buttons */
 
     </style>
 </head>
@@ -163,7 +217,8 @@
                     <option value="21">21</option> <option value="22">22</option> <option value="23">23</option> <option value="24">24</option> <option value="25">25</option>
                  </select>
             </div>
-            <div class="text-center">
+            <!-- MODIFIED: Used button group class -->
+            <div class="button-group-center">
                 <button class="btn btn-primary" id="startRecordingBtn">Record Catch <i class="bi bi-arrow-right-circle ms-1"></i></button>
             </div>
         </div>
@@ -185,27 +240,36 @@
                      <label for="lengthInput" class="form-label">Length (cm)</label>
                      <input type="number" id="lengthInput" class="form-control" placeholder="Enter length" step="1" min="1">
                 </div>
-                <div id="initialsInputGroup" class="col-md-4 mb-3" style="display: none;">  <!-- HIDDEN INITIALLY -->
+                <div id="initialsInputGroup" class="col-md-4 mb-3" style="display: none;">
                      <label for="initialsInput" class="form-label">Verifier Initials</label>
                      <input type="text" id="initialsInput" class="form-control" placeholder="Enter Initials (e.g., AB)" maxlength="3" style="text-transform:uppercase">
                 </div>
             </div>
-            <div class="text-center mb-3">
+            <!-- MODIFIED: Used button group class -->
+            <div class="button-group-center mb-4"> <!-- Added margin bottom -->
                 <button class="btn btn-primary" id="addFishBtn"><i class="bi bi-plus-circle me-1"></i> Add Fish</button>
                 <button class="btn btn-secondary" id="backFromFishingBtn"><i class="bi bi-arrow-left-circle me-1"></i> Back</button>
             </div>
 
             <h2 class="mt-4">Fish Log</h2>
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead> <tr> <th>Species</th> <th>Length (cm)</th> <th id="verifiedByHeader" style="display:none;">Verified By</th> <th class="text-end">Action</th> </tr> </thead>
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <!-- NEW: Column for Photo -->
+                            <th>Photo</th>
+                            <th>Species</th>
+                            <th>Length (cm)</th>
+                            <th id="verifiedByHeader" style="display:none;">Verified By</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
                     <tbody id="fishLog"></tbody>
                 </table>
             </div>
 
-            <!-- Verifier section removed -->
-
-            <div class="text-center mt-3">
+            <!-- MODIFIED: Used button group class -->
+            <div class="button-group-center mt-4"> <!-- Added margin top -->
                 <button class="btn btn-success" id="endSessionBtn"><i class="bi bi-check-circle me-1"></i> End & Save Session</button>
             </div>
         </div>
@@ -222,6 +286,7 @@
                  <span id="summaryVerifier"></span>
             </div>
             <div class="table-responsive">
+                <!-- Added table-bordered for consistency -->
                 <table class="table table-bordered">
                     <thead>
                         <tr> <th>Species</th> <th>Total Caught</th> <th>Lengths (cm)</th> <th>Total Length (cm)</th> </tr>
@@ -234,15 +299,17 @@
                     </tfoot>
                 </table>
             </div>
-            <div class="text-center">
-                <button class="btn btn-secondary mb-3" id="backFromTallyBtn"><i class="bi bi-arrow-left-circle me-1"></i> Back</button>
+            <!-- MODIFIED: Used button group class -->
+            <div class="button-group-center">
+                <button class="btn btn-secondary" id="backFromTallyBtn"><i class="bi bi-arrow-left-circle me-1"></i> Back</button>
             </div>
         </div>
     </div> <!-- End of .container -->
 
     <!-- Splash Screen (Outside .container) -->
     <div id="splashScreen" class="splash-screen page">
-        <div class="text-center">
+        <!-- MODIFIED: Used button group class -->
+        <div class="button-group-center">
              <button class="btn btn-primary btn-lg" id="continueBtn">Start Fishing <i class="bi bi-water ms-1"></i></button>
              <br>
              <button class="btn btn-outline-light btn-lg" id="viewScorecardsBtn">View Saved Scorecards <i class="bi bi-journal-bookmark ms-1"></i></button>
@@ -264,8 +331,8 @@
                      <p><strong>Date:</strong> <span id="restoreDate"></span></p>
                      <p><strong>Fish Caught:</strong> <span id="restoreFishCount"></span></p>
                  </div>
-
-                 <div class="modal-footer d-block text-center">
+                 <!-- MODIFIED: Used button group class -->
+                 <div class="modal-footer button-group-center d-block"> <!-- Ensure buttons stack -->
                      <button type="button" class="btn btn-success btn-lg mb-2" id="restoreSessionBtn">Restore Session</button>
                      <br>
                      <button type="button" class="btn btn-danger" id="startNewSessionBtn">Start New Session</button>
@@ -284,9 +351,8 @@
                  </div>
                 <div class="modal-body">
                     <div id="savedScorecardsList" class="card-section">
-                       <p class="placeholder-glow"><span class="placeholder col-12"></span></p> <!-- Placeholder while loading -->
+                       <p class="placeholder-glow"><span class="placeholder col-12"></span></p>
                     </div>
-                    <!-- DIV TO HOLD THE "VIEW OLDER" / "DELETE OLDER" BUTTONS -->
                     <div id="olderScorecardsToggleContainer" class="text-center mt-3"></div>
                 </div>
                 <div class="modal-footer">
@@ -296,7 +362,7 @@
         </div>
     </div>
 
-    <!-- End Session Confirmation Modal (UPDATED with Verifier Input) -->
+    <!-- End Session Confirmation Modal -->
     <div class="modal fade" id="endSessionModal" tabindex="-1" aria-labelledby="endSessionModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -306,13 +372,7 @@
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to end your session? This will save the scorecard.</p>
-
-                    <div id="verifierEndModalSection" class="mt-3" style="display: none;">
-                        <hr>
-                        <label for="verifierEndModalInput" class="form-label"><strong>Competition Verifier</strong> <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="verifierEndModalInput" placeholder="Enter name of verifier" required>
-                        <small class="text-muted">Required for competition scorecards.</small>
-                    </div>
+                    <div id="verifierEndModalSection" class="mt-3" style="display: none;"> <hr> <label for="verifierEndModalInput" class="form-label"><strong>Competition Verifier</strong> <span class="text-danger">*</span></label> <input type="text" class="form-control" id="verifierEndModalInput" placeholder="Enter name of verifier" required> <small class="text-muted">Required for competition scorecards.</small> </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelEndSessionBtn">Cancel</button>
@@ -322,49 +382,68 @@
         </div>
     </div>
 
-    <!-- Verifier Modal Removed -->
-
     <!-- Notes Modal -->
     <div class="modal fade" id="notesModal" tabindex="-1" aria-labelledby="notesModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
+          <div class="modal-header"> <h5 class="modal-title" id="notesModalLabel">Session Notes</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> </div>
+          <div class="modal-body"> <input type="hidden" id="notesModalScorecardKey"> <div class="mb-3"> <label for="notesTextarea" class="form-label">Enter your notes below:</label> <textarea class="form-control" id="notesTextarea" rows="5"></textarea> </div> </div>
+          <div class="modal-footer"> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> <button type="button" class="btn btn-primary" onclick="saveNoteFromModal()">Save Notes</button> </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MLS Information Modal -->
+    <div class="modal fade" id="mlsInfoModal" tabindex="-1" aria-labelledby="mlsInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"> <h5 class="modal-title" id="mlsInfoModalLabel">Important MLS Information</h5> </div>
+                <div class="modal-body"> <p>Please ensure you are recording your catches in accordance with the minimum landing sizes (MLS) and any other fishing regulations that apply to your specific location or event.</p> </div>
+                <div class="modal-footer"> <button type="button" class="btn btn-primary" id="mlsAgreeBtn">OK</button> </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: Camera Modal -->
+    <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="notesModalLabel">Session Notes</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h5 class="modal-title" id="cameraModalLabel">Take Photo</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cancelCameraButtonHeader"></button>
           </div>
           <div class="modal-body">
-            <input type="hidden" id="notesModalScorecardKey">
-            <div class="mb-3">
-              <label for="notesTextarea" class="form-label">Enter your notes below:</label>
-              <textarea class="form-control" id="notesTextarea" rows="5"></textarea>
-            </div>
+            <video id="cameraVideo" playsinline autoplay muted></video>
+            <canvas id="cameraCanvas"></canvas> <!-- Hidden canvas for snapshot -->
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" onclick="saveNoteFromModal()">Save Notes</button>
+          <div id="cameraControls">
+            <button type="button" class="btn btn-light" id="takePhotoButton" aria-label="Take Photo"></button>
+             <!-- Optional Cancel Button at bottom -->
+             <!-- <button type="button" class="btn btn-secondary ms-3" id="cancelCameraButtonFooter" data-bs-dismiss="modal">Cancel</button> -->
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ** START: ADDED MLS INFORMATION MODAL - Shown only for Competitions ** -->
-    <div class="modal fade" id="mlsInfoModal" tabindex="-1" aria-labelledby="mlsInfoModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="mlsInfoModalLabel">Important MLS Information</h5>
-                    <!-- No close button in header to force "I Agree" button -->
-                </div>
-                <div class="modal-body">
-                    <p>Please ensure you are recording your catches in accordance with the minimum landing sizes (MLS) and any other fishing regulations that apply to your specific location or event.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="mlsAgreeBtn">OK</button>  <!-- ** CHANGED BUTTON TEXT TO "OK" ** -->
-                </div>
-            </div>
+    <!-- NEW: Image Viewer Modal -->
+    <div class="modal fade" id="imageViewerModal" tabindex="-1" aria-labelledby="imageViewerModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="imageViewerModalLabel">Fish Photo</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <img id="fullImageView" src="#" alt="Full fish photo">
+          </div>
+          <div class="modal-footer">
+             <!-- Share button added here -->
+             <button type="button" class="btn btn-info" id="shareImageBtn"><i class="bi bi-share-fill me-1"></i> Share</button>
+             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
         </div>
+      </div>
     </div>
-    <!-- ** END: ADDED MLS INFORMATION MODAL ** -->
 
 
     <!-- Bootstrap JS -->
@@ -375,12 +454,12 @@
         // --- Global Variables ---
         const fishCategories = {
             "Flatfish": [ "Brill", "Dab", "Flounder", "Halibut", "Megrim", "Plaice", "Sole (Dover)", "Sole (Lemon)", "Turbot" ],
-            "Round Fish": [ "Bass", "Bream (Black)", "Bream (Gilthead)", "Bream (Red)", "Bream (Sea)", "Bull Huss", "Coalfish", "Cod", "Conger Eel", "Dogfish", "Dogfish (Black Mouth)", "Gurnard (Red)", "Gurnard (Tub)", "Haddock", "Hake", "John Dory", "Ling", "Mackerel", "Monkfish", "Mullet (Grey)", "Mullet (Red)", "Pollack", "Poor Cod", "Pouting", "Saithe", "Triggerfish", "Whiting" ], // ** ADDED "Bull Huss" HERE **
+            "Round Fish": [ "Bass", "Bream (Black)", "Bream (Gilthead)", "Bream (Red)", "Bream (Sea)", "Bull Huss", "Coalfish", "Cod", "Conger Eel", "Dogfish", "Dogfish (Black Mouth)", "Gurnard (Red)", "Gurnard (Tub)", "Haddock", "Hake", "John Dory", "Ling", "Mackerel", "Monkfish", "Mullet (Grey)", "Mullet (Red)", "Pollack", "Poor Cod", "Pouting", "Saithe", "Triggerfish", "Whiting" ],
             "Rays and Skates": [ "Ray (Blonde)", "Ray (Small-eyed)", "Ray (Starry)", "Ray (Thornback)", "Skate" ],
             "Sharks": [ "Shark (Blue)", "Shark (Porbeagle)", "Shark (Thresher)", "Smoothhound", "Smoothhound (Starry)", "Spurdog", "Tope" ],
             "Wrasse": [ "Wrasse (Ballan)", "Wrasse (Cuckoo)" ]
         };
-        let fishData = [];
+        let fishData = []; // Now contains { id, species, length, initials, imageId }
         let currentAngler = null;
         let currentDate = null;
         let currentVenue = null;
@@ -390,11 +469,125 @@
         let isAppActive = false;
         let historyHijacked = false;
         let notesModalInstance = null;
-        // No Verifier Modal Instance needed
+        let cameraModalInstance = null;
+        let imageViewerModalInstance = null;
+        let db = null; // For IndexedDB
+        let currentStream = null; // For camera stream
+        let currentFishIdForPhoto = null; // Track which fish is getting a photo
+        let currentImageBlobForViewer = null; // Store blob for sharing
+        let currentImageIdForViewer = null; // Store imageId for sharing filename
+
+        // --- Constants ---
+        const DB_NAME = 'SeaCatchDB';
+        const DB_VERSION = 1;
+        const IMAGE_STORE_NAME = 'fishImages';
 
         // --- Utility Functions ---
         function formatDate(dateString) { if (!dateString) return 'N/A'; try { const d = new Date(dateString + 'T00:00:00Z'); return isNaN(d.getTime()) ? dateString : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }); } catch (e) { console.error("Date format err:", e); return dateString; } }
         function showPage(pageId) { console.log("Show page:", pageId); document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); const target = document.getElementById(pageId); if (target) { target.style.display = pageId === 'splashScreen' ? 'flex' : 'block'; currentPage = pageId; const container = document.querySelector('.container'); if(container) container.style.display = (pageId === 'splashScreen') ? 'none' : 'block'; if(pageId !== 'splashScreen' && !isAppActive) { activateAppMode(); } else if (pageId === 'splashScreen' && isAppActive) { deactivateAppMode(); } if (pageId !== 'splashScreen') { saveTempSession(); } } else { console.error("Page missing:", pageId, ". Defaulting splash."); const splash = document.getElementById('splashScreen'), container = document.querySelector('.container'); if(splash) splash.style.display = 'flex'; if(container) container.style.display = 'none'; currentPage = 'splashScreen'; deactivateAppMode(); } }
+        function generateUUID() { // Simple UUID generator
+           return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16) );
+        }
+
+
+        // --- IndexedDB Functions ---
+        function initDb() {
+            return new Promise((resolve, reject) => {
+                if (db) { resolve(db); return; }
+                console.log("Initializing IndexedDB...");
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+                request.onerror = (event) => {
+                    console.error("IndexedDB error:", event.target.error);
+                    reject("IndexedDB error: " + event.target.error);
+                };
+
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    console.log("IndexedDB initialized successfully.");
+                    resolve(db);
+                };
+
+                request.onupgradeneeded = (event) => {
+                    console.log("Upgrading IndexedDB...");
+                    db = event.target.result;
+                    if (!db.objectStoreNames.contains(IMAGE_STORE_NAME)) {
+                        console.log(`Creating object store: ${IMAGE_STORE_NAME}`);
+                        db.createObjectStore(IMAGE_STORE_NAME, { keyPath: 'id' }); // Store images with an 'id' as key
+                    }
+                };
+            });
+        }
+
+        function saveImageToDb(imageId, blob) {
+            return new Promise(async (resolve, reject) => {
+                if (!db) { await initDb(); }
+                if (!blob || !imageId) { reject("Missing imageId or blob data."); return; }
+
+                const transaction = db.transaction([IMAGE_STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(IMAGE_STORE_NAME);
+                const imageData = { id: imageId, blob: blob }; // Store blob with its ID
+
+                console.log(`Attempting to save image with ID: ${imageId}`);
+                const request = store.put(imageData);
+
+                request.onsuccess = () => {
+                    console.log(`Image ${imageId} saved to IndexedDB.`);
+                    resolve();
+                };
+                request.onerror = (event) => {
+                    console.error(`Error saving image ${imageId}:`, event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        function getImageFromDb(imageId) {
+            return new Promise(async (resolve, reject) => {
+                if (!db) { await initDb(); }
+                if (!imageId) { reject("Missing imageId."); return; }
+
+                const transaction = db.transaction([IMAGE_STORE_NAME], 'readonly');
+                const store = transaction.objectStore(IMAGE_STORE_NAME);
+                const request = store.get(imageId);
+
+                request.onsuccess = (event) => {
+                    if (event.target.result) {
+                        console.log(`Image ${imageId} retrieved from IndexedDB.`);
+                        resolve(event.target.result.blob); // Return the blob part
+                    } else {
+                        console.log(`Image ${imageId} not found in IndexedDB.`);
+                        resolve(null); // Resolve with null if not found
+                    }
+                };
+                request.onerror = (event) => {
+                    console.error(`Error retrieving image ${imageId}:`, event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        function deleteImageFromDb(imageId) {
+            return new Promise(async (resolve, reject) => {
+                if (!db) { await initDb(); }
+                if (!imageId) { resolve(); return; } // No ID, nothing to delete
+
+                const transaction = db.transaction([IMAGE_STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(IMAGE_STORE_NAME);
+                console.log(`Attempting to delete image with ID: ${imageId}`);
+                const request = store.delete(imageId);
+
+                request.onsuccess = () => {
+                    console.log(`Image ${imageId} deleted from IndexedDB.`);
+                    resolve();
+                };
+                request.onerror = (event) => {
+                    console.error(`Error deleting image ${imageId}:`, event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
 
         // --- History/Navigation Control ---
         function activateAppMode() { if (!isAppActive) { console.log("Activating App Mode"); isAppActive = true; if (!historyHijacked) { history.pushState({ appActive: true }, '', location.href); historyHijacked = true; console.log("Pushed history state."); } } }
@@ -403,46 +596,43 @@
         function handleBeforeUnload(event) { if (isAppActive) { console.log("beforeunload prompt."); event.preventDefault(); event.returnValue = ''; return ''; } else { console.log("beforeunload allowed."); } }
 
         // --- Session Management ---
-        function saveTempSession() { if (!currentAngler && !currentDate && !currentVenue && fishData.length === 0 && currentPage === 'registrationPage') return; const temp = { fishData: fishData||[], currentAngler, currentDate, currentVenue, currentZone, currentPeg, currentPage, isAppActive, historyHijacked, isCompetition: !!(currentZone && currentPeg) }; try { localStorage.setItem('temp_session', JSON.stringify(temp)); } catch (e) { console.error("Save temp err:", e); } }
+        function saveTempSession() { if (!isAppActive) return; const temp = { fishData: fishData||[], currentAngler, currentDate, currentVenue, currentZone, currentPeg, currentPage, isAppActive, historyHijacked, isCompetition: !!(currentZone && currentPeg) }; try { localStorage.setItem('temp_session', JSON.stringify(temp)); } catch (e) { console.error("Save temp err:", e); if(e.name === 'QuotaExceededError'){ alert("Warning: Could not save session progress, local storage might be full. Saved scorecards are unaffected for now.");}} }
         function clearTempSession() { try { localStorage.removeItem('temp_session'); console.log("Temp cleared."); } catch (e) { console.error("Clear temp err:", e); } }
         function checkRestoreSession() { let data; try { const temp = localStorage.getItem('temp_session'); if (!temp) { showPage('splashScreen'); return; } data = JSON.parse(temp); if (!data || !Array.isArray(data.fishData)) throw new Error("Invalid format."); } catch (e) { console.error("Read temp err:", e); clearTempSession(); showPage('splashScreen'); return; } if (data.currentAngler || data.currentDate || data.currentVenue || data.fishData.length > 0) { console.log("Found session, show modal."); document.getElementById('restoreAngler').textContent=data.currentAngler||'N/A'; document.getElementById('restoreDate').textContent=data.currentDate?formatDate(data.currentDate):'N/A'; document.getElementById('restoreFishCount').textContent=data.fishData.length; const modalEl=document.getElementById('restoreSessionModal'); if(modalEl){let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false}); mI.show();}else{console.error("Restore modal missing.");clearTempSession();showPage('splashScreen');} } else { clearTempSession(); showPage('splashScreen'); } }
-        function restoreSession() { console.log("Restore clicked."); let temp; try { const sS=localStorage.getItem('temp_session'); if(!sS)throw new Error("No data."); temp=JSON.parse(sS); if(!temp||!Array.isArray(temp.fishData))throw new Error("Invalid format."); } catch(e){console.error("Restore err:",e);alert("Failed restore.");startNewSession();return;} fishData=temp.fishData||[]; currentAngler=temp.currentAngler||null; currentDate=temp.currentDate||null; currentVenue=temp.currentVenue||null; currentZone=temp.currentZone||null; currentPeg=temp.currentPeg||null; const page=temp.currentPage||'registrationPage'; isAppActive=temp.isAppActive||false; historyHijacked=temp.historyHijacked||false; const restoredIsCompetition = temp.isCompetition === true; // Get competition status from saved session
+        function restoreSession() { console.log("Restore clicked."); let temp; try { const sS=localStorage.getItem('temp_session'); if(!sS)throw new Error("No data."); temp=JSON.parse(sS); if(!temp||!Array.isArray(temp.fishData))throw new Error("Invalid format."); } catch(e){console.error("Restore err:",e);alert("Failed restore.");startNewSession();return;} fishData=temp.fishData||[]; currentAngler=temp.currentAngler||null; currentDate=temp.currentDate||null; currentVenue=temp.currentVenue||null; currentZone=temp.currentZone||null; currentPeg=temp.currentPeg||null; const page=temp.currentPage||'registrationPage'; isAppActive=temp.isAppActive||false; historyHijacked=temp.historyHijacked||false; const restoredIsCompetition = temp.isCompetition === true;
         console.log("Restoring to:",page,"App active:",isAppActive, "Is Competition:", restoredIsCompetition);
         try{
             if(currentAngler)document.getElementById('anglerName').value=currentAngler;
             if(currentDate)document.getElementById('competitionDate').value=currentDate;
             if(currentVenue)document.getElementById('venueInput').value=currentVenue;
-            document.getElementById('isCompetition').checked=restoredIsCompetition; // Set checkbox based on restored status
-            toggleCompetitionFields(); // Update fields based on restored competition status
+            document.getElementById('isCompetition').checked=restoredIsCompetition;
+            toggleCompetitionFields(false); // Update fields but don't update log yet
             if(currentZone)document.getElementById('zoneInput').value=currentZone;
             if(currentPeg)document.getElementById('pegInput').value=currentPeg;
         }catch(e){console.error("Restore reg fields err:",e);}
         if(page==='fishingPage'||page==='tallyPage'){populateSpeciesDropdown(); if(page==='fishingPage'){updateFishLog();}else if(page==='tallyPage'){populateTallySummaryFields();populateTallyTable();}} hideModal('restoreSessionModal'); showPage(page); if(isAppActive && !historyHijacked){history.pushState({appActive:true},'',location.href); historyHijacked=true; console.log("Pushed history after restore.");} console.log("Session restored."); }
 
-
-        function startNewSession() {
-            // Confirmation logic moved to the event listener
-            console.log("Start New Session confirmed after prompt.");
-            clearTempSession(); resetApp(); hideModal('restoreSessionModal'); showPage('splashScreen');
-        }
+        function startNewSession() { console.log("Start New Session confirmed after prompt."); clearTempSession(); resetApp(); hideModal('restoreSessionModal'); showPage('splashScreen'); }
 
         // --- UI Interaction ---
         function populateSpeciesDropdown() { const input=document.getElementById('speciesInput'); if(!input) {console.error("Species dropdown missing!"); return;} const cats=Object.keys(fishCategories).sort(); input.innerHTML='<option value="" selected disabled>Select species</option><option value="Other">Other</option>'; cats.forEach(cat=>{const group=document.createElement('optgroup'); group.label=cat; const species=[...fishCategories[cat]].sort(); species.forEach(s=>{const opt=document.createElement('option'); opt.value=s; opt.textContent=s; group.appendChild(opt);}); input.appendChild(group);}); console.log("Species dropdown populated."); }
         function toggleCustomSpeciesInput() { const sel=document.getElementById('speciesInput'), custom=document.getElementById('customSpeciesInput'); if(!sel||!custom)return; custom.style.display=sel.value==='Other'?'block':'none'; if(sel.value!=='Other')custom.value=''; }
-        function toggleCompetitionFields() {
+        function toggleCompetitionFields(updateLog = true) { // Added flag
             try{
                 const check=document.getElementById('isCompetition').checked;
                 const zone=document.getElementById('zoneInput');
                 const peg=document.getElementById('pegInput');
-                const initialsGroup = document.getElementById('initialsInputGroup'); // Get the initials input group
-                const initialsInput = document.getElementById('initialsInput'); // Get the initials input field
-                const verifiedByHeader = document.getElementById('verifiedByHeader'); // Get the "Verified By" header
+                const initialsGroup = document.getElementById('initialsInputGroup');
+                const initialsInput = document.getElementById('initialsInput');
+                const verifiedByHeader = document.getElementById('verifiedByHeader');
 
                 zone.disabled=!check; peg.disabled=!check;
-                initialsGroup.style.display = check ? 'block' : 'none'; // Show/hide initials input
-                verifiedByHeader.style.display = check ? 'table-cell' : 'none'; // Show/hide "Verified By" column header
+                initialsGroup.style.display = check ? 'block' : 'none';
+                verifiedByHeader.style.display = check ? 'table-cell' : 'none';
 
-                updateFishLog(); // Re-render fish log to show/hide "Verified By" column
+                if (updateLog) { // Only update log if flag is true
+                   updateFishLog();
+                }
             }catch(e){console.error("Toggle comp fields err:",e);}
         }
 
@@ -462,182 +652,311 @@
             updateFishLog();
             showPage('fishingPage');
 
-            // ** SHOW MLS MODAL IF COMPETITION **
-            if (isActuallyCompetition) {
-                showModal('mlsInfoModal'); // Show the MLS info modal
-            }
+            if (isActuallyCompetition) { showModal('mlsInfoModal'); }
         }
         function addFish() {
             console.log("Add Fish.");
-            const spEl=document.getElementById('speciesInput');
-            const custEl=document.getElementById('customSpeciesInput');
-            const lenEl=document.getElementById('lengthInput');
-            const initialsEl = document.getElementById('initialsInput');
-            const isCompetition = document.getElementById('isCompetition').checked; // Check competition status
+            const spEl=document.getElementById('speciesInput'), custEl=document.getElementById('customSpeciesInput'), lenEl=document.getElementById('lengthInput'), initialsEl = document.getElementById('initialsInput');
+            const isCompetition = document.getElementById('isCompetition').checked;
 
             if(!spEl||!custEl||!lenEl){alert("Add fish elements missing.");return;}
-            let species=spEl.value;
-            const lenVal=lenEl.value.trim();
-            let length;
-            let initials = null; // Initialize initials to null for non-competition
+            let species=spEl.value; const lenVal=lenEl.value.trim(); let length; let initials = null;
 
             if(!lenVal){alert("Length required.");return;}
             length=Math.round(parseFloat(lenVal));
             if(isNaN(length)||length<=0||length>500){alert("Valid length (1-500cm) required.");return;}
             if(species==='Other'){species=custEl.value.trim();if(!species){alert("Custom species name required.");return;}if(!/^[a-zA-Z\s'-]+$/.test(species)){alert("Invalid species chars.");return;}}else if(!species){alert("Select species.");return;}
+            if (isCompetition && initialsEl) { initials = initialsEl.value.trim().toUpperCase(); }
 
-            if (isCompetition && initialsEl) { // Only get initials if it's a competition and input exists
-                initials = initialsEl.value.trim().toUpperCase();
-            }
+            // NEW: Add unique ID and null imageId
+            const fishId = generateUUID();
+            fishData.push({ id: fishId, species, length, initials: initials || null, imageId: null });
 
-            fishData.push({species, length, initials: initials || null}); // Store initials, null if not competition or empty
-            console.log("Added:",{species,length, initials});
+            console.log("Added:",{id: fishId, species,length, initials});
             updateFishLog(); spEl.value='';custEl.value='';lenEl.value=''; if(initialsEl) initialsEl.value=''; toggleCustomSpeciesInput();saveTempSession();
         }
 
 
-        function updateFishLog() {
-            const log=document.getElementById('fishLog');
-            const isCompetition = document.getElementById('isCompetition').checked; // Check competition status
-            const verifiedByHeader = document.getElementById('verifiedByHeader'); // Get the "Verified By" header
+        async function updateFishLog() {
+            const log = document.getElementById('fishLog');
+            const isCompetition = document.getElementById('isCompetition').checked;
+            const verifiedByHeader = document.getElementById('verifiedByHeader');
 
-            if(!log) return;
+            if (!log) return;
 
-            verifiedByHeader.style.display = isCompetition ? 'table-cell' : 'none'; // Show/hide header
+            verifiedByHeader.style.display = isCompetition ? 'table-cell' : 'none';
+            log.innerHTML = ''; // Clear existing log
 
-            log.innerHTML = fishData.map((f,i)=> {
+            for (const [i, f] of fishData.entries()) {
+                const row = document.createElement('tr');
+
                 let verifiedByCell = '';
                 if (isCompetition) {
-                    verifiedByCell = `<td>${f.initials || '-'}</td>`; // Display initials if competition, or '-' if null/empty
+                    verifiedByCell = `<td>${f.initials || '-'}</td>`;
                 }
-                return `<tr><td>${f.species||'?'}</td><td>${f.length||'?'}</td>${verifiedByCell}<td class="text-end"><button class="btn btn-danger btn-sm" onclick="deleteFish(${i})"><i class="bi bi-trash"></i></button></td></tr>`;
-            }).join('');
+
+                // Thumbnail cell
+                const thumbCell = document.createElement('td');
+                thumbCell.id = `thumb-cell-${f.id}`; // ID for later update
+                thumbCell.innerHTML = `<span class="thumbnail-container"><i class="bi bi-camera no-photo-icon"></i></span>`; // Default icon
+
+                // Actions cell
+                const actionsCell = document.createElement('td');
+                actionsCell.className = 'text-end fish-actions';
+                actionsCell.innerHTML = `
+                    <button class="btn btn-info btn-sm" onclick="openCamera('${f.id}')" title="Take Photo">
+                        <i class="bi bi-camera-fill"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteFish(${i})" title="Delete Fish">
+                        <i class="bi bi-trash"></i>
+                    </button>`;
+
+                row.innerHTML = `
+                    ${thumbCell.outerHTML}
+                    <td>${f.species || '?'}</td>
+                    <td>${f.length || '?'}</td>
+                    ${verifiedByCell}
+                    ${actionsCell.outerHTML}`;
+
+                log.appendChild(row);
+
+                // Asynchronously load thumbnail if imageId exists
+                if (f.imageId) {
+                    loadThumbnail(f.id, f.imageId);
+                }
+            }
         }
 
+        async function loadThumbnail(fishId, imageId) {
+             const thumbCell = document.getElementById(`thumb-cell-${fishId}`);
+             if (!thumbCell || !imageId) return;
 
-        function deleteFish(idx){
-            if(idx>=0&&idx<fishData.length){
-                const{species,length, initials}=fishData[idx];
+             try {
+                 const blob = await getImageFromDb(imageId);
+                 if (blob) {
+                     const url = URL.createObjectURL(blob);
+                     thumbCell.innerHTML = `
+                         <span class="thumbnail-container" onclick="showFullscreenImage('${imageId}')">
+                             <img src="${url}" alt="Fish thumbnail" class="fish-thumbnail" onload="URL.revokeObjectURL(this.src)">
+                         </span>`;
+                     // Note: Revoke might happen too soon if image loads slow, safer in modal close. We'll keep it simple here for now.
+                 } else {
+                    // Keep default icon or show broken image icon?
+                     thumbCell.innerHTML = `<span class="thumbnail-container"><i class="bi bi-image-alt no-photo-icon" title="Image missing"></i></span>`;
+                 }
+             } catch (error) {
+                 console.error(`Error loading thumbnail for ${imageId}:`, error);
+                 thumbCell.innerHTML = `<span class="thumbnail-container"><i class="bi bi-exclamation-triangle-fill text-danger no-photo-icon" title="Error loading image"></i></span>`;
+             }
+         }
+
+
+        async function deleteFish(idx) {
+            if (idx >= 0 && idx < fishData.length) {
+                const fishToDelete = fishData[idx];
+                const { id, species, length, initials, imageId } = fishToDelete;
                 const isCompetition = document.getElementById('isCompetition').checked;
-                let confirmMessage = `Delete ${species||'?'} (${length||'?'}cm)?`;
-                if (isCompetition && initials) {
-                    confirmMessage = `Delete ${species||'?'} (${length||'?'}cm) verified by ${initials}?`;
-                }
-                if(confirm(confirmMessage)){
-                    console.log("Deleting:",idx);
-                    fishData.splice(idx,1);
-                    updateFishLog();
-                    saveTempSession();
-                }
-            }else{console.error("Invalid delete idx:",idx);}
-        }
-        function backFromFishing() { console.log("Back from Fishing."); showPage('registrationPage'); }
+                let confirmMessage = `Delete ${species || '?'} (${length || '?'}cm)?`;
+                if (isCompetition && initials) { confirmMessage = `Delete ${species || '?'} (${length || '?'}cm) verified by ${initials}?`; }
+                if (imageId) { confirmMessage += " This will also delete the photo."; }
 
-        // *** UPDATED: Shows the single confirmation modal, adjusts visibility of verifier inside ***
+                if (confirm(confirmMessage)) {
+                    console.log("Deleting fish index:", idx, "ID:", id, "ImageID:", imageId);
+                    try {
+                        // Delete image from DB first
+                        if (imageId) {
+                            await deleteImageFromDb(imageId);
+                            console.log("Image deleted from DB for fish:", id);
+                        }
+                        // Remove fish from array
+                        fishData.splice(idx, 1);
+                        updateFishLog();
+                        saveTempSession();
+                    } catch (error) {
+                        console.error("Error during fish/image deletion:", error);
+                        alert("An error occurred while deleting the fish or its photo. Please check the console.");
+                        // Potentially revert splice if DB delete failed? Or just log error.
+                        updateFishLog(); // Refresh log even on error
+                    }
+                } else { console.log("Delete cancelled."); }
+            } else { console.error("Invalid delete idx:", idx); }
+        }
+
+        function backFromFishing() { console.log("Back from Fishing."); stopCameraStream(); showPage('registrationPage'); }
+
+
+        // --- Camera Functions ---
+        async function openCamera(fishId) {
+            console.log("Opening camera for fish ID:", fishId);
+            currentFishIdForPhoto = fishId; // Store the ID of the fish we're taking a photo for
+
+            const video = document.getElementById('cameraVideo');
+            if (!video) { console.error("Camera video element missing!"); return; }
+            if (!cameraModalInstance) { console.error("Camera modal instance not initialized!"); return; }
+
+            // Check for camera support
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert("Camera access is not supported by your browser.");
+                return;
+            }
+
+            try {
+                // Request camera stream (prefer back camera)
+                const constraints = { video: { facingMode: "environment" } }; // 'user' for front
+                currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = currentStream;
+                video.play(); // Ensure video plays
+                cameraModalInstance.show();
+                console.log("Camera stream started.");
+            } catch (err) {
+                console.error("Error accessing camera:", err);
+                if (err.name === "NotAllowedError") {
+                    alert("Camera permission denied. Please allow camera access in your browser settings.");
+                } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+                     // Try front camera as fallback?
+                     try {
+                          console.log("Back camera not found, trying front camera...");
+                          const frontConstraints = { video: { facingMode: "user" } };
+                          currentStream = await navigator.mediaDevices.getUserMedia(frontConstraints);
+                          video.srcObject = currentStream;
+                          video.play();
+                          cameraModalInstance.show();
+                          console.log("Front camera stream started.");
+                     } catch (fallbackErr) {
+                          console.error("Error accessing front camera:", fallbackErr);
+                          alert(`Could not access camera. Error: ${fallbackErr.message}`);
+                     }
+                } else {
+                    alert(`Could not access camera. Error: ${err.message}`);
+                }
+            }
+        }
+
+        function stopCameraStream() {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                console.log("Camera stream stopped.");
+                currentStream = null;
+                const video = document.getElementById('cameraVideo');
+                if (video) video.srcObject = null; // Clear video source
+            }
+        }
+
+        async function takeSnapshot() {
+            console.log("Taking snapshot...");
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.getElementById('cameraCanvas');
+            if (!video || !canvas || !currentFishIdForPhoto) {
+                 console.error("Missing video, canvas, or fish ID for snapshot.");
+                 stopCameraStream();
+                 hideModal('cameraModal');
+                 return;
+            }
+            const context = canvas.getContext('2d');
+
+            // Set canvas dimensions to match video intrinsic size for best quality
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Draw the current video frame onto the canvas
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Stop the camera stream immediately after taking the picture
+            stopCameraStream();
+
+            // Convert canvas to blob
+            canvas.toBlob(async (blob) => {
+                if (blob) {
+                    const imageId = `img_${currentFishIdForPhoto}_${Date.now()}`; // Unique ID for the image
+                    console.log(`Generated Blob, size: ${blob.size}, type: ${blob.type}. Saving with ID: ${imageId}`);
+                    try {
+                        await saveImageToDb(imageId, blob);
+
+                        // Find the fish in fishData and update its imageId
+                        const fishIndex = fishData.findIndex(f => f.id === currentFishIdForPhoto);
+                        if (fishIndex !== -1) {
+                            fishData[fishIndex].imageId = imageId;
+                            console.log("Updated fishData with imageId:", fishData[fishIndex]);
+                            saveTempSession(); // Save the updated fishData
+                            updateFishLog(); // Refresh the log to show the thumbnail
+                        } else {
+                            console.error("Could not find fish with ID", currentFishIdForPhoto, "to assign imageId.");
+                        }
+                    } catch (error) {
+                        console.error("Error saving image blob to DB:", error);
+                        alert("Failed to save the photo. Please try again.");
+                    }
+                } else {
+                    console.error("Canvas toBlob failed.");
+                    alert("Failed to capture photo data.");
+                }
+                // Hide the modal regardless of success/failure after attempt
+                hideModal('cameraModal');
+                currentFishIdForPhoto = null; // Reset fish ID tracker
+            }, 'image/jpeg', 0.9); // Save as JPEG with 90% quality
+        }
+
+
+        // --- End Session Modal ---
         function showEndSessionModal() {
             console.log("End Session button clicked.");
             const modalEl = document.getElementById('endSessionModal');
             const verifierSection = document.getElementById('verifierEndModalSection');
             const verifierInput = document.getElementById('verifierEndModalInput');
 
-            if (!modalEl || !verifierSection || !verifierInput) {
-                console.error("End session modal or its verifier elements missing!");
-                alert("Error preparing end session dialog.");
-                return;
-            }
-
-            // Check competition status and show/hide verifier section within the modal
+            if (!modalEl || !verifierSection || !verifierInput) { console.error("End session modal or its verifier elements missing!"); alert("Error preparing end session dialog."); return; }
             const isCompetition = !!(currentZone && currentPeg);
-            if (isCompetition) {
-                console.log("Setting up modal for Competition save.");
-                verifierSection.style.display = 'block';
-                verifierInput.value = ''; // Clear previous input
-            } else {
-                console.log("Setting up modal for Non-Competition save.");
-                verifierSection.style.display = 'none';
-                verifierInput.value = ''; // Clear just in case
-            }
-
-            // Show the single modal
-            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl, {backdrop: 'static', keyboard: false});
-            modalInstance.show();
+            verifierSection.style.display = isCompetition ? 'block' : 'none';
+            verifierInput.value = '';
+            bootstrap.Modal.getOrCreateInstance(modalEl, {backdrop: 'static', keyboard: false}).show();
         }
 
-        // *** UPDATED: Handles single confirm button, includes conditional verifier check ***
         function confirmEndSession() {
             console.log("Confirm End button clicked.");
-
-            // 1. Basic Data Validation (Globals)
-            if (!currentAngler || !currentDate || !currentVenue) {
-                alert("Cannot save session: Missing Angler Name, Date, or Venue information.");
-                hideModal('endSessionModal'); // Hide modal before navigating
-                showPage('registrationPage');
-                return;
-            }
-
-            const isCompetition = !!(currentZone && currentPeg);
-            let verifierName = null;
-
-            // 2. Competition Verifier Validation (If applicable)
+            if (!currentAngler || !currentDate || !currentVenue) { alert("Cannot save session: Missing Angler Name, Date, or Venue information."); hideModal('endSessionModal'); showPage('registrationPage'); return; }
+            const isCompetition = !!(currentZone && currentPeg); let verifierName = null;
             if (isCompetition) {
                  const verifierInput = document.getElementById('verifierEndModalInput');
-                 if (!verifierInput) {
-                     console.error("Verifier input missing inside modal during save!");
-                     alert("Error: Verifier field is missing. Cannot save competition scorecard.");
-                     return; // Stop saving
-                 }
+                 if (!verifierInput) { console.error("Verifier input missing!"); alert("Error: Verifier field missing."); return; }
                  verifierName = verifierInput.value.trim();
-                 if (!verifierName) {
-                     alert("Competition Scorecard: Please enter the verifier's name in the modal.");
-                     verifierInput.focus(); // Keep focus in modal
-                     return; // Stop saving, keep modal open
-                 }
+                 if (!verifierName) { alert("Competition Scorecard: Please enter the verifier's name."); verifierInput.focus(); return; }
             }
-
-            // 3. Hide modal *before* attempting save
             hideModal('endSessionModal');
-
-            // 4. Prepare and Save Data
-            console.log("Validation passed. Proceeding to save data with verifier:", verifierName);
-            const sessionData = {
-                currentAngler, currentDate, currentVenue, currentZone, currentPeg,
-                verifier: verifierName, // Will be null if not competition or invalid
-                notes: null, // Initialize notes field
-                fishData: fishData || [],
-                isCompetition: isCompetition // Save competition status with the scorecard
-            };
+            console.log("Validation passed. Saving data with verifier:", verifierName);
+            // NOTE: fishData now contains imageId references, not the images themselves.
+            const sessionData = { currentAngler, currentDate, currentVenue, currentZone, currentPeg, verifier: verifierName, notes: null, fishData: fishData || [], isCompetition: isCompetition };
             const id = `scorecard_${Date.now()}`;
             try {
+                // We only save metadata (including image IDs) to localStorage. Images are in IndexedDB.
                 localStorage.setItem(id, JSON.stringify(sessionData));
-                console.log("Saved:", id, sessionData);
+                console.log("Saved scorecard metadata:", id, sessionData);
                 alert("Scorecard saved successfully!");
                 clearTempSession();
-                resetApp(); // This includes deactivateAppMode()
+                resetApp();
                 showPage('splashScreen');
             } catch(e) {
-                console.error("Save err:", e);
-                alert("Save failed. Local storage might be full or disabled.");
-                showPage('fishingPage'); // Stay on fishing page on failure
+                console.error("Save scorecard metadata err:", e);
+                alert("Save failed. Local storage might be full or disabled. Images might still be saved separately.");
+                if(e.name === 'QuotaExceededError') { alert("Local storage is full. Please delete older scorecards to save new ones.");}
+                showPage('fishingPage');
             }
         }
-        // Removed confirmEndSessionWithVerifier and saveScorecardData functions
 
         // --- Tally Page ---
-        function populateTallySummaryFields() { try{document.getElementById('summaryAngler').textContent=currentAngler||'?'; document.getElementById('summaryDate').textContent=currentDate?formatDate(currentDate):'?'; document.getElementById('summaryVenue').textContent=currentVenue||'?'; document.getElementById('summaryZone').textContent=currentZone||'?'; document.getElementById('summaryPeg').textContent=currentPeg||'?'; document.getElementById('summaryVerifier').innerHTML = '';}catch(e){} }
-        function populateTallyTable() { const table=document.getElementById('tallyTable'); if (!table)return; const sum={}; let tL=0, lF=null; fishData.forEach(f=>{const sK=f.species||"?";const l=f.length||0; sum[sK]=sum[sK]||{c:0,tL:0,l:[]}; sum[sK].c++;sum[sK].tL+=l;sum[sK].l.push(l); tL+=l; if(!lF||l>(lF.length||0))lF=f;}); Object.values(sum).forEach(d=>d.l.sort((a,b)=>a-b)); const sorted=Object.entries(sum).sort(([a],[b])=>a.localeCompare(b)); table.innerHTML=sorted.map(([s,d])=>`<tr><td>${s}</td><td>${d.c}</td><td>(${d.l.join(', ')})</td><td>${d.tL}</td></tr>`).join('')||'<tr><td colspan="4" class="text-center">No fish.</td></tr>'; document.getElementById('tallyTotalLength').textContent=`${tL} cm`; document.getElementById('tallySpeciesCount').textContent=Object.keys(sum).length; document.getElementById('longestFishSpecies').textContent=lF?(lF.species||'?'):'N/A'; document.getElementById('longestFishLength').textContent=lF?`${lF.length||'?'} cm`:'0 cm';}
+        function populateTallySummaryFields() { try{document.getElementById('summaryAngler').textContent=currentAngler||'?'; document.getElementById('summaryDate').textContent=currentDate?formatDate(currentDate):'?'; document.getElementById('summaryVenue').textContent=currentVenue||'?'; document.getElementById('summaryZone').textContent=currentZone||'N/A'; document.getElementById('summaryPeg').textContent=currentPeg||'N/A'; document.getElementById('summaryVerifier').innerHTML = '';}catch(e){} } // Display N/A if no zone/peg
+        function populateTallyTable() { const table=document.getElementById('tallyTable'); if (!table)return; const sum={}; let tL=0, lF=null; fishData.forEach(f=>{const sK=f.species||"?";const l=f.length||0; sum[sK]=sum[sK]||{c:0,tL:0,l:[]}; sum[sK].c++;sum[sK].tL+=l;sum[sK].l.push(l); tL+=l; if(!lF||l>(lF.length||0))lF=f;}); Object.values(sum).forEach(d=>d.l.sort((a,b)=>a-b)); const sorted=Object.entries(sum).sort(([a],[b])=>a.localeCompare(b)); table.innerHTML=sorted.map(([s,d])=>`<tr><td>${s}</td><td>${d.c}</td><td>(${d.l.join(', ')})</td><td>${d.tL}</td></tr>`).join('')||'<tr><td colspan="4" class="text-center">No fish recorded.</td></tr>'; document.getElementById('tallyTotalLength').textContent=`${tL} cm`; document.getElementById('tallySpeciesCount').textContent=Object.keys(sum).length; document.getElementById('longestFishSpecies').textContent=lF?(lF.species||'?'):'N/A'; document.getElementById('longestFishLength').textContent=lF?`${lF.length||'?'} cm`:'0 cm';}
         function backFromTally() { console.log("Back from Tally."); showPage('fishingPage'); }
 
         // --- Saved Scorecards ---
         function showScorecardsModal() { console.log("View Scorecards."); const modalEl=document.getElementById('savedScorecardsModal'), listEl=document.getElementById('savedScorecardsList'); if(modalEl&&listEl){listEl.innerHTML='<div class="text-center p-3"><div class="spinner-border text-primary"><span class="visually-hidden">Load...</span></div></div>'; let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false});mI.show();setTimeout(loadScorecards,50);}else{console.error("Scorecard modal/list missing.");alert("Err show modal.");}}
 
-        function loadScorecards() {
+        async function loadScorecards() { // Made async for thumbnail loading
             console.log("Loading scorecards...");
             const savedScorecardsList = document.getElementById('savedScorecardsList');
             const olderScorecardsToggleContainer = document.getElementById('olderScorecardsToggleContainer');
-             if (!savedScorecardsList) { console.error("CRITICAL: savedScorecardsList element not found!"); const mb = document.getElementById('savedScorecardsModal')?.querySelector('.modal-body'); if(mb) mb.innerHTML = '<p class="text-danger">Error: List container missing.</p>'; return; }
-             if (!olderScorecardsToggleContainer) { console.error("CRITICAL: olderScorecardsToggleContainer element not found!"); }
+             if (!savedScorecardsList || !olderScorecardsToggleContainer) { console.error("CRITICAL: Modal list or toggle container missing!"); return; }
 
-            savedScorecardsList.innerHTML = ''; if(olderScorecardsToggleContainer) olderScorecardsToggleContainer.innerHTML = '';
+            savedScorecardsList.innerHTML = ''; olderScorecardsToggleContainer.innerHTML = '';
             const scorecards = []; let loadError = false;
 
             try { for (let i=0; i<localStorage.length; i++){ const key=localStorage.key(i); if (key?.startsWith('scorecard_')){ const dS=localStorage.getItem(key); if(dS){ try { const data=JSON.parse(dS); if(data?.currentAngler && data.currentDate && data.currentVenue){ const tS=parseInt(key.split('_')[1],10); if(!isNaN(tS)){scorecards.push({key,data,timestamp:tS});}} else {console.warn("Skip invalid card:",key);}} catch(e){console.error("Parse err:",key,e);}}}}}
@@ -651,101 +970,134 @@
             const displayLimit = 4;
             const createScorecardElement = (key, data, isLatest) => {
                  try {
-                     const w = document.createElement('div');
-                     w.className = `scorecard-entry${isLatest ? ' latest-scorecard' : ''}`;
+                     const wrapperDiv = document.createElement('div'); // Use a wrapper for easier updates
+                     wrapperDiv.className = `scorecard-entry${isLatest ? ' latest-scorecard' : ''}`;
+                     wrapperDiv.id = `entry-${key}`; // ID for potential future updates
+
                      let tL = 0, fC = 0, sp = new Set(), lF = null;
                      const fish = data.fishData || [];
                      fish.forEach(f => { const l = f.length || 0; fC++; tL += l; if (f.species) sp.add(f.species); if (!lF || l > (lF.length || 0)) lF = f; });
                      const spC = sp.size;
                      const lFS = lF ? `${lF.species || '?'}(${lF.length || '?'}cm)` : 'N/A';
-                     const eK = key.replace(/'/g, "\\'");
+                     const eK = key.replace(/'/g, "\\'"); // Escaped key for JS calls
 
-                     const viewNoteButtonHtml = (data.notes && data.notes.trim() !== '')
-                        ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${eK}', event)"><i class="bi bi-eye me-1"></i>View Note</button>`
-                        : '';
+                     const viewNoteButtonHtml = (data.notes && data.notes.trim() !== '') ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${eK}', event)"><i class="bi bi-eye me-1"></i>View Note</button>` : '';
 
-                     let catchTableHTML = '<p>No fish.</p>';
+                     let catchTableHTML = '<p class="ms-2">No fish recorded.</p>'; // Added margin start
                      if (fish.length > 0) {
-                         const verifiedHeader = data.isCompetition ? '<th>Verified</th>' : ''; // Conditional header
-                         const fishRows = fish.map((f, i) => {
-                             const verifiedCell = data.isCompetition ? `<td>${f.initials || '-'}</td>` : ''; // Conditional cell
-                             return `<tr><td>${i + 1}</td><td>${f.species || '?'}</td><td>${f.length || '?'}</td>${verifiedCell}</tr>`;
-                         }).join('');
-                         catchTableHTML = `<div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th>#</th><th>Species</th><th>Len(cm)</th>${verifiedHeader}</tr></thead><tbody>${fishRows}</tbody></table></div>`;
+                         const verifiedHeader = data.isCompetition ? '<th>Verified</th>' : '';
+                         // Placeholder for rows, will be filled asynchronously if images exist
+                         const fishRowsPlaceholderId = `fish-rows-${key}`;
+                         catchTableHTML = `<div class="table-responsive"><table class="table table-sm table-striped table-bordered"><thead><tr><th>#</th><th>Photo</th><th>Species</th><th>Len(cm)</th>${verifiedHeader}</tr></thead><tbody id="${fishRowsPlaceholderId}"><tr><td colspan="5" class="text-center p-2"><div class="spinner-border spinner-border-sm"><span class="visually-hidden">Loading fish...</span></div></td></tr></tbody></table></div>`;
+
+                         // Load fish rows with thumbnails asynchronously
+                         loadFishRowsForScorecard(key, data, fishRowsPlaceholderId);
                      }
 
 
-                     w.innerHTML = `<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest ? '<span class="badge ms-2">Latest</span>' : ''}</div>
+                     wrapperDiv.innerHTML = `<div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)"><i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest ? '<span class="badge ms-2">Latest</span>' : ''}</div>
                         <div class="scorecard-details" id="details_${key}">
                             <h6>Session Details</h6>
-                            <p><strong>Angler:</strong> ${data.currentAngler || '?'}</p>
-                            <p><strong>Venue:</strong> ${data.currentVenue || '?'}</p>
-                            <p><strong>Date:</strong> ${formatDate(data.currentDate || '')}</p>
-                            ${data.currentZone ? `<p><strong>Zone:</strong> ${data.currentZone}</p>` : ''}
-                            ${data.currentPeg ? `<p><strong>Peg:</strong> ${data.currentPeg}</p>` : ''}
-                            ${data.verifier ? `<p><strong>Verified By:</strong> ${data.verifier}</p>` : ''}
-                            <hr>
-                            <h6>Catch (${fC})</h6>
+                            <p><strong>Angler:</strong> ${data.currentAngler || '?'}</p> <p><strong>Venue:</strong> ${data.currentVenue || '?'}</p> <p><strong>Date:</strong> ${formatDate(data.currentDate || '')}</p>
+                            ${data.currentZone ? `<p><strong>Zone:</strong> ${data.currentZone}</p>` : ''} ${data.currentPeg ? `<p><strong>Peg:</strong> ${data.currentPeg}</p>` : ''} ${data.verifier ? `<p><strong>Verified By:</strong> ${data.verifier}</p>` : ''}
+                            <hr> <h6>Catch (${fC})</h6>
                             ${catchTableHTML}
                             ${fish.length > 0 ? `<hr><h6>Summary</h6><p><strong>Total Len:</strong> ${tL}cm</p><p><strong>Species:</strong> ${spC}</p><p><strong>Longest:</strong> ${lFS}</p>` : ''}
-
-                            <div class="btn-actions-group">
-                                ${viewNoteButtonHtml}
-                                <button class="btn btn-outline-secondary btn-sm" onclick="openNotesModal('${eK}', event)"><i class="bi bi-pencil me-1"></i>Add/Edit Note</button>
-                                <button class="btn btn-info btn-sm" onclick="emailScorecard('${eK}', event)"><i class="bi bi-envelope me-1"></i>Email</button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteScorecard('${eK}', event)"><i class="bi bi-trash me-1"></i>Delete</button>
-                            </div>
+                            <div class="btn-actions-group"> ${viewNoteButtonHtml} <button class="btn btn-outline-secondary btn-sm" onclick="openNotesModal('${eK}', event)"><i class="bi bi-pencil me-1"></i>Add/Edit Note</button> <button class="btn btn-info btn-sm" onclick="emailScorecard('${eK}', event)"><i class="bi bi-envelope me-1"></i>Email</button> <button class="btn btn-danger btn-sm" onclick="deleteScorecard('${eK}', event)"><i class="bi bi-trash me-1"></i>Delete</button> </div>
                         </div>`;
-                     return w;
-                 } catch (elementError) {
-                     console.error(`Err create el for ${key}:`, elementError);
-                     const errDiv = document.createElement('div');
-                     errDiv.className = 'alert alert-warning p-2 my-2';
-                     errDiv.textContent = `Err display card ${key.slice(-4)}`;
-                     return errDiv;
-                 }
+                     return wrapperDiv;
+                 } catch (elementError) { console.error(`Err create el for ${key}:`, elementError); const errDiv = document.createElement('div'); errDiv.className = 'alert alert-warning p-2 my-2'; errDiv.textContent = `Err display card ${key.slice(-4)}`; return errDiv; }
              }; // End of createScorecardElement
 
 
-            try { console.log(`Slicing initial (0 to ${displayLimit})`); const initial = scorecards.slice(0, displayLimit); console.log(`Displaying ${initial.length} initial.`); initial.forEach(({ key, data }, index) => { const el = createScorecardElement(key, data, index === 0); if (el) savedScorecardsList.appendChild(el); }); }
+            try { const initial = scorecards.slice(0, displayLimit); initial.forEach(({ key, data }, index) => { const el = createScorecardElement(key, data, index === 0); if (el) savedScorecardsList.appendChild(el); }); }
             catch(e) { console.error("Err initial loop:", e); savedScorecardsList.innerHTML += '<p class="text-danger p-3">Err display initial.</p>'; }
 
-            console.log(`Check need Older button: ${scorecards.length} > ${displayLimit}?`);
             if (scorecards.length > displayLimit) {
-                 console.log("Condition MET: Creating 'Older' buttons."); // Plural
-                 if (!olderScorecardsToggleContainer) { console.error("Cannot create 'Older' buttons - container missing!"); return; }
                  const olderCount = scorecards.length - displayLimit;
-
-                 // Create View Older Button
-                 const showOlderBtn = document.createElement('button');
-                 showOlderBtn.id = 'showOlderBtn';
-                 showOlderBtn.className = 'btn btn-outline-secondary'; // Use className
-                 showOlderBtn.textContent = `View ${olderCount} Older Scorecard${olderCount > 1 ? 's' : ''}`;
-                 showOlderBtn.onclick = function() { console.log("'Older' clicked."); try { const older = scorecards.slice(displayLimit); console.log(`Appending ${older.length} older.`); older.forEach(({ key, data }) => { const el = createScorecardElement(key, data, false); if (el) savedScorecardsList.appendChild(el); }); olderScorecardsToggleContainer.innerHTML = ''; console.log("Older appended, buttons removed."); } catch(e) { console.error("Err create/append older:", e); olderScorecardsToggleContainer.innerHTML = '<p class="text-danger">Err display older.</p>'; } };
+                 const showOlderBtn = document.createElement('button'); showOlderBtn.id = 'showOlderBtn'; showOlderBtn.className = 'btn btn-outline-secondary'; showOlderBtn.textContent = `View ${olderCount} Older Scorecard${olderCount > 1 ? 's' : ''}`;
+                 showOlderBtn.onclick = function() { console.log("'Older' clicked."); try { const older = scorecards.slice(displayLimit); older.forEach(({ key, data }) => { const el = createScorecardElement(key, data, false); if (el) savedScorecardsList.appendChild(el); }); olderScorecardsToggleContainer.innerHTML = ''; } catch(e) { console.error("Err create/append older:", e); olderScorecardsToggleContainer.innerHTML = '<p class="text-danger">Err display older.</p>'; } };
                  olderScorecardsToggleContainer.appendChild(showOlderBtn);
-                 console.log("'View Older' button added.");
 
-                 // Create Delete Older Button
-                 const deleteOlderBtn = document.createElement('button');
-                 deleteOlderBtn.id = 'deleteOlderBtn';
-                 deleteOlderBtn.className = 'btn btn-danger'; // Use className, red button
-                 deleteOlderBtn.textContent = 'Delete Older Scorecards';
-                 deleteOlderBtn.onclick = confirmDeleteOlderScorecards; // Assign new confirmation function
+                 const deleteOlderBtn = document.createElement('button'); deleteOlderBtn.id = 'deleteOlderBtn'; deleteOlderBtn.className = 'btn btn-danger'; deleteOlderBtn.textContent = 'Delete Older Scorecards'; deleteOlderBtn.onclick = confirmDeleteOlderScorecards;
                  olderScorecardsToggleContainer.appendChild(deleteOlderBtn);
-                 console.log("'Delete Older' button added.");
-
-            } else {
-                 console.log("Condition NOT MET: No 'Older' buttons needed.");
             }
         } // End of loadScorecards
 
+        // NEW: Async function to load fish rows with thumbnails for saved scorecards
+        async function loadFishRowsForScorecard(scorecardKey, scorecardData, targetBodyId) {
+            const fish = scorecardData.fishData || [];
+            const tableBody = document.getElementById(targetBodyId);
+            if (!tableBody) return;
+
+            if (fish.length === 0) {
+                 tableBody.innerHTML = '<tr><td colspan="5" class="text-center p-2">No fish recorded.</td></tr>';
+                 return;
+            }
+
+            let rowsHtml = '';
+            for (const [i, f] of fish.entries()) {
+                 const verifiedCell = scorecardData.isCompetition ? `<td>${f.initials || '-'}</td>` : '';
+                 let thumbHtml = '<span class="thumbnail-container"><i class="bi bi-camera no-photo-icon"></i></span>'; // Default
+
+                 if (f.imageId) {
+                      try {
+                          const blob = await getImageFromDb(f.imageId);
+                          if (blob) {
+                              const url = URL.createObjectURL(blob);
+                              // Make thumbnail clickable to show full image
+                              thumbHtml = `<span class="thumbnail-container" onclick="showFullscreenImage('${f.imageId}')"><img src="${url}" alt="Fish thumbnail" class="fish-thumbnail" onload="URL.revokeObjectURL(this.src)"></span>`;
+                          } else {
+                               thumbHtml = `<span class="thumbnail-container"><i class="bi bi-image-alt no-photo-icon" title="Image missing"></i></span>`;
+                          }
+                      } catch (err) {
+                           console.error(`Error loading saved thumb ${f.imageId}:`, err);
+                           thumbHtml = `<span class="thumbnail-container"><i class="bi bi-exclamation-triangle-fill text-danger no-photo-icon" title="Error load"></i></span>`;
+                      }
+                 }
+
+                 rowsHtml += `<tr><td>${i + 1}</td><td>${thumbHtml}</td><td>${f.species || '?'}</td><td>${f.length || '?'}</td>${verifiedCell}</tr>`;
+            }
+            tableBody.innerHTML = rowsHtml;
+        }
+
 
         function toggleScorecardDetails(key, element){console.log("Toggle:",key); const d=document.getElementById(`details_${key}`), i=element.querySelector('i.bi'); if(d){const v=d.style.display==='block'; d.style.display=v?'none':'block'; if(i){i.classList.toggle('bi-chevron-right',v);i.classList.toggle('bi-chevron-down',!v);} element.classList.toggle('details-visible',!v);}else{console.error("Details missing:",key);}}
-        function deleteScorecard(key, event){event.stopPropagation(); console.log("Delete:",key); let sN=`card ${key.slice(-6)}`; try{const d=JSON.parse(localStorage.getItem(key)||'{}'); sN=`card for ${d.currentAngler||'?'} on ${formatDate(d.currentDate||'')}`;}catch(e){} if(confirm(`Delete ${sN}? Cannot undo.`)){try{localStorage.removeItem(key);console.log("Deleted:",key);loadScorecards();}catch(e){console.error("Delete err:",e);alert("Failed delete.");}}else{console.log("Delete cancel.");}}
+
+        async function deleteScorecard(key, event){ // Make async
+            event.stopPropagation(); console.log("Delete scorecard key:", key);
+            let data;
+            try { data = JSON.parse(localStorage.getItem(key) || '{}'); } catch (e) { data = {}; }
+            const fishList = data.fishData || [];
+            const imageIdsToDelete = fishList.map(f => f.imageId).filter(id => !!id); // Get all valid image IDs
+
+            let sN = `card ${key.slice(-6)}`;
+            try { sN = `card for ${data.currentAngler || '?'} on ${formatDate(data.currentDate || '')}`; } catch (e) {}
+            if (confirm(`Delete ${sN}? This will also delete ${imageIdsToDelete.length} associated photo(s). Cannot undo.`)) {
+                 try {
+                      // Delete all associated images from IndexedDB first
+                      if (imageIdsToDelete.length > 0) {
+                          console.log("Deleting images from DB:", imageIdsToDelete);
+                          const deletePromises = imageIdsToDelete.map(id => deleteImageFromDb(id));
+                          await Promise.allSettled(deletePromises); // Wait for all deletions, ignore individual errors here
+                          console.log("Image deletion from DB attempted.");
+                      }
+
+                      // Delete scorecard metadata from localStorage
+                      localStorage.removeItem(key);
+                      console.log("Deleted scorecard metadata from localStorage:", key);
+                      loadScorecards(); // Refresh the list
+                 } catch (e) {
+                      console.error("Delete scorecard/images error:", e);
+                      alert("Failed to delete scorecard or some associated images.");
+                      loadScorecards(); // Refresh list even on error
+                 }
+            } else { console.log("Delete cancel."); }
+        }
 
         function emailScorecard(key, event) {
             event.stopPropagation(); console.log("Emailing:", key);
-            alert("This will open your default email app. Notes are NOT included.");
+            alert("This will open your default email app. Photos and Notes are NOT included.");
 
             let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error getting data: ${error.message}`); return; }
             let body = "Sea Catch Scorecard\r\n=====================\r\n\r\n";
@@ -761,89 +1113,159 @@
 
         // --- Notes Modal Functions ---
         function openNotesModal(key, event) { if(event) event.stopPropagation(); console.log('Opening notes modal for key:', key); const notesTextarea = document.getElementById('notesTextarea'), notesModalKeyInput = document.getElementById('notesModalScorecardKey'); if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { console.error('Notes modal elements/instance missing!'); alert('Error opening notes editor.'); return; } try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; notesTextarea.value=data.notes||''; } catch(e){ console.error('Error loading notes for modal:',e); notesTextarea.value=''; } notesModalKeyInput.value = key; notesModalInstance.show(); }
-        function saveNoteFromModal() { console.log('Save notes modal clicked.'); const notesTextarea = document.getElementById('notesTextarea'), notesModalKeyInput = document.getElementById('notesModalScorecardKey'); if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { alert('Error saving notes.'); return; } const key = notesModalKeyInput.value; const newNotes = notesTextarea.value; if (!key) { alert('Error: Scorecard key missing.'); return; } try { const dS = localStorage.getItem(key); if (!dS) throw new Error('Scorecard data not found.'); let data = JSON.parse(dS); data.notes = newNotes; localStorage.setItem(key, JSON.stringify(data)); console.log('Notes saved via modal for key:', key); notesModalInstance.hide(); setTimeout(loadScorecards, 150); } catch (e) { console.error('Error saving notes from modal:', e); alert(`Failed to save notes: ${e.message}`); } }
+        function saveNoteFromModal() { console.log('Save notes modal clicked.'); const notesTextarea = document.getElementById('notesTextarea'), notesModalKeyInput = document.getElementById('notesModalScorecardKey'); if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { alert('Error saving notes.'); return; } const key = notesModalKeyInput.value; const newNotes = notesTextarea.value; if (!key) { alert('Error: Scorecard key missing.'); return; } try { const dS = localStorage.getItem(key); if (!dS) throw new Error('Scorecard data not found.'); let data = JSON.parse(dS); data.notes = newNotes; localStorage.setItem(key, JSON.stringify(data)); console.log('Notes saved via modal for key:', key); notesModalInstance.hide(); setTimeout(loadScorecards, 150); } catch (e) { console.error('Error saving notes from modal:', e); alert(`Failed to save notes: ${e.message}`); if(e.name === 'QuotaExceededError') { alert("Local storage is full. Could not save notes."); }} }
         function viewNote(key, event) { event.stopPropagation(); console.log('Viewing notes for key:', key); try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; const notes=data.notes||''; alert(`Notes for scorecard:\n--------------------\n${notes || '(No notes saved)'}`); } catch (e) { console.error('Error retrieving notes:', e); alert('Could not retrieve notes.'); } }
-        // --- End Notes Functions ---
 
         // --- Delete Older Scorecards Functions ---
         function confirmDeleteOlderScorecards() {
-            const displayLimit = 4; // Keep consistent
-            const scorecards = [];
-            try {
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key?.startsWith('scorecard_')) scorecards.push(key);
-                }
-            } catch (e) { alert('Error reading scorecards for deletion count.'); return; }
-
-            scorecards.sort((a, b) => parseInt(b.split('_')[1]) - parseInt(a.split('_')[1])); // Sort by timestamp desc
+            const displayLimit = 4; const scorecards = [];
+            try { for (let i = 0; i < localStorage.length; i++) { const key = localStorage.key(i); if (key?.startsWith('scorecard_')) scorecards.push(key); } }
+            catch (e) { alert('Error reading scorecards for deletion count.'); return; }
+            scorecards.sort((a, b) => parseInt(b.split('_')[1]) - parseInt(a.split('_')[1]));
 
             if (scorecards.length > displayLimit) {
-                 const olderCount = scorecards.length - displayLimit;
-                 if (confirm(`Are you sure you want to delete the oldest ${olderCount} scorecard${olderCount > 1 ? 's' : ''}? This cannot be undone.`)) {
+                 const olderKeys = scorecards.slice(displayLimit);
+                 const olderCount = olderKeys.length;
+                 // Count associated images (best effort)
+                 let imageCount = 0;
+                 olderKeys.forEach(key => { try { const data = JSON.parse(localStorage.getItem(key) || '{}'); imageCount += (data.fishData || []).filter(f => !!f.imageId).length; } catch (e) {} });
+
+                 if (confirm(`Are you sure you want to delete the oldest ${olderCount} scorecard${olderCount > 1 ? 's' : ''} (including approx. ${imageCount} photos)? This cannot be undone.`)) {
                      deleteOlderScorecards();
-                 } else {
-                     console.log("Delete older scorecards cancelled.");
-                 }
-            } else {
-                 alert("No older scorecards found to delete (less than 5 total).");
-            }
+                 } else { console.log("Delete older scorecards cancelled."); }
+            } else { alert("No older scorecards found to delete (less than 5 total)."); }
         }
 
-        function deleteOlderScorecards() {
+        async function deleteOlderScorecards() { // Make async
             console.log("Deleting older scorecards...");
-            const displayLimit = 4;
-            const scorecards = [];
-             let errorOccurred = false;
+            const displayLimit = 4; const scorecards = []; let errorOccurred = false;
             try {
-                // Fetch all scorecard keys
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key?.startsWith('scorecard_')) {
-                        const timestamp = parseInt(key.split('_')[1], 10);
-                        if (!isNaN(timestamp)) {
-                             scorecards.push({ key, timestamp });
-                        }
-                    }
-                }
-                // Sort by timestamp, newest first
+                for (let i = 0; i < localStorage.length; i++) { const key = localStorage.key(i); if (key?.startsWith('scorecard_')) { const timestamp = parseInt(key.split('_')[1], 10); if (!isNaN(timestamp)) { scorecards.push({ key, timestamp }); } } }
                 scorecards.sort((a, b) => b.timestamp - a.timestamp);
-
-                // Identify keys to delete (skip the first 'displayLimit')
                 const keysToDelete = scorecards.slice(displayLimit).map(item => item.key);
 
                 if (keysToDelete.length > 0) {
                     console.log(`Attempting to delete ${keysToDelete.length} older scorecards:`, keysToDelete);
-                    keysToDelete.forEach(key => {
-                         try {
-                             localStorage.removeItem(key);
-                             console.log(`Deleted: ${key}`);
-                         } catch (removeError) {
-                              console.error(`Error removing key ${key}:`, removeError);
-                              errorOccurred = true; // Mark that an error happened
-                         }
-                    });
+                    let allImageIdsToDelete = [];
+                    // Collect all image IDs first
+                    keysToDelete.forEach(key => { try { const data = JSON.parse(localStorage.getItem(key) || '{}'); allImageIdsToDelete.push(...(data.fishData || []).map(f => f.imageId).filter(id => !!id)); } catch (e) { console.warn("Error parsing scorecard for image IDs during delete:", key); }});
+                    allImageIdsToDelete = [...new Set(allImageIdsToDelete)]; // Remove duplicates
 
-                    if (errorOccurred) {
-                         alert("Some older scorecards may not have been deleted due to an error. Please check the list.");
-                    } else {
-                         alert(`${keysToDelete.length} older scorecard${keysToDelete.length > 1 ? 's' : ''} deleted successfully.`);
+                    // Delete images from DB
+                    if (allImageIdsToDelete.length > 0) {
+                         console.log("Deleting older images from DB:", allImageIdsToDelete);
+                         const deleteImgPromises = allImageIdsToDelete.map(id => deleteImageFromDb(id));
+                         const results = await Promise.allSettled(deleteImgPromises);
+                         results.forEach((result, index) => { if (result.status === 'rejected') { console.error(`Failed to delete image ${allImageIdsToDelete[index]}:`, result.reason); errorOccurred = true; }});
+                         console.log("Older image deletion from DB attempted.");
                     }
-                } else {
-                    console.log("No older scorecards found to delete after re-check.");
-                    // No need to alert if nothing to delete
-                }
 
-            } catch (e) {
-                console.error("Error during the delete older process:", e);
-                alert("An error occurred while trying to delete older scorecards.");
-                errorOccurred = true;
-            } finally {
-                 // Always reload the list to reflect changes or errors
-                 loadScorecards();
+                    // Delete scorecard metadata from localStorage
+                    keysToDelete.forEach(key => { try { localStorage.removeItem(key); console.log(`Deleted metadata: ${key}`); } catch (removeError) { console.error(`Error removing metadata key ${key}:`, removeError); errorOccurred = true; } });
+
+                    if (errorOccurred) { alert("Some older scorecards or their photos may not have been deleted due to an error."); }
+                    else { alert(`${keysToDelete.length} older scorecard${keysToDelete.length > 1 ? 's' : ''} and associated photos deleted successfully.`); }
+                } else { console.log("No older scorecards found to delete after re-check."); }
+            } catch (e) { console.error("Error during the delete older process:", e); alert("An error occurred while trying to delete older scorecards."); errorOccurred = true; }
+            finally { loadScorecards(); } // Always reload the list
+        }
+
+        // --- Image Viewer and Sharing ---
+        async function showFullscreenImage(imageId) {
+            console.log("Showing fullscreen image:", imageId);
+            if (!imageId || !imageViewerModalInstance) return;
+
+            const imageView = document.getElementById('fullImageView');
+            const shareBtn = document.getElementById('shareImageBtn');
+            if (!imageView || !shareBtn) { console.error("Image viewer elements missing"); return; }
+
+            imageView.src = '#'; // Clear previous image
+            shareBtn.disabled = true; // Disable share button initially
+            currentImageBlobForViewer = null; // Reset stored blob
+            currentImageIdForViewer = null; // Reset stored id
+
+            try {
+                 const blob = await getImageFromDb(imageId);
+                 if (blob) {
+                      const url = URL.createObjectURL(blob);
+                      imageView.src = url;
+                      // Store blob and ID for potential sharing
+                      currentImageBlobForViewer = blob;
+                      currentImageIdForViewer = imageId;
+                      // Enable share button only if API is supported
+                      shareBtn.disabled = !('share' in navigator && 'canShare' in navigator);
+                      if (shareBtn.disabled) {
+                           shareBtn.title = "Sharing not supported on this browser/device";
+                      } else {
+                           shareBtn.title = "Share Image";
+                      }
+                      imageViewerModalInstance.show();
+                      // Revoke URL when modal is hidden (important!)
+                      const modalElement = document.getElementById('imageViewerModal');
+                      modalElement.addEventListener('hidden.bs.modal', () => {
+                           console.log("Revoking object URL for fullscreen image:", url);
+                           URL.revokeObjectURL(url);
+                           imageView.src = '#'; // Clear src
+                           currentImageBlobForViewer = null; // Clear stored blob
+                           currentImageIdForViewer = null;
+                      }, { once: true }); // Listener runs only once per show
+                 } else {
+                      alert("Image data not found.");
+                 }
+            } catch (error) {
+                 console.error("Error loading image for viewer:", error);
+                 alert("Could not load image.");
             }
         }
-        // --- End Delete Older Scorecards ---
+
+        async function shareImage() {
+             console.log("Share button clicked.");
+             const shareBtn = document.getElementById('shareImageBtn');
+             if (shareBtn) shareBtn.disabled = true; // Prevent double clicks
+
+             if (!currentImageBlobForViewer || !currentImageIdForViewer) {
+                  alert("Image data not available for sharing.");
+                  if (shareBtn) shareBtn.disabled = false;
+                  return;
+             }
+             if (!navigator.share) {
+                  alert("Web Share API not supported on this browser.");
+                  if (shareBtn) shareBtn.disabled = false;
+                  return;
+             }
+
+             // Create a File object from the Blob
+             const fileName = `fish_photo_${currentImageIdForViewer}.jpg`;
+             const file = new File([currentImageBlobForViewer], fileName, { type: currentImageBlobForViewer.type });
+             const shareData = {
+                  files: [file],
+                  title: 'Sea Catch Photo',
+                  text: 'Check out this fish I caught using the Sea Catch Scorer app!'
+             };
+
+             // Check if the browser *can* share this data (recommended)
+             if (navigator.canShare && navigator.canShare(shareData)) {
+                  console.log("Attempting to share file:", fileName);
+                  try {
+                       await navigator.share(shareData);
+                       console.log("Image shared successfully.");
+                  } catch (error) {
+                       console.error("Error sharing image:", error);
+                       // Don't alert common AbortError
+                       if (error.name !== 'AbortError') {
+                            alert(`Sharing failed: ${error.message}`);
+                       } else {
+                            console.log("Sharing cancelled by user.");
+                       }
+                  } finally {
+                      if (shareBtn) shareBtn.disabled = false; // Re-enable button
+                  }
+             } else {
+                  console.warn("Sharing this file type might not be supported.");
+                  alert("Your browser may not support sharing this file.");
+                  if (shareBtn) shareBtn.disabled = false; // Re-enable button
+             }
+         }
 
 
         // --- General Modal Hiding/Showing ---
@@ -854,10 +1276,10 @@
         function resetApp() {
             console.log("Resetting app.");
             fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen';
+            stopCameraStream(); // Ensure camera is off if reset happens mid-photo
             deactivateAppMode();
             try {
-               document.getElementById('anglerName').value=''; document.getElementById('competitionDate').value=''; document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; toggleCompetitionFields(); document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; document.getElementById('speciesInput').value=''; document.getElementById('customSpeciesInput').value=''; document.getElementById('customSpeciesInput').style.display='none'; document.getElementById('lengthInput').value=''; document.getElementById('initialsInput').value=''; document.getElementById('fishLog').innerHTML='';
-               // Clear and hide verifier input inside modal
+               document.getElementById('anglerName').value=''; document.getElementById('competitionDate').value=''; document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; toggleCompetitionFields(false); document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; document.getElementById('speciesInput').value=''; document.getElementById('customSpeciesInput').value=''; document.getElementById('customSpeciesInput').style.display='none'; document.getElementById('lengthInput').value=''; document.getElementById('initialsInput').value=''; document.getElementById('fishLog').innerHTML='';
                const vI = document.getElementById('verifierEndModalInput'); if(vI) vI.value='';
                const vS = document.getElementById('verifierEndModalSection'); if(vS) vS.style.display='none';
                populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm';
@@ -865,9 +1287,12 @@
         }
 
         // --- Initialisation ---
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => { // Make async for DB init
             console.log("DOM loaded.");
             try {
+                 // --- Initialize IndexedDB ---
+                 await initDb(); // Ensure DB is ready before setting up listeners etc.
+
                  // --- Service Worker Registration ---
                  if ('serviceWorker' in navigator) {
                      window.addEventListener('load', () => {
@@ -876,14 +1301,33 @@
                              .catch(err => console.error('SW registration failed: ', err));
                      });
                  } else { console.log('Service workers not supported.'); }
-                 // --- End Service Worker Registration ---
 
                  window.addEventListener('popstate', handleBackButton); window.addEventListener('beforeunload', handleBeforeUnload); console.log("Nav listeners attached.");
-                 const refs = { continueBtn: document.getElementById('continueBtn'), viewScorecardsBtn: document.getElementById('viewScorecardsBtn'), startRecordingBtn: document.getElementById('startRecordingBtn'), isCompetitionCheck: document.getElementById('isCompetition'), speciesSelect: document.getElementById('speciesInput'), addFishBtn: document.getElementById('addFishBtn'), backFromFishingBtn: document.getElementById('backFromFishingBtn'), endSessionBtn: document.getElementById('endSessionBtn'), confirmEndBtn: document.getElementById('confirmEndBtn'), backFromTallyBtn: document.getElementById('backFromTallyBtn'), closeModalBtn: document.getElementById('closeModalBtn'), restoreSessionBtn: document.getElementById('restoreSessionBtn'), startNewSessionBtn: document.getElementById('startNewSessionBtn'), anglerNameInput: document.getElementById('anglerName'), competitionDateInput: document.getElementById('competitionDate'), venueInput: document.getElementById('venueInput'), zoneSelect: document.getElementById('zoneInput'), pegSelect: document.getElementById('pegInput'), initialsInput: document.getElementById('initialsInput'), initialsInputGroup: document.getElementById('initialsInputGroup'), verifiedByHeader: document.getElementById('verifiedByHeader'),
-                    mlsAgreeBtn: document.getElementById('mlsAgreeBtn'), // ** ADD MLS AGREE BUTTON REF **
-                    mlsInfoModalElement: document.getElementById('mlsInfoModal')  // ** ADD MLS MODAL ELEMENT REF **
+
+                 // --- Get Element References ---
+                 const refs = { continueBtn: document.getElementById('continueBtn'), viewScorecardsBtn: document.getElementById('viewScorecardsBtn'), startRecordingBtn: document.getElementById('startRecordingBtn'), isCompetitionCheck: document.getElementById('isCompetition'), speciesSelect: document.getElementById('speciesInput'), addFishBtn: document.getElementById('addFishBtn'), backFromFishingBtn: document.getElementById('backFromFishingBtn'), endSessionBtn: document.getElementById('endSessionBtn'), confirmEndBtn: document.getElementById('confirmEndBtn'), backFromTallyBtn: document.getElementById('backFromTallyBtn'), restoreSessionBtn: document.getElementById('restoreSessionBtn'), startNewSessionBtn: document.getElementById('startNewSessionBtn'), anglerNameInput: document.getElementById('anglerName'), competitionDateInput: document.getElementById('competitionDate'), venueInput: document.getElementById('venueInput'), zoneSelect: document.getElementById('zoneInput'), pegSelect: document.getElementById('pegInput'), initialsInput: document.getElementById('initialsInput'),
+                    mlsAgreeBtn: document.getElementById('mlsAgreeBtn'),
+                    takePhotoButton: document.getElementById('takePhotoButton'), // Camera button
+                    cancelCameraButtonHeader: document.getElementById('cancelCameraButtonHeader'), // Camera cancel
+                    // cancelCameraButtonFooter: document.getElementById('cancelCameraButtonFooter'), // Optional footer cancel
+                    shareImageBtn: document.getElementById('shareImageBtn') // Share button in viewer
                  };
-                 // Add listeners checking if ref exists
+
+                 // --- Initialize Modals ---
+                 const notesModalElement = document.getElementById('notesModal');
+                 if (notesModalElement) { notesModalInstance = new bootstrap.Modal(notesModalElement); } else { console.error("#notesModal not found!"); }
+
+                 const cameraModalElement = document.getElementById('cameraModal');
+                 if (cameraModalElement) {
+                      cameraModalInstance = new bootstrap.Modal(cameraModalElement);
+                      // Add listener to stop stream when modal is closed via header X or cancel button
+                      cameraModalElement.addEventListener('hidden.bs.modal', stopCameraStream);
+                 } else { console.error("#cameraModal not found!"); }
+
+                 const imageViewerModalElement = document.getElementById('imageViewerModal');
+                 if (imageViewerModalElement) { imageViewerModalInstance = new bootstrap.Modal(imageViewerModalElement); } else { console.error("#imageViewerModal not found!"); }
+
+                 // --- Add Event Listeners (check refs exist) ---
                  if (refs.continueBtn) refs.continueBtn.addEventListener('click', startApp);
                  if (refs.viewScorecardsBtn) refs.viewScorecardsBtn.addEventListener('click', showScorecardsModal);
                  if (refs.startRecordingBtn) refs.startRecordingBtn.addEventListener('click', startRecording);
@@ -891,55 +1335,30 @@
                  if (refs.speciesSelect) refs.speciesSelect.addEventListener('change', toggleCustomSpeciesInput);
                  if (refs.addFishBtn) refs.addFishBtn.addEventListener('click', addFish);
                  if (refs.backFromFishingBtn) refs.backFromFishingBtn.addEventListener('click', backFromFishing);
-                 if (refs.endSessionBtn) refs.endSessionBtn.addEventListener('click', showEndSessionModal); // Reverted listener target
-                 if (refs.confirmEndBtn) refs.confirmEndBtn.addEventListener('click', confirmEndSession); // Reverted listener target
-                 // Removed verifier modal button listener
+                 if (refs.endSessionBtn) refs.endSessionBtn.addEventListener('click', showEndSessionModal);
+                 if (refs.confirmEndBtn) refs.confirmEndBtn.addEventListener('click', confirmEndSession);
                  if (refs.backFromTallyBtn) refs.backFromTallyBtn.addEventListener('click', backFromTally);
-                 // *** UPDATED listener for Start New Session Button ***
-                 if (refs.startNewSessionBtn) {
-                      refs.startNewSessionBtn.addEventListener('click', function() {
-                            if (confirm("Starting a new session will discard the currently unsaved session data. Are you sure?")) {
-                                console.log("User confirmed discarding session.");
-                                startNewSession(); // Proceed only if user clicks OK
-                            } else {
-                                console.log("User cancelled discarding session.");
-                            }
-                      });
-                 } else {
-                      console.error("Missing: startNewSessionBtn");
-                 }
+                 if (refs.startNewSessionBtn) { refs.startNewSessionBtn.addEventListener('click', () => { if (confirm("Starting a new session will discard the currently unsaved session data. Are you sure?")) { startNewSession(); } }); }
                  if (refs.restoreSessionBtn) refs.restoreSessionBtn.addEventListener('click', restoreSession);
-                 // Input listeners
+                 // Input listeners for temp save
                  if (refs.anglerNameInput) refs.anglerNameInput.addEventListener('input', () => { currentAngler = refs.anglerNameInput.value.trim(); saveTempSession(); });
                  if (refs.competitionDateInput) refs.competitionDateInput.addEventListener('change', () => { currentDate = refs.competitionDateInput.value; saveTempSession(); });
                  if (refs.venueInput) refs.venueInput.addEventListener('input', () => { currentVenue = refs.venueInput.value.trim(); saveTempSession(); });
                  if (refs.zoneSelect) refs.zoneSelect.addEventListener('change', () => { currentZone = refs.isCompetitionCheck?.checked ? refs.zoneSelect.value : null; saveTempSession(); });
                  if (refs.pegSelect) refs.pegSelect.addEventListener('change', () => { currentPeg = refs.isCompetitionCheck?.checked ? refs.pegSelect.value : null; saveTempSession(); });
-                 if (refs.initialsInput) refs.initialsInput.addEventListener('input', () => { saveTempSession(); });
+                 if (refs.initialsInput) refs.initialsInput.addEventListener('input', saveTempSession); // No need to store initials globally, just save session
+                 // MLS Modal Button
+                 if (refs.mlsAgreeBtn) { refs.mlsAgreeBtn.addEventListener('click', () => hideModal('mlsInfoModal')); }
+                 // Camera Buttons
+                 if (refs.takePhotoButton) refs.takePhotoButton.addEventListener('click', takeSnapshot);
+                 if (refs.cancelCameraButtonHeader) refs.cancelCameraButtonHeader.addEventListener('click', stopCameraStream); // Ensure stream stops
+                 // if (refs.cancelCameraButtonFooter) refs.cancelCameraButtonFooter.addEventListener('click', stopCameraStream);
+                 // Image Viewer Share Button
+                 if (refs.shareImageBtn) refs.shareImageBtn.addEventListener('click', shareImage);
 
-                 // Initialize the MLS Info modal instance (No need to initialize instance if just showing/hiding)
-                 if (refs.mlsInfoModalElement) { /* No need to initialize instance if just showing/hiding */ }
-                 else { console.error("MLS Info Modal element (#mlsInfoModal) not found in HTML!"); }
+                 checkRestoreSession(); // Check for temp session last
 
-
-                 // Initialize the notes modal instance
-                 const notesModalElement = document.getElementById('notesModal');
-                 if (notesModalElement) { notesModalInstance = new bootstrap.Modal(notesModalElement); }
-                 else { console.error("Notes Modal element (#notesModal) not found in HTML!"); }
-                 // No verifier modal instance to initialize
-
-                 // ** ADD EVENT LISTENER FOR "OK" BUTTON ON MLS MODAL **
-                 if (refs.mlsAgreeBtn) {
-                     refs.mlsAgreeBtn.addEventListener('click', () => {
-                         hideModal('mlsInfoModal'); // Close the MLS info modal
-                     });
-                 } else {
-                     console.error("Missing: mlsAgreeBtn");
-                 }
-
-
-                 checkRestoreSession();
-             } catch (error) { console.error("Fatal init error:", error); document.body.innerHTML = `<div class="alert alert-danger m-5">App Error: ${error.message}. Please refresh.</div>`; }
+            } catch (error) { console.error("Fatal init error:", error); document.body.innerHTML = `<div class="alert alert-danger m-5">App Error: ${error.message}. Please check console, allow permissions, and refresh.</div>`; }
         });
     </script>
 
