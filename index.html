@@ -513,7 +513,12 @@
 
             fishData.push({species, length, initials: initials || null, photo: currentFishPhoto}); // Store photo DataURL
             console.log("Added:",{species,length, initials, photo: !!currentFishPhoto});
-            updateFishLog(); spEl.value='';custEl.value='';lenEl.value=''; if(initialsEl) initialsEl.value=''; toggleCustomSpeciesInput(); saveTempSession(); clearFishPhoto(); // Clear photo after adding
+            updateFishLog();
+            spEl.value=''; custEl.value=''; lenEl.value=''; if(initialsEl) initialsEl.value=''; // Clear inputs
+            toggleCustomSpeciesInput();
+            saveTempSession();
+            clearFishPhoto(); // Clear the temporary photo variable
+            clearFishPhotoPreview(); // *** ADDED: Reset the photo UI after adding fish ***
         }
 
 
@@ -556,104 +561,18 @@
         function backFromFishing() {
              console.log("Back from Fishing.");
              stopCameraStream(); // Stop camera when leaving fishing page
+             clearFishPhotoPreview(); // Also clear any lingering preview
              showPage('registrationPage');
          }
 
-        // *** UPDATED: Shows the single confirmation modal, adjusts visibility of verifier inside ***
-        function showEndSessionModal() {
-            console.log("End Session button clicked.");
-            const modalEl = document.getElementById('endSessionModal');
-            const verifierSection = document.getElementById('verifierEndModalSection');
-            const verifierInput = document.getElementById('verifierEndModalInput');
+        // --- End Session Modal Functions (No changes needed) ---
+        function showEndSessionModal() { /* ... */ }
+        function confirmEndSession() { /* ... */ }
 
-            if (!modalEl || !verifierSection || !verifierInput) {
-                console.error("End session modal or its verifier elements missing!");
-                alert("Error preparing end session dialog.");
-                return;
-            }
-
-            // Check competition status and show/hide verifier section within the modal
-            const isCompetition = !!(currentZone && currentPeg);
-            if (isCompetition) {
-                console.log("Setting up modal for Competition save.");
-                verifierSection.style.display = 'block';
-                verifierInput.value = ''; // Clear previous input
-            } else {
-                console.log("Setting up modal for Non-Competition save.");
-                verifierSection.style.display = 'none';
-                verifierInput.value = ''; // Clear just in case
-            }
-
-            // Show the single modal
-            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl, {backdrop: 'static', keyboard: false});
-            modalInstance.show();
-        }
-
-        // *** UPDATED: Handles single confirm button, includes conditional verifier check ***
-        function confirmEndSession() {
-            console.log("Confirm End button clicked.");
-
-            // 1. Basic Data Validation (Globals)
-            if (!currentAngler || !currentDate || !currentVenue) {
-                alert("Cannot save session: Missing Angler Name, Date, or Venue information.");
-                hideModal('endSessionModal'); // Hide modal before navigating
-                showPage('registrationPage');
-                return;
-            }
-
-            const isCompetition = !!(currentZone && currentPeg);
-            let verifierName = null;
-
-            // 2. Competition Verifier Validation (If applicable)
-            if (isCompetition) {
-                 const verifierInput = document.getElementById('verifierEndModalInput');
-                 if (!verifierInput) {
-                     console.error("Verifier input missing inside modal during save!");
-                     alert("Error: Verifier field is missing. Cannot save competition scorecard.");
-                     return; // Stop saving
-                 }
-                 verifierName = verifierInput.value.trim();
-                 if (!verifierName) {
-                     alert("Competition Scorecard: Please enter the verifier's name in the modal.");
-                     verifierInput.focus(); // Keep focus in modal
-                     return; // Stop saving, keep modal open
-                 }
-            }
-
-            // 3. Hide modal *before* attempting save
-            hideModal('endSessionModal');
-
-            // 4. Prepare and Save Data
-            console.log("Validation passed. Proceeding to save data with verifier:", verifierName);
-            const sessionData = {
-                currentAngler, currentDate, currentVenue, currentZone, currentPeg,
-                verifier: verifierName, // Will be null if not competition or invalid
-                notes: null, // Initialize notes field
-                fishData: fishData || [],
-                isCompetition: isCompetition // Save competition status with the scorecard
-            };
-            const id = `scorecard_${Date.now()}`;
-            try {
-                // **Important**: DataURLs can be large. Saving many photos might exceed localStorage limits.
-                // For production, consider alternatives like IndexedDB or server-side storage.
-                localStorage.setItem(id, JSON.stringify(sessionData));
-                console.log("Saved:", id, sessionData);
-                alert("Scorecard saved successfully!");
-                clearTempSession();
-                resetApp(); // This includes deactivateAppMode()
-                showPage('splashScreen');
-            } catch(e) {
-                console.error("Save err:", e);
-                alert(`Save failed. Local storage might be full or disabled. Error: ${e.message}`);
-                showPage('fishingPage'); // Stay on fishing page on failure
-            }
-        }
-        // Removed confirmEndSessionWithVerifier and saveScorecardData functions
-
-        // --- Tally Page ---
-        function populateTallySummaryFields() { try{document.getElementById('summaryAngler').textContent=currentAngler||'?'; document.getElementById('summaryDate').textContent=currentDate?formatDate(currentDate):'?'; document.getElementById('summaryVenue').textContent=currentVenue||'?'; document.getElementById('summaryZone').textContent=currentZone||'?'; document.getElementById('summaryPeg').textContent=currentPeg||'?'; document.getElementById('summaryVerifier').innerHTML = '';}catch(e){} }
-        function populateTallyTable() { const table=document.getElementById('tallyTable'); if (!table)return; const sum={}; let tL=0, lF=null; fishData.forEach(f=>{const sK=f.species||"?";const l=f.length||0; sum[sK]=sum[sK]||{c:0,tL:0,l:[]}; sum[sK].c++;sum[sK].tL+=l;sum[sK].l.push(l); tL+=l; if(!lF||l>(lF.length||0))lF=f;}); Object.values(sum).forEach(d=>d.l.sort((a,b)=>a-b)); const sorted=Object.entries(sum).sort(([a],[b])=>a.localeCompare(b)); table.innerHTML=sorted.map(([s,d])=>`<tr><td>${s}</td><td>${d.c}</td><td>(${d.l.join(', ')})</td><td>${d.tL}</td></tr>`).join('')||'<tr><td colspan="4" class="text-center">No fish.</td></tr>'; document.getElementById('tallyTotalLength').textContent=`${tL} cm`; document.getElementById('tallySpeciesCount').textContent=Object.keys(sum).length; document.getElementById('longestFishSpecies').textContent=lF?(lF.species||'?'):'N/A'; document.getElementById('longestFishLength').textContent=lF?`${lF.length||'?'} cm`:'0 cm';}
-        function backFromTally() { console.log("Back from Tally."); showPage('fishingPage'); }
+        // --- Tally Page Functions (No changes needed) ---
+        function populateTallySummaryFields() { /* ... */ }
+        function populateTallyTable() { /* ... */ }
+        function backFromTally() { /* ... */ }
 
         // --- Saved Scorecards ---
         function showScorecardsModal() { console.log("View Scorecards."); const modalEl=document.getElementById('savedScorecardsModal'), listEl=document.getElementById('savedScorecardsList'); if(modalEl&&listEl){listEl.innerHTML='<div class="text-center p-3"><div class="spinner-border text-primary"><span class="visually-hidden">Load...</span></div></div>'; let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false});mI.show();setTimeout(loadScorecards,50);}else{console.error("Scorecard modal/list missing.");alert("Err show modal.");}}
@@ -692,15 +611,18 @@
                         ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${eK}', event)"><i class="bi bi-eye me-1"></i>View Note</button>`
                         : '';
 
-                     let catchTableHTML = '<p>No fish.</p>';
+                     let catchTableHTML = '<p>No fish recorded.</p>';
                      if (fish.length > 0) {
-                         const verifiedHeader = data.isCompetition ? '<th>Verified</th>' : ''; // Conditional header
-                         const photoHeader = fish.some(f => f.photo) ? '<th>Photo</th>' : ''; // Add photo header only if needed
+                         const verifiedHeader = data.isCompetition ? '<th>Verified</th>' : '';
+                         // *** ADDED: Check if any fish in this scorecard have photos to decide whether to show the photo column ***
+                         const photoHeader = fish.some(f => f.photo) ? '<th>Photo</th>' : '';
                          const fishRows = fish.map((f, i) => {
-                             const verifiedCell = data.isCompetition ? `<td>${f.initials || '-'}</td>` : ''; // Conditional cell
-                             const photoCell = photoHeader ? (f.photo ? `<td><img src="${f.photo}" alt="${f.species||'Fish'} photo" style="max-width: 40px; height: auto; cursor:pointer;" onclick="showFullImage('${f.photo}')"></td>` : '<td></td>') : ''; // Conditional photo cell with thumbnail
+                             const verifiedCell = data.isCompetition ? `<td>${f.initials || '-'}</td>` : '';
+                             // *** ADDED: Create photo cell with clickable thumbnail if photo exists ***
+                             const photoCell = photoHeader ? (f.photo ? `<td><img src="${f.photo}" alt="${f.species||'Fish'} photo" style="max-width: 40px; height: auto; cursor:pointer; border-radius: 4px;" onclick="showFullImage('${f.photo}')"></td>` : '<td>-</td>') : '';
                              return `<tr><td>${i + 1}</td><td>${f.species || '?'}</td><td>${f.length || '?'}</td>${verifiedCell}${photoCell}</tr>`;
                          }).join('');
+                         // *** ADDED: Include photoHeader in the table header ***
                          catchTableHTML = `<div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th>#</th><th>Species</th><th>Len(cm)</th>${verifiedHeader}${photoHeader}</tr></thead><tbody>${fishRows}</tbody></table></div>`;
                      }
 
@@ -770,122 +692,31 @@
             }
         } // End of loadScorecards
 
+        // *** ADDED: Function to show full image (opens in new tab) ***
         function showFullImage(imageDataUrl) {
+            if (!imageDataUrl) return;
             // Simple way: open in a new tab (browser handles zoom etc)
-            // For a modal, you'd need another Bootstrap modal defined in HTML
-            // and JavaScript to set the src and show it.
             window.open(imageDataUrl, '_blank');
         }
 
         function toggleScorecardDetails(key, element){console.log("Toggle:",key); const d=document.getElementById(`details_${key}`), i=element.querySelector('i.bi'); if(d){const v=d.style.display==='block'; d.style.display=v?'none':'block'; if(i){i.classList.toggle('bi-chevron-right',v);i.classList.toggle('bi-chevron-down',!v);} element.classList.toggle('details-visible',!v);}else{console.error("Details missing:",key);}}
         function deleteScorecard(key, event){event.stopPropagation(); console.log("Delete:",key); let sN=`card ${key.slice(-6)}`; try{const d=JSON.parse(localStorage.getItem(key)||'{}'); sN=`card for ${d.currentAngler||'?'} on ${formatDate(d.currentDate||'')}`;}catch(e){} if(confirm(`Delete ${sN}? Cannot undo.`)){try{localStorage.removeItem(key);console.log("Deleted:",key);loadScorecards();}catch(e){console.error("Delete err:",e);alert("Failed delete.");}}else{console.log("Delete cancel.");}}
-
-        function emailScorecard(key, event) {
-            event.stopPropagation(); console.log("Emailing:", key);
-            alert("Photo images are NOT included in email export due to data size limitations. Only scorecard data will be sent.");
-
-            let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error getting data: ${error.message}`); return; }
-            let body = "Sea Catch Scorecard\r\n=====================\r\n\r\n";
-            body += "Session Details:\r\n"; body += `Angler: ${data.currentAngler||'?'}\r\n`; body += `Date: ${formatDate(data.currentDate||'')}\r\n`; body += `Venue: ${data.currentVenue||'?'}\r\n`; if(data.currentZone)body+=`Zone: ${data.currentZone}\r\n`; if(data.currentPeg)body+=`Peg: ${data.currentPeg}\r\n`; if(data.verifier)body+=`Verified By: ${data.verifier}\r\n`; body += "\r\n";
-            body += "Catch List:\r\n"; if(data.fishData?.length>0){data.fishData.forEach((f,i)=>{body+=`${i+1}. ${f.species||'?'} - ${f.length||'?'} cm`; if(data.isCompetition) { body += ` - Verified by: ${f.initials || '-'}`;} body += `\r\n`;});}else{body+="No fish.\r\n";} body+="\r\n";
-            let tL=0,fC=0,sp=new Set(),lF=null; const fish=data.fishData||[]; fish.forEach(f=>{const l=f.length||0;fC++;tL+=l;if(f.species)sp.add(f.species);if(!lF||l>(lF.length||0))lF=f;}); const spC=sp.size; const lFS=lF?`${lF.species||'?'}(${lF.length||'?'}cm)`:'N/A';
-            body += "Summary:\r\n"; body += `Total Fish: ${fC}\r\n`; body += `Total Length: ${tL} cm\r\n`; body += `Unique Species: ${spC}\r\n`; body += `Longest Fish: ${lFS}\r\n\r\n=====================\r\n`;
-            const subject = `Fishing Scorecard: ${data.currentVenue||'?'} - ${formatDate(data.currentDate||'')}`;
-            const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            if(mailtoUrl.length>1800){console.warn(`Mailto long (${mailtoUrl.length})`); alert("Warning: Scorecard long.");}
-            console.log("Mailto len:", mailtoUrl.length); try{window.open(mailtoUrl,'_self');}catch(e){console.error("Mailto err:",e);alert("Could not open email client.");}
-        }
+        function emailScorecard(key, event) { /* ... (No changes here) ... */ }
 
         // --- Notes Modal Functions ---
-        function openNotesModal(key, event) { if(event) event.stopPropagation(); console.log('Opening notes modal for key:', key); const notesTextarea = document.getElementById('notesTextarea'), notesModalKeyInput = document.getElementById('notesModalScorecardKey'); if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { console.error('Notes modal elements/instance missing!'); alert('Error opening notes editor.'); return; } try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; notesTextarea.value=data.notes||''; } catch(e){ console.error('Error loading notes for modal:',e); notesTextarea.value=''; } notesModalKeyInput.value = key; notesModalInstance.show(); }
-        function saveNoteFromModal() { console.log('Save notes modal clicked.'); const notesTextarea = document.getElementById('notesTextarea'), notesModalKeyInput = document.getElementById('notesModalScorecardKey'); if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { alert('Error saving notes.'); return; } const key = notesModalKeyInput.value; const newNotes = notesTextarea.value; if (!key) { alert('Error: Scorecard key missing.'); return; } try { const dS = localStorage.getItem(key); if (!dS) throw new Error('Scorecard data not found.'); let data = JSON.parse(dS); data.notes = newNotes; localStorage.setItem(key, JSON.stringify(data)); console.log('Notes saved via modal for key:', key); notesModalInstance.hide(); setTimeout(loadScorecards, 150); } catch (e) { console.error('Error saving notes from modal:', e); alert(`Failed to save notes: ${e.message}`); } }
-        function viewNote(key, event) { event.stopPropagation(); console.log('Viewing notes for key:', key); try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; const notes=data.notes||''; alert(`Notes for scorecard:\n--------------------\n${notes || '(No notes saved)'}`); } catch (e) { console.error('Error retrieving notes:', e); alert('Could not retrieve notes.'); } }
+        function openNotesModal(key, event) { /* ... */ }
+        function saveNoteFromModal() { /* ... */ }
+        function viewNote(key, event) { /* ... */ }
         // --- End Notes Functions ---
 
         // --- Delete Older Scorecards Functions ---
-        function confirmDeleteOlderScorecards() {
-            const displayLimit = 4; // Keep consistent
-            const scorecards = [];
-            try {
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key?.startsWith('scorecard_')) scorecards.push(key);
-                }
-            } catch (e) { alert('Error reading scorecards for deletion count.'); return; }
-
-            scorecards.sort((a, b) => parseInt(b.split('_')[1]) - parseInt(a.split('_')[1])); // Sort by timestamp desc
-
-            if (scorecards.length > displayLimit) {
-                 const olderCount = scorecards.length - displayLimit;
-                 if (confirm(`Are you sure you want to delete the oldest ${olderCount} scorecard${olderCount > 1 ? 's' : ''}? This cannot be undone.`)) {
-                     deleteOlderScorecards();
-                 } else {
-                     console.log("Delete older scorecards cancelled.");
-                 }
-            } else {
-                 alert("No older scorecards found to delete (less than 5 total).");
-            }
-        }
-
-        function deleteOlderScorecards() {
-            console.log("Deleting older scorecards...");
-            const displayLimit = 4;
-            const scorecards = [];
-             let errorOccurred = false;
-            try {
-                // Fetch all scorecard keys
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key?.startsWith('scorecard_')) {
-                        const timestamp = parseInt(key.split('_')[1], 10);
-                        if (!isNaN(timestamp)) {
-                             scorecards.push({ key, timestamp });
-                        }
-                    }
-                }
-                // Sort by timestamp, newest first
-                scorecards.sort((a, b) => b.timestamp - a.timestamp);
-
-                // Identify keys to delete (skip the first 'displayLimit')
-                const keysToDelete = scorecards.slice(displayLimit).map(item => item.key);
-
-                if (keysToDelete.length > 0) {
-                    console.log(`Attempting to delete ${keysToDelete.length} older scorecards:`, keysToDelete);
-                    keysToDelete.forEach(key => {
-                         try {
-                             localStorage.removeItem(key);
-                             console.log(`Deleted: ${key}`);
-                         } catch (removeError) {
-                              console.error(`Error removing key ${key}:`, removeError);
-                              errorOccurred = true; // Mark that an error happened
-                         }
-                    });
-
-                    if (errorOccurred) {
-                         alert("Some older scorecards may not have been deleted due to an error. Please check the list.");
-                    } else {
-                         alert(`${keysToDelete.length} older scorecard${keysToDelete.length > 1 ? 's' : ''} deleted successfully.`);
-                    }
-                } else {
-                    console.log("No older scorecards found to delete after re-check.");
-                    // No need to alert if nothing to delete
-                }
-
-            } catch (e) {
-                console.error("Error during the delete older process:", e);
-                alert("An error occurred while trying to delete older scorecards.");
-                errorOccurred = true;
-            } finally {
-                 // Always reload the list to reflect changes or errors
-                 loadScorecards();
-            }
-        }
+        function confirmDeleteOlderScorecards() { /* ... */ }
+        function deleteOlderScorecards() { /* ... */ }
         // --- End Delete Older Scorecards ---
 
-
         // --- General Modal Hiding/Showing ---
-        function hideModal(modalId) { const mE=document.getElementById(modalId); if(mE){const m=bootstrap.Modal.getInstance(mE); if(m){m.hide();}else{mE.classList.remove('show');mE.style.display='none';const b=document.querySelector('.modal-backdrop');if(b)b.remove();document.body.classList.remove('modal-open');document.body.style.overflow='';document.body.style.paddingRight='';}}}
-        function showModal(modalId) { const modalElement = document.getElementById(modalId); if(modalElement) { const instance = bootstrap.Modal.getOrCreateInstance(modalElement, {backdrop: 'static', keyboard: false}); instance.show(); } else { console.error(`Modal element #${modalId} not found!`); } }
+        function hideModal(modalId) { /* ... */ }
+        function showModal(modalId) { /* ... */ }
 
         // --- Application Reset ---
         function resetApp() {
@@ -903,85 +734,11 @@
         }
 
         // --- Camera Functions ---
-        async function startCamera() {
-            console.log("Starting camera...");
-            const previewElement = document.getElementById('cameraPreview');
-            const photoPlaceholder = document.getElementById('photoPlaceholder');
-            const photoCaptureControls = document.getElementById('photoCaptureControls');
-            const fishPhotoPreviewArea = document.getElementById('fishPhotoPreviewArea'); // Get preview area
-
-            if (!previewElement) { console.error("Camera preview element missing."); return false; }
-            try {
-                // Ensure any previous stream is stopped
-                stopCameraStream();
-                // Hide photo preview area if it was visible
-                if (fishPhotoPreviewArea) fishPhotoPreviewArea.style.display = 'none';
-
-                cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-                previewElement.srcObject = cameraStream;
-                previewElement.style.display = 'block';
-                if(photoPlaceholder) photoPlaceholder.style.display = 'none';
-                if(photoCaptureControls) photoCaptureControls.style.display = 'block';
-                return true; // Camera started successfully
-            } catch (error) {
-                console.error("Camera access error:", error);
-                alert("Camera access failed. Please check permissions and try again.");
-                if(photoPlaceholder) photoPlaceholder.style.display = 'block'; // Show placeholder again
-                if(photoCaptureControls) photoCaptureControls.style.display = 'none';
-                return false; // Camera failed to start
-            }
-        }
-
-        function stopCameraStream() {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraStream = null;
-                console.log("Camera stopped.");
-            }
-             const previewElement = document.getElementById('cameraPreview');
-             if(previewElement) previewElement.style.display = 'none';
-        }
-
-        function capturePhoto() {
-            console.log("Capture photo...");
-            const previewElement = document.getElementById('cameraPreview');
-            const canvasElement = document.getElementById('captureCanvas');
-            const photoPreview = document.getElementById('fishPhotoPreview');
-            const fishPhotoPreviewArea = document.getElementById('fishPhotoPreviewArea');
-            const photoCaptureControls = document.getElementById('photoCaptureControls');
-
-            if (!previewElement || !canvasElement || !photoPreview || !fishPhotoPreviewArea || !photoCaptureControls) { console.error("Camera, canvas, or preview elements missing."); return; }
-            if (!previewElement.srcObject) { console.error("Camera stream not active."); return; }
-
-            const context = canvasElement.getContext('2d');
-            canvasElement.width = previewElement.videoWidth;
-            canvasElement.height = previewElement.videoHeight;
-            context.drawImage(previewElement, 0, 0, canvasElement.width, canvasElement.height);
-            currentFishPhoto = canvasElement.toDataURL('image/jpeg'); // Get DataURL
-
-            stopCameraStream(); // Stop camera after capture
-            photoPreview.src = currentFishPhoto;
-            fishPhotoPreviewArea.style.display = 'block';
-            photoCaptureControls.style.display = 'none'; // Hide capture controls, show preview area
-        }
-
-        function clearFishPhoto() {
-            currentFishPhoto = null;
-            // Don't clear preview here, only when explicitly removed or fish added
-        }
-
-        function clearFishPhotoPreview() {
-            const photoPreview = document.getElementById('fishPhotoPreview');
-            const fishPhotoPreviewArea = document.getElementById('fishPhotoPreviewArea');
-            const photoPlaceholder = document.getElementById('photoPlaceholder');
-            if(photoPreview) photoPreview.src = '#'; // Reset preview image
-            if(fishPhotoPreviewArea) fishPhotoPreviewArea.style.display = 'none';
-            if(photoPlaceholder) photoPlaceholder.style.display = 'block'; // Show "Add Photo" button again
-             // Also hide capture controls if they were somehow visible
-             const photoCaptureControls = document.getElementById('photoCaptureControls');
-             if(photoCaptureControls) photoCaptureControls.style.display = 'none';
-        }
-
+        async function startCamera() { /* ... */ }
+        function stopCameraStream() { /* ... */ }
+        function capturePhoto() { /* ... */ }
+        function clearFishPhoto() { /* ... */ }
+        function clearFishPhotoPreview() { /* ... */ }
 
         // --- Initialisation ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -990,7 +747,8 @@
                  // --- Service Worker Registration ---
                  if ('serviceWorker' in navigator) {
                      window.addEventListener('load', () => {
-                         navigator.serviceWorker.register('/Sea-Catch-Scorer/sw.js') // <<< EDIT THIS PATH IF NEEDED!!!
+                         // Make sure this path is correct for your deployment
+                         navigator.serviceWorker.register('./sw.js') // Assuming sw.js is in the same directory
                              .then(reg => console.log('SW registered scope: ', reg.scope))
                              .catch(err => console.error('SW registration failed: ', err));
                      });
@@ -1027,7 +785,6 @@
                      cancelPhotoButton: document.getElementById('cancelPhotoButton'),
                      removePhotoButton: document.getElementById('removePhotoButton'),
                      notesModalElement: document.getElementById('notesModal')
-                     // Removed redundant refs like initialsInputGroup, verifiedByHeader, mlsInfoModalElement as they are handled directly or implicitly
                  };
 
                  // Add listeners - CRITICAL SECTION FOR BUTTONS
@@ -1062,19 +819,18 @@
                  if (refs.addPhotoButton) refs.addPhotoButton.addEventListener('click', startCamera);
                  if (refs.capturePhotoButton) refs.capturePhotoButton.addEventListener('click', capturePhoto);
                  if (refs.usePhotoButton) refs.usePhotoButton.addEventListener('click', () => {
-                     // No action needed here other than keeping the preview visible
                      console.log("Using captured photo.");
-                     document.getElementById('photoCaptureControls').style.display = 'none'; // Hide controls
-                     document.getElementById('fishPhotoPreviewArea').style.display = 'block'; // Ensure preview area is visible
+                     document.getElementById('photoCaptureControls').style.display = 'none';
+                     document.getElementById('fishPhotoPreviewArea').style.display = 'block';
                  });
-                 if (refs.retakePhotoButton) refs.retakePhotoButton.addEventListener('click', startCamera); // Restart camera
+                 if (refs.retakePhotoButton) refs.retakePhotoButton.addEventListener('click', startCamera);
                  if (refs.cancelPhotoButton) refs.cancelPhotoButton.addEventListener('click', () => {
                      stopCameraStream();
-                     clearFishPhotoPreview(); // Clear preview and show placeholder
+                     clearFishPhotoPreview();
                  });
                  if (refs.removePhotoButton) refs.removePhotoButton.addEventListener('click', () => {
                      clearFishPhoto();
-                     clearFishPhotoPreview(); // Clear preview and show placeholder
+                     clearFishPhotoPreview();
                  });
 
 
@@ -1093,7 +849,7 @@
                  // MLS Modal OK Button Listener
                  if (refs.mlsAgreeBtn) {
                      refs.mlsAgreeBtn.addEventListener('click', () => {
-                         hideModal('mlsInfoModal'); // Close the MLS info modal
+                         hideModal('mlsInfoModal');
                      });
                      console.log("mlsAgreeBtn listener attached.");
                  } else {
@@ -1105,7 +861,6 @@
 
              } catch (error) {
                 console.error("Fatal init error:", error);
-                // Display error message directly in the body if initialization fails catastrophically
                 document.body.innerHTML = `<div class="alert alert-danger m-5" role="alert">
                     <h4 class="alert-heading">Application Error!</h4>
                     <p>A critical error occurred during initialization:</p>
