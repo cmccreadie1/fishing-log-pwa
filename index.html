@@ -385,7 +385,8 @@
                  const deleteCell = row.insertCell(); deleteCell.className = 'delete-col';
                  const deleteBtn = document.createElement('button'); deleteBtn.type = 'button';
                  deleteBtn.className = 'delete-icon-btn'; deleteBtn.title = 'Delete this fish';
-                 deleteBtn.innerHTML = '<i class="bi bi-x-circle-fill"></i>';
+                 deleteBtn.setAttribute('aria-label', `Delete ${f.species || 'fish'} (${f.length || '?'}cm)`); // Accessibility
+                 deleteBtn.innerHTML = '<i class="bi bi-x-circle-fill" aria-hidden="true"></i>'; // Hide icon from screen reader
                  deleteBtn.addEventListener('click', (e) => { e.stopPropagation(); deleteFish(i); });
                  deleteCell.appendChild(deleteBtn);
 
@@ -420,7 +421,7 @@
         // --- Saved Scorecards ---
         function showScorecardsModal() { /* ... Same ... */ console.log("View Scorecards."); const modalEl=document.getElementById('savedScorecardsModal'), listEl=document.getElementById('savedScorecardsList'); if(modalEl&&listEl){listEl.innerHTML='<div class="text-center p-3"><div class="spinner-border text-primary"><span class="visually-hidden">Load...</span></div></div>'; let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false});mI.show();setTimeout(loadScorecards,50);}else{console.error("Scorecard modal/list missing.");alert("Err show modal.");}}
         async function loadScorecards() { /* ... Same ... */ console.log("Loading scorecards..."); const savedScorecardsList = document.getElementById('savedScorecardsList'); const olderScorecardsToggleContainer = document.getElementById('olderScorecardsToggleContainer'); if (!savedScorecardsList || !olderScorecardsToggleContainer) { console.error("CRITICAL: Modal list or toggle container missing!"); return; } savedScorecardsList.innerHTML = ''; olderScorecardsToggleContainer.innerHTML = ''; const scorecards = []; let loadError = false; try { for (let i=0; i<localStorage.length; i++){ const key=localStorage.key(i); if (key?.startsWith('scorecard_')){ const dS=localStorage.getItem(key); if(dS){ try { const data=JSON.parse(dS); if(data?.currentAngler && data.currentDate && data.currentVenue){ const tS=parseInt(key.split('_')[1],10); if(!isNaN(tS)){scorecards.push({key,data,timestamp:tS});}} else {console.warn("Skip invalid card:",key);}} catch(e){console.error("Parse err:",key,e);}}}}} catch (e) { console.error("LS err:",e); savedScorecardsList.innerHTML='<p class="text-danger p-3">Load failed.</p>'; loadError=true; } if(loadError) return; scorecards.sort((a,b)=>b.timestamp-a.timestamp); if (scorecards.length===0){ savedScorecardsList.innerHTML='<p class="text-center p-3">No saved scorecards.</p>'; return; } console.log(`Total scorecards found: ${scorecards.length}`); const displayLimit = 4; try { const initial = scorecards.slice(0, displayLimit); initial.forEach(({ key, data }, index) => { const el = createScorecardElement(key, data, index === 0); if (el) savedScorecardsList.appendChild(el); }); } catch(e) { console.error("Err initial loop:", e); savedScorecardsList.innerHTML += '<p class="text-danger p-3">Err display initial.</p>'; } if (scorecards.length > displayLimit) { const olderCount = scorecards.length - displayLimit; const showOlderBtn = document.createElement('button'); showOlderBtn.id = 'showOlderBtn'; showOlderBtn.className = 'btn btn-outline-secondary'; showOlderBtn.textContent = `View ${olderCount} Older Scorecard${olderCount > 1 ? 's' : ''}`; showOlderBtn.onclick = function() { console.log("'Older' clicked."); try { const older = scorecards.slice(displayLimit); older.forEach(({ key, data }) => { const el = createScorecardElement(key, data, false); if (el) savedScorecardsList.appendChild(el); }); olderScorecardsToggleContainer.innerHTML = ''; } catch(e) { console.error("Err create/append older:", e); olderScorecardsToggleContainer.innerHTML = '<p class="text-danger">Err display older.</p>'; } }; olderScorecardsToggleContainer.appendChild(showOlderBtn); const deleteOlderBtn = document.createElement('button'); deleteOlderBtn.id = 'deleteOlderBtn'; deleteOlderBtn.className = 'btn btn-danger'; deleteOlderBtn.textContent = 'Delete Older Scorecards'; deleteOlderBtn.onclick = confirmDeleteOlderScorecards; olderScorecardsToggleContainer.appendChild(deleteOlderBtn); } }
-        // --- UPDATE: createScorecardElement uses simple list, calls loadSessionPhotos ---
+        // --- createScorecardElement uses simple list, calls loadSessionPhotos ---
         function createScorecardElement (key, data, isLatest) {
             try {
                 const wrapperDiv = document.createElement('div');
@@ -447,13 +448,13 @@
                 // --- End fish list generation ---
 
                 // --- Placeholder for photos ---
-                const photosPlaceholderId = `sessionPhotos-${key}`;
+                const photosPlaceholderId = `sessionPhotos-${key}`; // Defined variable used below
                 const photosHtml = `<hr><h6>Session Photos</h6><div class="session-photos" id="${photosPlaceholderId}"><p class="text-muted placeholder-photos">(No photos)</p></div>`;
                 // --- End photos placeholder ---
 
                 wrapperDiv.innerHTML = `
                     <div class="scorecard-item" onclick="toggleScorecardDetails('${eK}',this)">
-                        <i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest ? '<span class="badge ms-2">Latest</span>' : ''}
+                        <i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fC} fish, ${tL}cm)</span> ${isLatest ? '<span class="badge bg-primary ms-2">Latest</span>' : ''}
                     </div>
                     <div class="scorecard-details" id="details_${key}">
                         <h6>Session Details</h6>
@@ -467,7 +468,7 @@
                         <h6>Catch (${fC})</h6>
                         ${fishListHtml}
                         ${fishList.length > 0 ? `<hr><h6>Summary</h6><p><strong>Total Len:</strong> ${tL}cm</p><p><strong>Species:</strong> ${spC}</p><p><strong>Longest:</strong> ${lFS}</p>` : ''}
-                        ${photosHtml}
+                        ${photosHtml} {/* This includes the div with id="sessionPhotos-${key}" */}
                         <div class="btn-actions-group">
                             ${viewNoteButtonHtml}
                             <button class="btn btn-outline-secondary btn-sm" onclick="openNotesModal('${eK}', event)"><i class="bi bi-pencil me-1"></i>Add/Edit Note</button>
@@ -476,16 +477,18 @@
                         </div>
                     </div>`;
 
-                // Call async function to load photos AFTER element is in DOM (or scheduled shortly after)
+                // Call async function to load photos AFTER element is created (schedule for next tick)
                 setTimeout(() => loadSessionPhotos(key, fishList), 0);
 
                 return wrapperDiv;
             } catch (elementError) { console.error(`Err create el for ${key}:`, elementError); const errDiv = document.createElement('div'); errDiv.className = 'alert alert-warning p-2 my-2'; errDiv.textContent = `Err display card ${key.slice(-4)}`; return errDiv; }
         }
-        // --- NEW: loadSessionPhotos function ---
+
+        // --- FIXED: loadSessionPhotos function ---
         async function loadSessionPhotos(scorecardKey, fishList) {
             const photosContainerId = `sessionPhotos-${scorecardKey}`;
-            const photosContainer = document.getElementById(photosPlaceholderId);
+            // *** FIX: Use the correct ID variable here ***
+            const photosContainer = document.getElementById(photosContainerId);
             if (!photosContainer) {
                  console.error(`Photos container not found: ${photosContainerId}`);
                  return;
@@ -499,9 +502,11 @@
             }
 
             console.log(`Loading ${fishWithPhotos.length} photos for scorecard ${scorecardKey}`);
-            photosContainer.innerHTML = ''; // Clear "Loading..." or "(No photos)" placeholder
+            // Add a temporary loading indicator
+            photosContainer.innerHTML = '<div class="spinner-border spinner-border-sm text-secondary" role="status"><span class="visually-hidden">Loading photos...</span></div>';
 
-            for (const fish of fishWithPhotos) {
+            let imagesAdded = 0; // Keep track if any images are successfully added
+            const imagePromises = fishWithPhotos.map(async (fish) => {
                  try {
                       const blob = await getImageFromDb(fish.imageId);
                       if (blob) {
@@ -511,20 +516,43 @@
                            img.alt = `Photo for ${fish.species || 'fish'}`;
                            img.className = 'session-photo-thumbnail';
                            img.onclick = () => showFullscreenImage(fish.imageId);
-                           // Don't revoke here, viewer handles it
-                           photosContainer.appendChild(img);
+                           // Don't revoke here, viewer or browser GC handles it
+                           return img; // Return the image element if successful
                       } else {
                            console.warn(`Blob not found in DB for imageId: ${fish.imageId}`);
-                           // Optionally add a "missing image" placeholder here
+                           return null; // Return null if blob not found
                       }
                  } catch (error) {
                       console.error(`Error loading photo ${fish.imageId} for scorecard ${scorecardKey}:`, error);
-                      // Optionally add an "error loading" placeholder here
+                      return null; // Return null on error
                  }
+            });
+
+            // Wait for all promises to settle
+            const imageElements = await Promise.all(imagePromises);
+
+            // Clear loading indicator *before* adding images
+            photosContainer.innerHTML = '';
+
+            // Append only the successfully created image elements
+            imageElements.forEach(img => {
+                if (img) {
+                    photosContainer.appendChild(img);
+                    imagesAdded++;
+                }
+            });
+
+            // If after all attempts, no images were added (e.g., all failed/missing)
+            if (imagesAdded === 0 && fishWithPhotos.length > 0) {
+                photosContainer.innerHTML = '<p class="text-danger placeholder-photos">(Error loading session photos)</p>';
+            } else if (imagesAdded === 0) {
+                 // This case should technically be caught by the initial check, but as a fallback:
+                 photosContainer.innerHTML = '<p class="text-muted placeholder-photos">(No photos found)</p>';
             }
-            console.log(`Finished loading photos for scorecard ${scorecardKey}`);
+
+            console.log(`Finished loading photos for scorecard ${scorecardKey}. Added ${imagesAdded} images.`);
         }
-        // --- REMOVED loadFishRowsForScorecard function ---
+
         function toggleScorecardDetails(key, element){ /* ... Same ... */ console.log("Toggle:",key); const d=document.getElementById(`details_${key}`), i=element.querySelector('i.bi'); if(d){const v=d.style.display==='block'; d.style.display=v?'none':'block'; if(i){i.classList.toggle('bi-chevron-right',v);i.classList.toggle('bi-chevron-down',!v);} element.classList.toggle('details-visible',!v);}else{console.error("Details missing:",key);}}
         async function deleteScorecard(key, event){ /* ... Same ... */ event.stopPropagation(); console.log("Delete scorecard key:", key); let data; try { data = JSON.parse(localStorage.getItem(key) || '{}'); } catch (e) { data = {}; } const fishList = data.fishData || []; const imageIdsToDelete = fishList.map(f => f.imageId).filter(id => !!id); let sN = `card ${key.slice(-6)}`; try { sN = `card for ${data.currentAngler || '?'} on ${formatDate(data.currentDate || '')}`; } catch (e) {} if (confirm(`Delete ${sN}? This will also delete ${imageIdsToDelete.length} associated photo(s). Cannot undo.`)) { try { if (imageIdsToDelete.length > 0) { console.log("Deleting images from DB:", imageIdsToDelete); const deletePromises = imageIdsToDelete.map(id => deleteImageFromDb(id)); await Promise.allSettled(deletePromises); console.log("Image deletion from DB attempted."); } localStorage.removeItem(key); console.log("Deleted scorecard metadata from localStorage:", key); loadScorecards(); } catch (e) { console.error("Delete scorecard/images error:", e); alert("Failed to delete scorecard or some associated images."); loadScorecards(); } } else { console.log("Delete cancel."); } }
         function emailScorecard(key, event) { /* ... Same ... */ event.stopPropagation(); console.log("Emailing:", key); alert("This will open your default email app. Photos and Notes are NOT included."); let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error getting data: ${error.message}`); return; } let body = "Sea Catch Scorecard\r\n=====================\r\n\r\n"; body += "Session Details:\r\n"; body += `Angler: ${data.currentAngler||'?'}\r\n`; body += `Date: ${formatDate(data.currentDate||'')}\r\n`; body += `Venue: ${data.currentVenue||'?'}\r\n`; if(data.currentZone)body+=`Zone: ${data.currentZone}\r\n`; if(data.currentPeg)body+=`Peg: ${data.currentPeg}\r\n`; if(data.verifier)body+=`Verified By: ${data.verifier}\r\n`; body += "\r\n"; body += "Catch List:\r\n"; if(data.fishData?.length>0){data.fishData.forEach((f,i)=>{body+=`${i+1}. ${f.species||'?'} - ${f.length||'?'} cm`; if(data.isCompetition) { body += ` - Verified by: ${f.initials || '-'}`;} body += `\r\n`;});}else{body+="No fish.\r\n";} body+="\r\n"; let tL=0,fC=0,sp=new Set(),lF=null; const fish=data.fishData||[]; fish.forEach(f=>{const l=f.length||0;fC++;tL+=l;if(f.species)sp.add(f.species);if(!lF||l>(lF.length||0))lF=f;}); const spC=sp.size; const lFS=lF?`${lF.species||'?'}(${lF.length||'?'}cm)`:'N/A'; body += "Summary:\r\n"; body += `Total Fish: ${fC}\r\n`; body += `Total Length: ${tL} cm\r\n`; body += `Unique Species: ${spC}\r\n`; body += `Longest Fish: ${lFS}\r\n\r\n=====================\r\n`; const subject = `Fishing Scorecard: ${data.currentVenue||'?'} - ${formatDate(data.currentDate||'')}`; const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`; if(mailtoUrl.length>1800){console.warn(`Mailto long (${mailtoUrl.length})`); alert("Warning: Scorecard long.");} console.log("Mailto len:", mailtoUrl.length); try{window.open(mailtoUrl,'_self');}catch(e){console.error("Mailto err:",e);alert("Could not open email client.");} }
@@ -548,7 +576,7 @@
         function showModal(modalId) { /* ... Same ... */ const modalElement = document.getElementById(modalId); if(modalElement) { const instance = bootstrap.Modal.getOrCreateInstance(modalElement, {backdrop: 'static', keyboard: false}); instance.show(); } else { console.error(`Modal element #${modalId} not found!`); } }
 
         // --- Application Reset ---
-        function resetApp() { /* ... Removed amend mode reset ... */ console.log("Resetting app."); fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen'; stopCameraStream(); deactivateAppMode(); isDropdownPopulated = false; pendingFishData = null; try { document.getElementById('anglerName').value=''; setTodaysDate(); document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; toggleCompetitionFields(false); document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; const speciesInput = document.getElementById('speciesInput'); if (speciesInput) { speciesInput.innerHTML = '<option value="" selected disabled>Select a species</option><option value="Other">Other (specify)</option>'; } const customSpeciesInput = document.getElementById('customSpeciesInput'); if (customSpeciesInput) { customSpeciesInput.value = ''; customSpeciesInput.style.display = 'none'; } document.getElementById('lengthInput').value=''; document.getElementById('initialsInput').value=''; document.getElementById('fishLog').innerHTML=''; const vI = document.getElementById('verifierEndModalInput'); if(vI) vI.value=''; const vS = document.getElementById('verifierEndModalSection'); if(vS) vS.style.display='none'; populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm'; } catch(e) { console.error("Error resetting forms:", e); } }
+        function resetApp() { /* ... Same ... */ console.log("Resetting app."); fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen'; stopCameraStream(); deactivateAppMode(); isDropdownPopulated = false; pendingFishData = null; try { document.getElementById('anglerName').value=''; setTodaysDate(); document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; toggleCompetitionFields(false); document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; const speciesInput = document.getElementById('speciesInput'); if (speciesInput) { speciesInput.innerHTML = '<option value="" selected disabled>Select a species</option><option value="Other">Other (specify)</option>'; } const customSpeciesInput = document.getElementById('customSpeciesInput'); if (customSpeciesInput) { customSpeciesInput.value = ''; customSpeciesInput.style.display = 'none'; } document.getElementById('lengthInput').value=''; document.getElementById('initialsInput').value=''; document.getElementById('fishLog').innerHTML=''; const vI = document.getElementById('verifierEndModalInput'); if(vI) vI.value=''; const vS = document.getElementById('verifierEndModalSection'); if(vS) vS.style.display='none'; populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm'; } catch(e) { console.error("Error resetting forms:", e); } }
 
         // --- Initialisation ---
         document.addEventListener('DOMContentLoaded', async () => {
