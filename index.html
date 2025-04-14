@@ -28,18 +28,6 @@
         .card-section { background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 30px 25px; margin: 20px 0; border: 1px solid #dee2e6; color: #212529; z-index: 3; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); }
         .card-section h2 { color: #0056b3; margin-bottom: 1.2rem; }
         .card-section h5 { color: #0056b3; margin-bottom: 1rem; }
-        /* Added style for species summary */
-        #savedScorecardsModal .scorecard-details .species-length-summary p {
-            margin-bottom: 0.3rem; /* Tighter spacing for the list */
-            padding-left: 10px;
-        }
-        #savedScorecardsModal .scorecard-details .species-length-summary h6 {
-             margin-top: 0.5rem;
-             margin-bottom: 0.5rem;
-             font-size: 0.95rem; /* Slightly smaller heading */
-             color: #495057;
-        }
-
 
         /* --- Buttons --- */
         .btn { padding: 12px 24px; font-size: 1.1rem; border-radius: 25px; border: none; margin: 5px; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; cursor: pointer; font-weight: 600; vertical-align: middle; }
@@ -150,6 +138,52 @@
          }
         .placeholder-photos { color: #6c757d; font-style: italic; }
 
+        #savedScorecardsModal .scorecard-details .species-length-summary p {
+            margin-bottom: 0.3rem; /* Tighter spacing for the list */
+            padding-left: 10px;
+        }
+        #savedScorecardsModal .scorecard-details .species-length-summary h6 {
+             margin-top: 0.5rem;
+             margin-bottom: 0.5rem;
+             font-size: 0.95rem; /* Slightly smaller heading */
+             color: #495057;
+        }
+        /* STYLING: Background shading for summary block */
+        #savedScorecardsModal .scorecard-details .scorecard-summary-block {
+            background-color: #e7f1ff; /* Light blue background */
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid #b8d6fb; /* Subtle border */
+        }
+        #savedScorecardsModal .scorecard-details .scorecard-summary-block h6 {
+            margin-top: 0; /* Remove extra top margin for the h6 inside */
+            margin-bottom: 0.75rem;
+            border-bottom: none; /* Remove border if not needed */
+            color: #0056b3; /* Match heading color */
+        }
+        /* STYLING: Highlight for specific summary lines */
+        #savedScorecardsModal .scorecard-details .scorecard-summary-block .summary-highlight {
+            background-color: #cce5ff; /* Slightly darker blue */
+            margin-left: -15px; /* Extend background to edge */
+            margin-right: -15px; /* Extend background to edge */
+            padding: 5px 15px;   /* Adjust padding */
+            border-radius: 0;      /* Square off corners */
+            margin-bottom: 5px;    /* Space below highlight */
+            border-top: 1px solid #b8d6fb; /* Separator line */
+            border-bottom: 1px solid #b8d6fb; /* Separator line */
+        }
+        #savedScorecardsModal .scorecard-details .scorecard-summary-block .summary-highlight:last-of-type {
+             margin-bottom: 0; /* No extra space after last highlighted item */
+             border-bottom-left-radius: 8px; /* Curve bottom corners */
+             border-bottom-right-radius: 8px;
+             border-bottom: none;
+        }
+        #savedScorecardsModal .scorecard-details .scorecard-summary-block .summary-highlight:first-of-type {
+            border-top: none; /* No top border on the first highlight */
+        }
+
+
         #savedScorecardsModal .scorecard-details .btn-actions-group { margin-top: 15px; padding-top: 15px; border-top: 1px solid #e9ecef;}
         #savedScorecardsModal .scorecard-details .btn { margin-top: 5px; margin-right: 5px; }
         #savedScorecardsModal .scorecard-details .btn-danger { color: white !important; }
@@ -226,7 +260,14 @@
          <div id="tallyPage" class="card-section page">
             <h2>Catch Summary</h2>
             <div class="catch-summary-details"> <strong>Angler:</strong> <span id="summaryAngler"></span><br> <strong>Date:</strong> <span id="summaryDate"></span><br> <strong>Venue:</strong> <span id="summaryVenue"></span><br> <strong>Zone:</strong> <span id="summaryZone"></span><br> <strong>Peg:</strong> <span id="summaryPeg"></span><br> <span id="summaryVerifier"></span> </div>
-            <div class="table-responsive"> <table class="table table-bordered"> <thead> <tr> <th>Species</th> <th>Total Caught</th> <th>Lengths (cm)</th> <th>Total Length (cm)</th> </tr> </thead> <tbody id="tallyTable"></tbody> <tfoot> <tr> <td colspan="3" class="text-end"><strong>Total Length</strong></td> <td><strong id="tallyTotalLength">0 cm</strong></td> </tr> <tr> <td colspan="3" class="text-end"><strong>Species Count</strong></td> <td><strong id="tallySpeciesCount">0</strong></td> </tr> <tr> <td colspan="2" class="text-end"><strong>Longest Fish</strong></td> <td><strong id="longestFishSpecies">N/A</strong></td> <td><strong id="longestFishLength">0 cm</strong></td> </tr> </tfoot> </table> </div>
+            <div class="table-responsive"> <table class="table table-bordered"> <thead> <tr> <th>Species</th> <th>Total Caught</th> <th>Lengths (cm)</th> <th>Total Length (cm)</th> </tr> </thead> <tbody id="tallyTable"></tbody>
+                <tfoot>
+                    <tr> <td colspan="3" class="text-end"><strong>Total Length</strong></td> <td><strong id="tallyTotalLength">0 cm</strong></td> </tr>
+                    <tr> <td colspan="3" class="text-end"><strong>Species Count</strong></td> <td><strong id="tallySpeciesCount">0</strong></td> </tr>
+                    <tr> <td colspan="2" class="text-end"><strong>Longest Fish</strong></td> <td><strong id="longestFishSpecies">N/A</strong></td> <td><strong id="longestFishLength">0 cm</strong></td> </tr>
+                    <tr> <td colspan="3" class="text-end"><strong>Points Total</strong></td> <td><strong id="tallyPointsTotal">0</strong></td> </tr>
+                </tfoot>
+            </table> </div>
             <div class="button-group-center"> <button class="btn btn-secondary" id="backFromTallyBtn"><i class="bi bi-arrow-left-circle me-1"></i> Back</button> </div>
         </div>
     </div> <!-- End of .container -->
@@ -283,6 +324,7 @@
         const DB_NAME = 'SeaCatchDB';
         const DB_VERSION = 1;
         const IMAGE_STORE_NAME = 'fishImages';
+        const POINTS_PER_SPECIES = 10;
 
         // --- Utility Functions ---
         function formatDate(dateString) { if (!dateString) return 'N/A'; try { const d = new Date(dateString + 'T00:00:00Z'); return isNaN(d.getTime()) ? dateString : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }); } catch (e) { console.error("Date format err:", e); return dateString; } }
@@ -411,81 +453,102 @@
 
         // --- Tally Page ---
         function populateTallySummaryFields() { try{document.getElementById('summaryAngler').textContent=currentAngler||'?'; document.getElementById('summaryDate').textContent=currentDate?formatDate(currentDate):'?'; document.getElementById('summaryVenue').textContent=currentVenue||'?'; document.getElementById('summaryZone').textContent=currentZone||'N/A'; document.getElementById('summaryPeg').textContent=currentPeg||'N/A'; document.getElementById('summaryVerifier').innerHTML = '';}catch(e){} }
-        function populateTallyTable() { const table=document.getElementById('tallyTable'); if (!table)return; const sum={}; let tL=0, lF=null; fishData.forEach(f=>{const sK=f.species||"?";const l=f.length||0; sum[sK]=sum[sK]||{c:0,tL:0,l:[]}; sum[sK].c++;sum[sK].tL+=l;sum[sK].l.push(l); tL+=l; if(!lF||l>(lF.length||0))lF=f;}); Object.values(sum).forEach(d=>d.l.sort((a,b)=>a-b)); const sorted=Object.entries(sum).sort(([a],[b])=>a.localeCompare(b)); table.innerHTML=sorted.map(([s,d])=>`<tr><td>${s}</td><td>${d.c}</td><td>(${d.l.join(', ')})</td><td>${d.tL}</td></tr>`).join('')||'<tr><td colspan="4" class="text-center">No fish recorded.</td></tr>'; document.getElementById('tallyTotalLength').textContent=`${tL} cm`; document.getElementById('tallySpeciesCount').textContent=Object.keys(sum).length; document.getElementById('longestFishSpecies').textContent=lF?(lF.species||'?'):'N/A'; document.getElementById('longestFishLength').textContent=lF?`${lF.length||'?'} cm`:'0 cm';}
+        function populateTallyTable() {
+            const tableBody = document.getElementById('tallyTable');
+            if (!tableBody) return;
+
+            const speciesSummary = {};
+            let overallTotalLength = 0;
+            let longestFish = null;
+
+            fishData.forEach(fish => {
+                const speciesKey = fish.species || "?";
+                const length = fish.length || 0;
+                speciesSummary[speciesKey] = speciesSummary[speciesKey] || { count: 0, totalLength: 0, lengths: [] };
+                speciesSummary[speciesKey].count++;
+                speciesSummary[speciesKey].totalLength += length;
+                speciesSummary[speciesKey].lengths.push(length);
+                overallTotalLength += length;
+                if (!longestFish || length > (longestFish.length || 0)) {
+                    longestFish = fish;
+                }
+            });
+
+            Object.values(speciesSummary).forEach(details => details.lengths.sort((a, b) => a - b));
+            const sortedSpeciesEntries = Object.entries(speciesSummary).sort(([a], [b]) => a.localeCompare(b));
+
+            tableBody.innerHTML = sortedSpeciesEntries.map(([species, details]) =>
+                `<tr>
+                    <td>${species}</td>
+                    <td>${details.count}</td>
+                    <td>(${details.lengths.join(', ')})</td>
+                    <td>${details.totalLength}</td>
+                 </tr>`
+            ).join('') || '<tr><td colspan="4" class="text-center">No fish recorded.</td></tr>';
+
+            const speciesCount = Object.keys(speciesSummary).length;
+            const points = overallTotalLength + (speciesCount * POINTS_PER_SPECIES);
+
+            document.getElementById('tallyTotalLength').textContent = `${overallTotalLength} cm`;
+            document.getElementById('tallySpeciesCount').textContent = speciesCount;
+            document.getElementById('longestFishSpecies').textContent = longestFish ? (longestFish.species || '?') : 'N/A';
+            document.getElementById('longestFishLength').textContent = longestFish ? `${longestFish.length || '?'} cm` : '0 cm';
+            document.getElementById('tallyPointsTotal').textContent = points;
+        }
         function backFromTally() { console.log("Back from Tally."); showPage('fishingPage'); }
 
         // --- Saved Scorecards ---
         function showScorecardsModal() { console.log("View Scorecards."); const modalEl=document.getElementById('savedScorecardsModal'), listEl=document.getElementById('savedScorecardsList'); if(modalEl&&listEl){listEl.innerHTML='<div class="text-center p-3"><div class="spinner-border text-primary"><span class="visually-hidden">Load...</span></div></div>'; let mI=bootstrap.Modal.getInstance(modalEl);if(!mI)mI=new bootstrap.Modal(modalEl,{backdrop:'static',keyboard:false});mI.show();setTimeout(loadScorecards,50);}else{console.error("Scorecard modal/list missing.");alert("Err show modal.");}}
         async function loadScorecards() { console.log("Loading scorecards..."); const savedScorecardsList = document.getElementById('savedScorecardsList'); const olderScorecardsToggleContainer = document.getElementById('olderScorecardsToggleContainer'); if (!savedScorecardsList || !olderScorecardsToggleContainer) { console.error("CRITICAL: Modal list or toggle container missing!"); return; } savedScorecardsList.innerHTML = ''; olderScorecardsToggleContainer.innerHTML = ''; const scorecards = []; let loadError = false; try { for (let i=0; i<localStorage.length; i++){ const key=localStorage.key(i); if (key?.startsWith('scorecard_')){ const dS=localStorage.getItem(key); if(dS){ try { const data=JSON.parse(dS); if(data?.currentAngler && data.currentDate && data.currentVenue){ const tS=parseInt(key.split('_')[1],10); if(!isNaN(tS)){scorecards.push({key,data,timestamp:tS});}} else {console.warn("Skip invalid card:",key);}} catch(e){console.error("Parse err:",key,e);}}}}} catch (e) { console.error("LS err:",e); savedScorecardsList.innerHTML='<p class="text-danger p-3">Load failed.</p>'; loadError=true; } if(loadError) return; scorecards.sort((a,b)=>b.timestamp-a.timestamp); if (scorecards.length===0){ savedScorecardsList.innerHTML='<p class="text-center p-3">No saved scorecards.</p>'; return; } console.log(`Total scorecards found: ${scorecards.length}`); const displayLimit = 4; try { const initial = scorecards.slice(0, displayLimit); initial.forEach(({ key, data }, index) => { const el = createScorecardElement(key, data, index === 0); if (el) savedScorecardsList.appendChild(el); }); } catch(e) { console.error("Err initial loop:", e); savedScorecardsList.innerHTML += '<p class="text-danger p-3">Err display initial.</p>'; } if (scorecards.length > displayLimit) { const olderCount = scorecards.length - displayLimit; const showOlderBtn = document.createElement('button'); showOlderBtn.id = 'showOlderBtn'; showOlderBtn.className = 'btn btn-outline-secondary'; showOlderBtn.textContent = `View ${olderCount} Older Scorecard${olderCount > 1 ? 's' : ''}`; showOlderBtn.onclick = function() { console.log("'Older' clicked."); try { const older = scorecards.slice(displayLimit); older.forEach(({ key, data }) => { const el = createScorecardElement(key, data, false); if (el) savedScorecardsList.appendChild(el); }); olderScorecardsToggleContainer.innerHTML = ''; } catch(e) { console.error("Err create/append older:", e); olderScorecardsToggleContainer.innerHTML = '<p class="text-danger">Err display older.</p>'; } }; olderScorecardsToggleContainer.appendChild(showOlderBtn); const deleteOlderBtn = document.createElement('button'); deleteOlderBtn.id = 'deleteOlderBtn'; deleteOlderBtn.className = 'btn btn-danger'; deleteOlderBtn.textContent = 'Delete Older Scorecards'; deleteOlderBtn.onclick = confirmDeleteOlderScorecards; olderScorecardsToggleContainer.appendChild(deleteOlderBtn); } }
-        // --- createScorecardElement adds species length summary (Comment Removed) ---
+        // --- UPDATED: createScorecardElement applies new styling and removes comments ---
         function createScorecardElement (key, data, isLatest) {
             try {
                 const wrapperDiv = document.createElement('div');
                 wrapperDiv.className = `scorecard-entry${isLatest ? ' latest-scorecard' : ''}`;
                 wrapperDiv.id = `entry-${key}`;
 
-                // --- Calculate Summaries ---
-                let overallTotalLength = 0;
-                let fishCount = 0;
-                let speciesSet = new Set();
-                let longestFish = null;
-                let speciesTotals = {}; // Object to hold { speciesName: totalLength }
+                // Calculate Summaries
+                let overallTotalLength = 0, fishCount = 0, speciesSet = new Set(), longestFish = null, speciesTotals = {};
                 const fishList = data.fishData || [];
-
                 fishList.forEach(f => {
-                    const length = f.length || 0;
-                    const speciesName = f.species || '?'; // Use '?' for unknown species
-
-                    fishCount++;
-                    overallTotalLength += length;
-                    speciesSet.add(speciesName);
-
-                    // Update longest fish
-                    if (!longestFish || length > (longestFish.length || 0)) {
-                        longestFish = f;
-                    }
-
-                    // Update species-specific totals
+                    const length = f.length || 0; const speciesName = f.species || '?';
+                    fishCount++; overallTotalLength += length; speciesSet.add(speciesName);
+                    if (!longestFish || length > (longestFish.length || 0)) longestFish = f;
                     speciesTotals[speciesName] = (speciesTotals[speciesName] || 0) + length;
                 });
-
                 const speciesCount = speciesSet.size;
+                const points = overallTotalLength + (speciesCount * POINTS_PER_SPECIES);
                 const longestFishString = longestFish ? `${longestFish.species || '?'}(${longestFish.length || '?'}cm)` : 'N/A';
-                const escapedKey = key.replace(/'/g, "\\'"); // For use in inline onclick
+                const escapedKey = key.replace(/'/g, "\\'");
                 const viewNoteButtonHtml = (data.notes && data.notes.trim() !== '') ? `<button class="btn btn-secondary btn-sm" onclick="viewNote('${escapedKey}', event)"><i class="bi bi-eye me-1"></i>View Note</button>` : '';
 
-                // --- Generate Simple Fish List HTML ---
+                // Generate Fish List HTML
                 let fishListHtml = '<p class="ms-2">No fish recorded.</p>';
                 if (fishList.length > 0) {
                     fishListHtml = fishList.map((f, i) => {
-                        let verifiedText = '';
-                        if (data.isCompetition && f.initials) {
-                             verifiedText = ` <small class="text-muted">(Verified: ${f.initials})</small>`;
-                        }
+                        let verifiedText = ''; if (data.isCompetition && f.initials) verifiedText = ` <small class="text-muted">(Verified: ${f.initials})</small>`;
                         return `<p class="fish-list-item">${i + 1}. ${f.species || '?'} - ${f.length || '?'}cm${verifiedText}</p>`;
                     }).join('');
                 }
 
-                // --- Generate Species Length Summary HTML ---
+                // Generate Species Length Summary HTML
                 let speciesSummaryHtml = '';
                 if (Object.keys(speciesTotals).length > 0) {
                     const sortedSpecies = Object.entries(speciesTotals).sort((a, b) => a[0].localeCompare(b[0]));
                     speciesSummaryHtml += '<div class="species-length-summary">';
                     speciesSummaryHtml += '<h6>Species Length Totals:</h6>';
-                    sortedSpecies.forEach(([speciesName, totalLength]) => {
-                        speciesSummaryHtml += `<p><strong>${speciesName}:</strong> ${totalLength}cm</p>`;
-                    });
+                    sortedSpecies.forEach(([speciesName, totalLength]) => { speciesSummaryHtml += `<p><strong>${speciesName}:</strong> ${totalLength}cm</p>`; });
                     speciesSummaryHtml += '</div><hr>';
                 }
 
-                // --- Generate Photos Section HTML ---
+                // Generate Photos Section HTML
                 const photosPlaceholderId = `sessionPhotos-${key}`;
                 const photosHtml = `<hr><h6>Session Photos</h6><div class="session-photos" id="${photosPlaceholderId}"><p class="text-muted placeholder-photos">(No photos)</p></div>`;
 
-                // --- Assemble Full Scorecard Details HTML ---
+                // Assemble Full Scorecard Details HTML
                 wrapperDiv.innerHTML = `
                     <div class="scorecard-item" onclick="toggleScorecardDetails('${escapedKey}',this)">
-                        <i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fishCount} fish, ${overallTotalLength}cm)</span> ${isLatest ? '<span class="badge bg-primary ms-2">Latest</span>' : ''}
+                        <i class="bi bi-chevron-right me-2"></i><strong>${data.currentVenue || '?'}</strong> - ${formatDate(data.currentDate || '')} <span class="text-muted ms-2">(${fishCount} fish, ${overallTotalLength}cm, ${points} pts)</span> ${isLatest ? '<span class="badge bg-primary ms-2">Latest</span>' : ''}
                     </div>
                     <div class="scorecard-details" id="details_${key}">
                         <h6>Session Details</h6>
@@ -500,11 +563,14 @@
                         ${fishListHtml}
                         ${fishList.length > 0 ? `
                             <hr>
-                            <h6>Summary</h6>
-                            ${speciesSummaryHtml}
-                            <p><strong>Overall Total Length:</strong> ${overallTotalLength}cm</p>
-                            <p><strong>Total Species:</strong> ${speciesCount}</p>
-                            <p><strong>Longest Fish:</strong> ${longestFishString}</p>
+                            <div class="scorecard-summary-block">
+                                <h6>Summary</h6>
+                                ${speciesSummaryHtml}
+                                <p class="summary-highlight"><strong>Overall Total Length:</strong> ${overallTotalLength}cm</p>
+                                <p><strong>Total Species:</strong> ${speciesCount}</p>
+                                <p><strong>Longest Fish:</strong> ${longestFishString}</p>
+                                <p class="summary-highlight"><strong>Points Total:</strong> ${points}</p> 
+                            </div>
                         ` : ''}
                         ${photosHtml}
                         <div class="btn-actions-group">
@@ -515,7 +581,6 @@
                         </div>
                     </div>`;
 
-                // Trigger photo loading asynchronously
                 setTimeout(() => loadSessionPhotos(key, fishList), 0);
 
                 return wrapperDiv;
@@ -525,66 +590,41 @@
         async function loadSessionPhotos(scorecardKey, fishList) {
             const photosContainerId = `sessionPhotos-${scorecardKey}`;
             const photosContainer = document.getElementById(photosContainerId);
-            if (!photosContainer) {
-                 console.error(`Photos container not found: ${photosContainerId}`);
-                 return;
-            }
-
+            if (!photosContainer) { console.error(`Photos container not found: ${photosContainerId}`); return; }
             const fishWithPhotos = fishList.filter(f => !!f.imageId);
-
-            if (fishWithPhotos.length === 0) {
-                 photosContainer.innerHTML = '<p class="text-muted placeholder-photos">(No photos saved for this session)</p>';
-                 return;
-            }
-
+            if (fishWithPhotos.length === 0) { photosContainer.innerHTML = '<p class="text-muted placeholder-photos">(No photos saved for this session)</p>'; return; }
             console.log(`Loading ${fishWithPhotos.length} photos for scorecard ${scorecardKey}`);
             photosContainer.innerHTML = '<div class="spinner-border spinner-border-sm text-secondary" role="status"><span class="visually-hidden">Loading photos...</span></div>';
-
             let imagesAdded = 0;
             const imagePromises = fishWithPhotos.map(async (fish) => {
                  try {
                       const blob = await getImageFromDb(fish.imageId);
                       if (blob) {
                            const url = URL.createObjectURL(blob);
-                           const img = document.createElement('img');
-                           img.src = url;
-                           img.alt = `Photo for ${fish.species || 'fish'}`;
-                           img.className = 'session-photo-thumbnail';
-                           img.onclick = () => showFullscreenImage(fish.imageId);
-                           return img;
-                      } else {
-                           console.warn(`Blob not found in DB for imageId: ${fish.imageId}`);
-                           return null;
-                      }
-                 } catch (error) {
-                      console.error(`Error loading photo ${fish.imageId} for scorecard ${scorecardKey}:`, error);
-                      return null;
-                 }
+                           const img = document.createElement('img'); img.src = url; img.alt = `Photo for ${fish.species || 'fish'}`; img.className = 'session-photo-thumbnail'; img.onclick = () => showFullscreenImage(fish.imageId); return img;
+                      } else { console.warn(`Blob not found in DB for imageId: ${fish.imageId}`); return null; }
+                 } catch (error) { console.error(`Error loading photo ${fish.imageId} for scorecard ${scorecardKey}:`, error); return null; }
             });
-
             const imageElements = await Promise.all(imagePromises);
-
             photosContainer.innerHTML = '';
-
-            imageElements.forEach(img => {
-                if (img) {
-                    photosContainer.appendChild(img);
-                    imagesAdded++;
-                }
-            });
-
-            if (imagesAdded === 0 && fishWithPhotos.length > 0) {
-                photosContainer.innerHTML = '<p class="text-danger placeholder-photos">(Error loading session photos)</p>';
-            } else if (imagesAdded === 0) {
-                 photosContainer.innerHTML = '<p class="text-muted placeholder-photos">(No photos found)</p>';
-            }
-
+            imageElements.forEach(img => { if (img) { photosContainer.appendChild(img); imagesAdded++; } });
+            if (imagesAdded === 0 && fishWithPhotos.length > 0) { photosContainer.innerHTML = '<p class="text-danger placeholder-photos">(Error loading session photos)</p>'; }
+            else if (imagesAdded === 0) { photosContainer.innerHTML = '<p class="text-muted placeholder-photos">(No photos found)</p>'; }
             console.log(`Finished loading photos for scorecard ${scorecardKey}. Added ${imagesAdded} images.`);
         }
 
         function toggleScorecardDetails(key, element){ console.log("Toggle:",key); const d=document.getElementById(`details_${key}`), i=element.querySelector('i.bi'); if(d){const v=d.style.display==='block'; d.style.display=v?'none':'block'; if(i){i.classList.toggle('bi-chevron-right',v);i.classList.toggle('bi-chevron-down',!v);} element.classList.toggle('details-visible',!v);}else{console.error("Details missing:",key);}}
         async function deleteScorecard(key, event){ event.stopPropagation(); console.log("Delete scorecard key:", key); let data; try { data = JSON.parse(localStorage.getItem(key) || '{}'); } catch (e) { data = {}; } const fishList = data.fishData || []; const imageIdsToDelete = fishList.map(f => f.imageId).filter(id => !!id); let sN = `card ${key.slice(-6)}`; try { sN = `card for ${data.currentAngler || '?'} on ${formatDate(data.currentDate || '')}`; } catch (e) {} if (confirm(`Delete ${sN}? This will also delete ${imageIdsToDelete.length} associated photo(s). Cannot undo.`)) { try { if (imageIdsToDelete.length > 0) { console.log("Deleting images from DB:", imageIdsToDelete); const deletePromises = imageIdsToDelete.map(id => deleteImageFromDb(id)); await Promise.allSettled(deletePromises); console.log("Image deletion from DB attempted."); } localStorage.removeItem(key); console.log("Deleted scorecard metadata from localStorage:", key); loadScorecards(); } catch (e) { console.error("Delete scorecard/images error:", e); alert("Failed to delete scorecard or some associated images."); loadScorecards(); } } else { console.log("Delete cancel."); } }
-        function emailScorecard(key, event) { event.stopPropagation(); console.log("Emailing:", key); alert("This will open your default email app. Photos and Notes are NOT included."); let data; try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error getting data: ${error.message}`); return; } let body = "Sea Catch Scorecard\r\n=====================\r\n\r\n"; body += "Session Details:\r\n"; body += `Angler: ${data.currentAngler||'?'}\r\n`; body += `Date: ${formatDate(data.currentDate||'')}\r\n`; body += `Venue: ${data.currentVenue||'?'}\r\n`; if(data.currentZone)body+=`Zone: ${data.currentZone}\r\n`; if(data.currentPeg)body+=`Peg: ${data.currentPeg}\r\n`; if(data.verifier)body+=`Verified By: ${data.verifier}\r\n`; body += "\r\n"; body += "Catch List:\r\n"; if(data.fishData?.length>0){data.fishData.forEach((f,i)=>{body+=`${i+1}. ${f.species||'?'} - ${f.length||'?'} cm`; if(data.isCompetition && f.initials) { body += ` - Verified by: ${f.initials || '-'}`;} body += `\r\n`;});}else{body+="No fish.\r\n";} body+="\r\n"; let overallTotalLength=0,fishCount=0,speciesSet=new Set(),longestFish=null, speciesTotals={}; const fishList=data.fishData||[]; fishList.forEach(f=>{const l=f.length||0; const sN=f.species||'?'; fishCount++;overallTotalLength+=l;speciesSet.add(sN); if(!longestFish||l>(longestFish.length||0))longestFish=f; speciesTotals[sN]=(speciesTotals[sN]||0)+l; }); const speciesCount=speciesSet.size; const longestFishString=longestFish?`${longestFish.species||'?'}(${longestFish.length||'?'}cm)`:'N/A'; body += "Summary:\r\n"; if(Object.keys(speciesTotals).length > 0) { body += "Species Length Totals:\r\n"; Object.entries(speciesTotals).sort((a,b) => a[0].localeCompare(b[0])).forEach(([name, len]) => { body += ` - ${name}: ${len}cm\r\n`; }); body += "\r\n"; } body += `Overall Total Fish: ${fishCount}\r\n`; body += `Overall Total Length: ${overallTotalLength} cm\r\n`; body += `Unique Species: ${speciesCount}\r\n`; body += `Longest Fish: ${longestFishString}\r\n\r\n=====================\r\n`; const subject = `Fishing Scorecard: ${data.currentVenue||'?'} - ${formatDate(data.currentDate||'')}`; const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`; if(mailtoUrl.length>1800){console.warn(`Mailto long (${mailtoUrl.length})`); alert("Warning: Scorecard long.");} console.log("Mailto len:", mailtoUrl.length); try{window.open(mailtoUrl,'_self');}catch(e){console.error("Mailto err:",e);alert("Could not open email client.");} }
+        function emailScorecard(key, event) {
+            event.stopPropagation(); console.log("Emailing:", key);
+            alert("This will open your default email app. Photos and Notes are NOT included.");
+            let data;
+            try { const dS = localStorage.getItem(key); if (!dS) throw new Error("Not found."); data = JSON.parse(dS); if (!data?.currentAngler || !data.currentDate || !data.currentVenue || !Array.isArray(data.fishData)) throw new Error("Invalid data."); } catch (error) { console.error("Email data err:", error); alert(`Error getting data: ${error.message}`); return; }
+            let body = "Sea Catch Scorecard\r\n=====================\r\n\r\n"; body += "Session Details:\r\n"; body += `Angler: ${data.currentAngler||'?'}\r\n`; body += `Date: ${formatDate(data.currentDate||'')}\r\n`; body += `Venue: ${data.currentVenue||'?'}\r\n`; if(data.currentZone)body+=`Zone: ${data.currentZone}\r\n`; if(data.currentPeg)body+=`Peg: ${data.currentPeg}\r\n`; if(data.verifier)body+=`Verified By: ${data.verifier}\r\n`; body += "\r\n"; body += "Catch List:\r\n"; if(data.fishData?.length>0){data.fishData.forEach((f,i)=>{body+=`${i+1}. ${f.species||'?'} - ${f.length||'?'} cm`; if(data.isCompetition && f.initials) { body += ` - Verified by: ${f.initials || '-'}`;} body += `\r\n`;});}else{body+="No fish.\r\n";} body+="\r\n";
+            let overallTotalLength=0, fishCount=0, speciesSet=new Set(), longestFish=null, speciesTotals={}; const fishList=data.fishData||[]; fishList.forEach(f=>{ const l=f.length||0; const sN=f.species||'?'; fishCount++; overallTotalLength+=l; speciesSet.add(sN); if(!longestFish||l>(longestFish.length||0)) longestFish=f; speciesTotals[sN]=(speciesTotals[sN]||0)+l; }); const speciesCount=speciesSet.size; const points = overallTotalLength + (speciesCount * POINTS_PER_SPECIES); const longestFishString=longestFish?`${longestFish.species||'?'}(${longestFish.length||'?'}cm)`:'N/A';
+            body += "Summary:\r\n"; if(Object.keys(speciesTotals).length > 0) { body += "Species Length Totals:\r\n"; Object.entries(speciesTotals).sort((a,b) => a[0].localeCompare(b[0])).forEach(([name, len]) => { body += ` - ${name}: ${len}cm\r\n`; }); body += "\r\n"; } body += `Overall Total Fish: ${fishCount}\r\n`; body += `Overall Total Length: ${overallTotalLength} cm\r\n`; body += `Unique Species: ${speciesCount}\r\n`; body += `Longest Fish: ${longestFishString}\r\n`; body += `Points Total: ${points}\r\n`; body += "\r\n=====================\r\n";
+            const subject = `Fishing Scorecard: ${data.currentVenue||'?'} - ${formatDate(data.currentDate||'')}`; const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`; if(mailtoUrl.length>1800){console.warn(`Mailto long (${mailtoUrl.length})`); alert("Warning: Scorecard long.");} console.log("Mailto len:", mailtoUrl.length); try{window.open(mailtoUrl,'_self');}catch(e){console.error("Mailto err:",e);alert("Could not open email client.");}
+        }
 
         // --- Notes Modal Functions ---
         function openNotesModal(key, event) { if(event) event.stopPropagation(); console.log('Opening notes modal for key:', key); const notesTextarea = document.getElementById('notesTextarea'), notesModalKeyInput = document.getElementById('notesModalScorecardKey'); if (!notesTextarea || !notesModalKeyInput || !notesModalInstance) { console.error('Notes modal elements/instance missing!'); alert('Error opening notes editor.'); return; } try { const dS=localStorage.getItem(key); const data=dS?JSON.parse(dS):{}; notesTextarea.value=data.notes||''; } catch(e){ console.error('Error loading notes for modal:',e); notesTextarea.value=''; } notesModalKeyInput.value = key; notesModalInstance.show(); }
@@ -605,7 +645,38 @@
         function showModal(modalId) { const modalElement = document.getElementById(modalId); if(modalElement) { const instance = bootstrap.Modal.getOrCreateInstance(modalElement, {backdrop: 'static', keyboard: false}); instance.show(); } else { console.error(`Modal element #${modalId} not found!`); } }
 
         // --- Application Reset ---
-        function resetApp() { console.log("Resetting app."); fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null; currentPage='splashScreen'; stopCameraStream(); deactivateAppMode(); isDropdownPopulated = false; pendingFishData = null; try { document.getElementById('anglerName').value=''; setTodaysDate(); document.getElementById('venueInput').value=''; document.getElementById('isCompetition').checked=false; toggleCompetitionFields(false); document.getElementById('zoneInput').value=''; document.getElementById('pegInput').value=''; const speciesInput = document.getElementById('speciesInput'); if (speciesInput) { speciesInput.innerHTML = '<option value="" selected disabled>Select a species</option><option value="Other">Other (specify)</option>'; } const customSpeciesInput = document.getElementById('customSpeciesInput'); if (customSpeciesInput) { customSpeciesInput.value = ''; customSpeciesInput.style.display = 'none'; } document.getElementById('lengthInput').value=''; document.getElementById('initialsInput').value=''; document.getElementById('fishLog').innerHTML=''; const vI = document.getElementById('verifierEndModalInput'); if(vI) vI.value=''; const vS = document.getElementById('verifierEndModalSection'); if(vS) vS.style.display='none'; populateTallySummaryFields(); document.getElementById('tallyTable').innerHTML=''; document.getElementById('tallyTotalLength').textContent='0 cm'; document.getElementById('tallySpeciesCount').textContent='0'; document.getElementById('longestFishSpecies').textContent='N/A'; document.getElementById('longestFishLength').textContent='0 cm'; } catch(e) { console.error("Error resetting forms:", e); } }
+        function resetApp() {
+            console.log("Resetting app.");
+            fishData=[]; currentAngler=null; currentDate=null; currentVenue=null; currentZone=null; currentPeg=null;
+            currentPage='splashScreen'; stopCameraStream(); deactivateAppMode();
+            isDropdownPopulated = false; pendingFishData = null;
+            try {
+                document.getElementById('anglerName').value='';
+                setTodaysDate();
+                document.getElementById('venueInput').value='';
+                document.getElementById('isCompetition').checked=false;
+                toggleCompetitionFields(false);
+                document.getElementById('zoneInput').value='';
+                document.getElementById('pegInput').value='';
+                const speciesInput = document.getElementById('speciesInput');
+                if (speciesInput) { speciesInput.innerHTML = '<option value="" selected disabled>Select a species</option><option value="Other">Other (specify)</option>'; }
+                const customSpeciesInput = document.getElementById('customSpeciesInput');
+                if (customSpeciesInput) { customSpeciesInput.value = ''; customSpeciesInput.style.display = 'none'; }
+                document.getElementById('lengthInput').value='';
+                document.getElementById('initialsInput').value='';
+                document.getElementById('fishLog').innerHTML='';
+                const vI = document.getElementById('verifierEndModalInput'); if(vI) vI.value='';
+                const vS = document.getElementById('verifierEndModalSection'); if(vS) vS.style.display='none';
+                // Reset Tally Page Footer
+                populateTallySummaryFields();
+                document.getElementById('tallyTable').innerHTML='';
+                document.getElementById('tallyTotalLength').textContent='0 cm';
+                document.getElementById('tallySpeciesCount').textContent='0';
+                document.getElementById('longestFishSpecies').textContent='N/A';
+                document.getElementById('longestFishLength').textContent='0 cm';
+                document.getElementById('tallyPointsTotal').textContent='0';
+            } catch(e) { console.error("Error resetting forms:", e); }
+        }
 
         // --- Initialisation ---
         document.addEventListener('DOMContentLoaded', async () => {
