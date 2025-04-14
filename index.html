@@ -468,7 +468,7 @@
                         <h6>Catch (${fC})</h6>
                         ${fishListHtml}
                         ${fishList.length > 0 ? `<hr><h6>Summary</h6><p><strong>Total Len:</strong> ${tL}cm</p><p><strong>Species:</strong> ${spC}</p><p><strong>Longest:</strong> ${lFS}</p>` : ''}
-                        ${photosHtml} {/* This includes the div with id="sessionPhotos-${key}" */}
+                        ${photosHtml}
                         <div class="btn-actions-group">
                             ${viewNoteButtonHtml}
                             <button class="btn btn-outline-secondary btn-sm" onclick="openNotesModal('${eK}', event)"><i class="bi bi-pencil me-1"></i>Add/Edit Note</button>
@@ -484,10 +484,9 @@
             } catch (elementError) { console.error(`Err create el for ${key}:`, elementError); const errDiv = document.createElement('div'); errDiv.className = 'alert alert-warning p-2 my-2'; errDiv.textContent = `Err display card ${key.slice(-4)}`; return errDiv; }
         }
 
-        // --- FIXED: loadSessionPhotos function ---
+        // --- loadSessionPhotos function (Corrected previously) ---
         async function loadSessionPhotos(scorecardKey, fishList) {
             const photosContainerId = `sessionPhotos-${scorecardKey}`;
-            // *** FIX: Use the correct ID variable here ***
             const photosContainer = document.getElementById(photosContainerId);
             if (!photosContainer) {
                  console.error(`Photos container not found: ${photosContainerId}`);
@@ -546,7 +545,6 @@
             if (imagesAdded === 0 && fishWithPhotos.length > 0) {
                 photosContainer.innerHTML = '<p class="text-danger placeholder-photos">(Error loading session photos)</p>';
             } else if (imagesAdded === 0) {
-                 // This case should technically be caught by the initial check, but as a fallback:
                  photosContainer.innerHTML = '<p class="text-muted placeholder-photos">(No photos found)</p>';
             }
 
